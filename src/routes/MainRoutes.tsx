@@ -24,11 +24,5 @@ export const MainRoute = {
       element: <Users />,
       fallback: <h1>Loading...</h1>,
     },
-    {
-      id: 3,
-      path: "*",
-      element: <Dashboard />,
-      fallback: <h1>Loading...</h1>,
-    },
   ],
 };

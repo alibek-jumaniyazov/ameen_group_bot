@@ -39,9 +39,7 @@ function App() {
 
         <Route
           path="*"
-          element={
-            <Navigate to={!isAuthenticated ? "/login" : "/login"} replace />
-          }
+          element={<Navigate to={!isAuthenticated ? "/login" : "/"} replace />}
         />
       </Routes>
     </>
