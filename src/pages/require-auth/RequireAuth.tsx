@@ -20,11 +20,8 @@ export function RequireAuth() {
   if (isLoading) return <h1>Loading...</h1>;
 
   return isAuthenticated ? (
-    <div className="flex justify-between items-start">
+    <div className="!h-full !w-full">
       <Sidebar />
-      <main className="flex-1 bg-lightDark text-white p-6 min-h-screen">
-        <Outlet />
-      </main>
     </div>
   ) : (
     <Navigate to="/login" state={{ from: location }} replace />

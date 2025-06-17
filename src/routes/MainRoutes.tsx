@@ -1,4 +1,6 @@
 import Login from "../pages/auth/Login";
+import Dashboard from "../pages/dashboard/Dashboard";
+import Users from "../pages/users/Users";
 
 export const MainRoute = {
   public: [
@@ -9,5 +11,24 @@ export const MainRoute = {
       fallback: <h1>Loading...</h1>,
     },
   ],
-  private: [],
+  private: [
+    {
+      id: 1,
+      path: "/",
+      element: <Dashboard />,
+      fallback: <h1>Loading...</h1>,
+    },
+    {
+      id: 2,
+      path: "/users",
+      element: <Users />,
+      fallback: <h1>Loading...</h1>,
+    },
+    {
+      id: 3,
+      path: "*",
+      element: <Dashboard />,
+      fallback: <h1>Loading...</h1>,
+    },
+  ],
 };
