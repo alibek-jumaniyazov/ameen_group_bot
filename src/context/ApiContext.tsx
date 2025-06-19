@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 import type {
   ApiContextType,
   ApiProviderProps,
@@ -7,8 +7,17 @@ import type {
 const ApiContext = createContext<ApiContextType>({} as ApiContextType);
 
 export default function ApiProvider({ children }: ApiProviderProps) {
-  const getMethods: ApiContextType = {};
+  function logout() {
+    localStorage.removeItem("isAuthenticated");
+    window.location.href = "/login";
+  }
+
+  const getMethods: ApiContextType = {
+    logout,
+  };
+
   return (
     <ApiContext.Provider value={getMethods}>{children}</ApiContext.Provider>
   );
 }
+export const useApi = () => useContext(ApiContext);
