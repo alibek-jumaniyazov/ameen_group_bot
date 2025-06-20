@@ -108,7 +108,7 @@ export default function UsersTabs() {
     name: "Alibek",
     surname: "Jumaniyazov",
     phone: 886003230 + i,
-    email: `alibek${i + 1}@gmail.com`,
+    email: `alibek00${i + 1}@gmail.com`,
     active: "2025.06.19 17:19",
     subscribe: [Math.random() > 0.5 ? "Aktiv" : "Deaktiv"],
   }));
@@ -125,6 +125,14 @@ export default function UsersTabs() {
 
   return (
     <div className="UsersTabs !w-full">
+      <div className="flex justify-start items-center gap-4 mb-4">
+        <p className="font-normal text-sm text-[#92959C] leading-5">
+          Total active: <span className="text-[#1D9629]">100</span>
+        </p>
+        <p className="font-normal text-sm text-[#92959C] leading-5">
+          Total deactive: <span className="text-[#D52A2A]">100</span>
+        </p>
+      </div>
       <div className="flex flex-col gap-4 w-full">
         <Table<DataType>
           columns={columns}
@@ -133,7 +141,6 @@ export default function UsersTabs() {
             showSizeChanger: false,
             align: "center",
           }}
-          onRow={() => setOpen(true)}
         />
       </div>
       <EditUserModal onClose={onClose} open={open} />
