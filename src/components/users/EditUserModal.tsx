@@ -1,16 +1,29 @@
 import { Button, Col, Drawer, Form, Input, Row, Space } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icons } from "../../assets/icons";
 
 export default function EditUserModal({
   onClose,
   open,
+  record,
 }: {
   onClose: () => void;
   open: boolean;
+  record: any;
 }) {
   const [showEditInputs, setShowEditInputs] = useState(true);
+  const [form] = Form.useForm();
 
+  useEffect(() => {
+    if (record) {
+      form.setFieldsValue(record);
+    }
+  }, [record, form]);
+
+  const onFinish = (values: any) => {
+    console.log("Form yuborildi:", values);
+    onClose();
+  };
   return (
     <Drawer
       title="Foydalanuvchi ma’lumotlari"
@@ -31,12 +44,12 @@ export default function EditUserModal({
         </Space>
       }
     >
-      <Form layout="vertical" hideRequiredMark>
+      <Form layout="vertical" hideRequiredMark form={form} onFinish={onFinish}>
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               label="Ismi"
-              name="firstName"
+              name="name"
               rules={[{ required: true, message: "Iltimos, ismini kiriting" }]}
             >
               <Input disabled={showEditInputs} placeholder="Ism" />

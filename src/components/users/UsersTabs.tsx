@@ -113,8 +113,8 @@ export default function UsersTabs() {
     subscribe: [Math.random() > 0.5 ? "Aktiv" : "Deaktiv"],
   }));
 
-  const [open, setOpen] = useState(false);
-
+  const [open, setOpen] = useState<boolean>(false);
+  const [selectedRecord, setSelectedRecord] = useState<DataType | null>(null);
   const showDrawer = () => {
     setOpen(true);
   };
@@ -141,9 +141,17 @@ export default function UsersTabs() {
             showSizeChanger: false,
             align: "center",
           }}
+          onRow={(record) => {
+            return {
+              onClick: () => {
+                setSelectedRecord(record);
+                setOpen(true);
+              },
+            };
+          }}
         />
       </div>
-      <EditUserModal onClose={onClose} open={open} />
+      <EditUserModal onClose={onClose} open={open} record={selectedRecord} />
     </div>
   );
 }

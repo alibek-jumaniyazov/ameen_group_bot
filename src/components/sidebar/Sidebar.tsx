@@ -11,52 +11,53 @@ import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Icons } from "../../assets/icons";
 import { useApi } from "../../context/ApiContext";
-
+import logo from "../../assets/logo.png";
+import FullLogo from "../../assets/full_logo.png";
 export default function Sidebar() {
   const items = [
     {
       key: "/",
-      icon: <HomeOutlined />,
+      icon: <Icons.dashboard />,
       label: "Dashboard",
     },
     {
       key: "/users",
-      icon: <UserOutlined />,
+      icon: <Icons.person />,
       label: "Foydalanuvchilar ro'yxati",
     },
     {
-      key: "/1",
-      icon: <UserOutlined />,
+      key: "/subscribe",
+      icon: <Icons.ticket />,
       label: "Obuna tariflari",
     },
     {
       key: "/2",
-      icon: <UserOutlined />,
+      icon: <Icons.files />,
       label: "To‘lovlar ro‘yxati",
     },
     {
       key: "/3",
-      icon: <UserOutlined />,
+      icon: <Icons.document />,
       label: "Obunalar ro‘yxati",
     },
     {
       key: "/4",
-      icon: <UserOutlined />,
+      icon: <Icons.refresh />,
       label: "Avtomatik to‘lov urinishlari",
     },
     {
       key: "/5",
-      icon: <UserOutlined />,
+      icon: <Icons.sim />,
       label: "Statik xabarlar",
     },
     {
       key: "/6",
-      icon: <UserOutlined />,
+      icon: <Icons.email />,
       label: "Xabar yuborish va hisobotlar",
     },
     {
       key: "/7",
-      icon: <UserOutlined />,
+      icon: <Icons.setting />,
       label: "Sozlamalar",
     },
   ];
@@ -90,8 +91,8 @@ export default function Sidebar() {
         width={300}
         className="relative"
       >
-        <div className="text-[#ffffff] text-center text-xl font-bold my-4 h-7 ">
-          {collapsed ? " " : "Ameen Group"}
+        <div className="!w-full flex items-center justify-center gap-2.5 pt-4 pb-2.5">
+          {collapsed ? <img src={logo} width={40} /> : <img src={FullLogo} />}
         </div>
         <Menu
           theme="dark"
