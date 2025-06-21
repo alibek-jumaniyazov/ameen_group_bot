@@ -25,7 +25,7 @@ export default function UsersTabs() {
   interface DataType {
     key: string;
     name: string;
-    surname: string;
+    lastName: string;
     phone: number;
     email: string;
     active: string;
@@ -45,8 +45,8 @@ export default function UsersTabs() {
     },
     {
       title: "Familiya",
-      dataIndex: "surname",
-      key: "surname",
+      dataIndex: "lastName",
+      key: "lastName",
     },
     {
       title: "Telefon",
@@ -106,7 +106,7 @@ export default function UsersTabs() {
   const data: DataType[] = Array.from({ length: 20 }, (_, i) => ({
     key: (i + 1).toString(),
     name: "Alibek",
-    surname: "Jumaniyazov",
+    lastName: "Jumaniyazov",
     phone: 886003230 + i,
     email: `alibek00${i + 1}@gmail.com`,
     active: "2025.06.19 17:19",
