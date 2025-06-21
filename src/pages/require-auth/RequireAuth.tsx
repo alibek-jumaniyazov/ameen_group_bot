@@ -1,4 +1,4 @@
-import { useLocation, Navigate, Outlet } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 
@@ -8,22 +8,31 @@ export function RequireAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const auth = JSON.parse(localStorage.getItem("isAuthenticated") || "");
-    if (auth?.token) {
-      setIsAuthenticated(true);
-    } else {
+    try {
+      const authData = JSON.parse(
+        localStorage.getItem("isAuthenticated") || "null"
+      );
+      const hasToken = Boolean(authData?.token);
+      setIsAuthenticated(hasToken);
+    } catch (error) {
+      console.error("Failed to parse auth data:", error);
       setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, []);
 
-  if (isLoading) return <h1>Loading...</h1>;
+  if (isLoading) {
+    return <div className="text-center mt-10 text-lg">Loading...</div>;
+  }
 
-  return isAuthenticated ? (
-    <div className="!h-full !w-full">
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return (
+    <div className="h-full w-full">
       <Sidebar />
     </div>
-  ) : (
-    <Navigate to="/login" state={{ from: location }} replace />
   );
 }

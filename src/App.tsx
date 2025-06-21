@@ -1,31 +1,43 @@
-import { Suspense, useEffect } from "react";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { useEffect, Suspense } from "react";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { MainRoute } from "./routes/MainRoutes";
 import { RequireAuth } from "./pages/require-auth/RequireAuth";
 
-function App() {
+const isUserAuthenticated = (): boolean => {
+  return !!localStorage.getItem("isAuthenticated");
+};
+
+const App = () => {
+
   const navigate = useNavigate();
-  const isAuthenticated = !!localStorage.getItem("isAuthenticated");
-  const isLoginPage = window.location.pathname === "/login";
+  const location = useLocation();
+  const isAuthenticated = isUserAuthenticated();
 
   useEffect(() => {
-    if (isAuthenticated && isLoginPage) {
-      navigate("/");
+    if (isAuthenticated && location.pathname === "/login") {
+      navigate("/", { replace: true });
     }
-  }, [isAuthenticated, isLoginPage, navigate]);
+  }, [isAuthenticated, location.pathname, navigate]);
 
   return (
-    <>
+    <Suspense fallback={<div>Loading...</div>}>
       <Routes>
-        {!isAuthenticated ? (
+        {!isAuthenticated &&
           MainRoute.public.map(({ id, path, element, fallback }) => (
             <Route
               key={id}
               path={path}
               element={<Suspense fallback={fallback}>{element}</Suspense>}
             />
-          ))
-        ) : (
+          ))}
+
+        {isAuthenticated && (
           <Route element={<RequireAuth />}>
             {MainRoute.private.map(({ id, path, element, fallback }) => (
               <Route
@@ -36,14 +48,13 @@ function App() {
             ))}
           </Route>
         )}
-
         <Route
           path="*"
-          element={<Navigate to={!isAuthenticated ? "/login" : "/"} replace />}
+          element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />}
         />
       </Routes>
-    </>
+    </Suspense>
   );
-}
+};
 
 export default App;

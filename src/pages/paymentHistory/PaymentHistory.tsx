@@ -6,10 +6,15 @@ import { useState } from "react";
 
 export default function PaymentHistory() {
   const [open, setOpen] = useState<boolean>(false);
+  const [filters, setFilters] = useState<any>(null); // 🔁 filter holatini saqlash
 
-  const onClose = () => {
-    setOpen(false);
+  const onClose = () => setOpen(false);
+
+  const handleFilter = (values: any) => {
+    setFilters(values); 
+    setOpen(false); 
   };
+
   return (
     <div className="Users flex flex-col gap-4">
       <div className="w-full flex items-center justify-between">
@@ -36,8 +41,8 @@ export default function PaymentHistory() {
           <Icons.adjustments /> Filter
         </Button>
       </div>
-      <PaymentHistoryTabs />
-      <PaymentHistoryTabsFilter onClose={onClose} open={open} />
+      <PaymentHistoryTabs filters={filters} />
+      <PaymentHistoryTabsFilter onClose={onClose} open={open} onFilter={handleFilter} />
     </div>
   );
 }

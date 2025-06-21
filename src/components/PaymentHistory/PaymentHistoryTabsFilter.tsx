@@ -10,68 +10,86 @@ import {
   type DatePickerProps,
 } from "antd";
 import { Icons } from "../../assets/icons";
+import { useForm } from "antd/es/form/Form";
 
 export default function PaymentHistoryTabsFilter({
   onClose,
   open,
+  onFilter,
 }: {
   onClose: () => void;
   open: boolean;
+  onFilter: (values: any) => void;
 }) {
-  const [form] = Form.useForm();
+  const [form] = useForm();
 
-  const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
+  const onFinish = (values: any) => {
+    onFilter(values); // ✅ filter qiymatlarini jo‘natish
+    onClose();
   };
-  const handleChangeStatus = (value: string) => {
-    console.log(`selected ${value}`);
-  };
-  const onChange: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+
+  const onDateChange: DatePickerProps["onChange"] = (date, dateString) => {
+    console.log("Date selected:", dateString);
   };
 
   return (
-    <Drawer title="Filter" width={600} onClose={onClose} open={open}>
-      <Form layout="vertical" form={form} hideRequiredMark>
+    <Drawer
+      title="Filter"
+      width={600}
+      onClose={onClose}
+      open={open}
+      footer={
+        <div className="w-full flex justify-between items-center">
+          <Button
+            className="!text-[#EAB308] !border-[#EAB308] !px-4 !py-3.5"
+            onClick={() => form.resetFields()}
+          >
+            Tozalash
+          </Button>
+          <Button
+            type="primary"
+            className="bg-[#528AF9]"
+            onClick={() => form.submit()}
+          >
+            Ko’rish
+          </Button>
+        </div>
+      }
+    >
+      <Form
+        layout="vertical"
+        form={form}
+        hideRequiredMark
+        onFinish={onFinish}
+        initialValues={{
+          definition: "Boshlang’ich",
+          status: "Muvaffaqiyatli",
+        }}
+      >
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item
-              label="Boshlanish sanasi"
-              name="StartDate"
-              rules={[
-                { required: true, message: "Iltimos, Tarif nomi kiriting" },
-              ]}
-            >
+            <Form.Item label="Boshlanish sanasi" name="startDate">
               <DatePicker
-                onChange={onChange}
+                onChange={onDateChange}
                 placeholder="Boshlanish sanasi"
                 className="!w-full"
               />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item
-              label="Tugash sanasi"
-              name="EndDate"
-              rules={[
-                { required: true, message: "Iltimos, Tarif narxi kiriting" },
-              ]}
-            >
+            <Form.Item label="Tugash sanasi" name="endDate">
               <DatePicker
-                onChange={onChange}
+                onChange={onDateChange}
                 placeholder="Tugash sanasi"
                 className="!w-full"
               />
             </Form.Item>
           </Col>
         </Row>
+
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item
-              label="Foydalanuvchi bo’yicha"
-              name="term"
-              rules={[{ required: true, message: "Muddati kiriting" }]}
-            >
+            <Form.Item label="Foydalanuvchi bo’yicha" name="searchUser">
               <Input
                 type="search"
                 placeholder="Foydalanuvchi bo’yicha"
@@ -83,27 +101,13 @@ export default function PaymentHistoryTabsFilter({
 
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item
-              label="Tarif"
-              name="definition"
-              rules={[{ required: true, message: "Tarifni kiriting" }]}
-            >
+            <Form.Item label="Tarif" name="definition">
               <Select
-                defaultValue="Boshlang’ich"
-                onChange={handleChange}
+                placeholder="Tarif tanlang"
                 options={[
-                  {
-                    value: "Boshlang’ich",
-                    label: "Boshlang’ich",
-                  },
-                  {
-                    value: "Premium",
-                    label: "Premium",
-                  },
-                  {
-                    value: "Biznes",
-                    label: "Biznes",
-                  },
+                  { value: "Boshlang’ich", label: "Boshlang’ich" },
+                  { value: "Premium", label: "Premium" },
+                  { value: "Biznes", label: "Biznes" },
                 ]}
               />
             </Form.Item>
@@ -112,57 +116,31 @@ export default function PaymentHistoryTabsFilter({
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item
-              label="Maksimum summasi"
-              name="EndDate"
-              rules={[
-                { required: true, message: "Iltimos, Tarif narxi kiriting" },
-              ]}
-            >
+            <Form.Item label="Maksimum summasi" name="maxAmount">
               <Input suffix="so'm" placeholder="Maksimum summasi" />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item
-              label="Minimum summasi"
-              name="StartDate"
-              rules={[
-                { required: true, message: "Iltimos, Tarif nomi kiriting" },
-              ]}
-            >
+            <Form.Item label="Minimum summasi" name="minAmount">
               <Input suffix="so'm" placeholder="Minimum summasi" />
             </Form.Item>
           </Col>
         </Row>
+
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item
-              label="Holati"
-              name="status"
-              rules={[{ required: true, message: "Holati kiriting" }]}
-            >
+            <Form.Item label="Holati" name="status">
               <Select
-                defaultValue="Muvaffaqiyatli"
-                onChange={handleChangeStatus}
+                placeholder="Holat tanlang"
                 options={[
-                  {
-                    value: "Muvaffaqiyatli",
-                    label: "Muvaffaqiyatli",
-                  },
-                  {
-                    value: "Muvaffaqiysiz",
-                    label: "Muvaffaqiysiz",
-                  },
+                  { value: "Muvaffaqiyatli", label: "Muvaffaqiyatli" },
+                  { value: "Muvaffaqiysiz", label: "Muvaffaqiysiz" },
                 ]}
               />
             </Form.Item>
           </Col>
         </Row>
       </Form>
-
-      <Button type="primary" className="w-full mt-4">
-        Qo'shish
-      </Button>
     </Drawer>
   );
 }
