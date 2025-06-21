@@ -4,9 +4,14 @@ import { Icons } from "../../assets/icons";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import EditUserModal from "./EditUserModal";
+import { useNavigate } from "react-router-dom";
+import { useApi } from "../../context/ApiContext";
 
 export default function UsersTabs() {
+  const { data } = useApi();
   const { confirm } = Modal;
+  const navigate = useNavigate();
+
   const showDeleteConfirm = () => {
     confirm({
       title: "Ushbu foydalanuvchini o'chirmoqchimisiz?",
@@ -22,6 +27,7 @@ export default function UsersTabs() {
       },
     });
   };
+
   interface DataType {
     key: string;
     name: string;
@@ -103,16 +109,6 @@ export default function UsersTabs() {
     },
   ];
 
-  const data: DataType[] = Array.from({ length: 20 }, (_, i) => ({
-    key: (i + 1).toString(),
-    name: "Alibek",
-    lastName: "Jumaniyazov",
-    phone: 886003230 + i,
-    email: `alibek00${i + 1}@gmail.com`,
-    active: "2025.06.19 17:19",
-    subscribe: [Math.random() > 0.5 ? "Aktiv" : "Deaktiv"],
-  }));
-
   const [open, setOpen] = useState<boolean>(false);
   const [selectedRecord, setSelectedRecord] = useState<DataType | null>(null);
   const showDrawer = () => {
@@ -145,7 +141,7 @@ export default function UsersTabs() {
             return {
               onClick: () => {
                 setSelectedRecord(record);
-                setOpen(true);
+                navigate(`/user/${record.key}`);
               },
             };
           }}

@@ -208,7 +208,7 @@ export default function EditUserModal({
           </Col>
         </Row>
 
-        <Button type="primary" className="w-full mt-4">
+        <Button type="primary" htmlType="submit" className="w-full mt-4">
           Saqlash
         </Button>
       </Form>

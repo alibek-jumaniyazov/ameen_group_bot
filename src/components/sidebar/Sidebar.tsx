@@ -31,7 +31,7 @@ export default function Sidebar() {
       label: "Obuna tariflari",
     },
     {
-      key: "/2",
+      key: "/payment-history",
       icon: <Icons.files />,
       label: "To‘lovlar ro‘yxati",
     },
@@ -61,6 +61,7 @@ export default function Sidebar() {
       label: "Sozlamalar",
     },
   ];
+
   const { logout } = useApi();
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();

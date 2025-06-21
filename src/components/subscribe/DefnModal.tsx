@@ -20,19 +20,6 @@ export default function DefnModal({
       width={600}
       onClose={onClose}
       open={open}
-      // extra={
-      //   <Space>
-      //     <button
-      //       onClick={() => setShowEditInputs(!showEditInputs)}
-      //       className="p-2 border border-yellow-500 rounded-lg cursor-pointer"
-      //     >
-      //       <Icons.pencilY />
-      //     </button>
-      //     <button className="p-2 border border-red-500 rounded-lg cursor-pointer">
-      //       <Icons.delete />
-      //     </button>
-      //   </Space>
-      // }
     >
       <Form layout="vertical" form={form} hideRequiredMark>
         <Row gutter={16}>

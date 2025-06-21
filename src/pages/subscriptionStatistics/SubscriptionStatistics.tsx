@@ -141,13 +141,13 @@ export default function SubscriptionStatisticsTabs() {
 
       <div className="flex gap-6 text-sm text-[#92959C] mb-4">
         <p>
-          Total active:{" "}
+          Total active:
           <span className="text-[#1D9629]">
             {allData.filter((d) => d.subscribe.includes("Aktiv")).length}
           </span>
         </p>
         <p>
-          Total deactive:{" "}
+          Total deactive:
           <span className="text-[#D52A2A]">
             {allData.filter((d) => d.subscribe.includes("Deaktiv")).length}
           </span>
