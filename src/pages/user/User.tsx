@@ -77,6 +77,14 @@ export default function User() {
                 {user?.active}
               </p>
             </div>
+            <div className="flex flex-col justify-center items-start">
+              <span className="text-[#60646E] font-normal text-[16px] leading-[24px]">
+                Ro‘yxatdan o‘tgan sana
+              </span>
+              <p className="text-[#111827] font-semibold text-[16px] leading-[24px]">
+                {user?.registerDate}
+              </p>
+            </div>
           </div>
         </div>
       </div>

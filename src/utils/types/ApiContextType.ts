@@ -8,6 +8,7 @@ export interface DataType {
   email: string;
   active: string;
   subscribe: string[];
+  registerDate: string;
 }
 export interface ApiContextType {
   logout: () => void;

@@ -20,6 +20,7 @@ export default function ApiProvider({ children }: ApiProviderProps) {
     email: `alibek00${i + 1}@gmail.com`,
     active: "2025.06.19 17:19",
     subscribe: [Math.random() > 0.5 ? "Aktiv" : "Deaktiv"],
+    registerDate: "2025/06/01",
   }));
   const getMethods: ApiContextType = {
     logout,

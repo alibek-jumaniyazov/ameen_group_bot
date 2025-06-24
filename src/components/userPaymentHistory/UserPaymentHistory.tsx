@@ -5,16 +5,18 @@ interface DataType {
   amount: string;
   date: string;
   status: string[];
-  definition: string[];
+  method: string;
+  additionalInfo: string;
 }
 
 export default function UserPaymentHistory() {
   const allData: DataType[] = Array.from({ length: 30 }, (_, i) => ({
     id: (i + 1).toString(),
     amount: "100 000 so’m",
-    date: "2025.06.19 17:19",
+    date: "2025/09/19 14:30",
     status: [Math.random() > 0.5 ? "Muvaffaqiyatli" : "Muvaffaqiyatsiz"],
-    definition: [Math.random() > 0.5 ? "Premium" : "Boshlang’ich"],
+    method: "Karta(1234)",
+    additionalInfo: "To‘lov rad etildi",
   }));
 
   const columns: TableProps<DataType>["columns"] = [
@@ -22,7 +24,12 @@ export default function UserPaymentHistory() {
     { title: "Summasi", dataIndex: "amount", key: "amount" },
     { title: "Sanasi", dataIndex: "date", key: "date" },
     { title: "Holati", dataIndex: "status", key: "status" },
-    { title: "Obuna", dataIndex: "definition", key: "definition" },
+    { title: "Usuli", dataIndex: "method", key: "method" },
+    {
+      title: "Qo‘shimcha ma’lumot",
+      dataIndex: "additionalInfo",
+      key: "additionalInfo",
+    },
   ];
 
   return (
