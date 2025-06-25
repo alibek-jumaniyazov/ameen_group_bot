@@ -7,12 +7,12 @@ import {
   Input,
   Row,
   Select,
-  type DatePickerProps,
 } from "antd";
 import { Icons } from "../../assets/icons";
 import { useForm } from "antd/es/form/Form";
+import dayjs from "dayjs";
 
-export default function PaymentHistoryTabsFilter({
+export default function SubscriptionListTableFilter({
   onClose,
   open,
   onFilter,
@@ -24,12 +24,16 @@ export default function PaymentHistoryTabsFilter({
   const [form] = useForm();
 
   const onFinish = (values: any) => {
-    onFilter(values);
-    onClose();
-  };
-
-  const onDateChange: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log("Date selected:", dateString);
+    const payload = {
+      ...values,
+      startDate: values.startDate
+        ? dayjs(values.startDate).format("YYYY/MM/DD")
+        : undefined,
+      endDate: values.endDate
+        ? dayjs(values.endDate).format("YYYY/MM/DD")
+        : undefined,
+    };
+    onFilter(payload);
   };
 
   return (
@@ -39,9 +43,9 @@ export default function PaymentHistoryTabsFilter({
       onClose={onClose}
       open={open}
       footer={
-        <div className="w-full flex justify-between items-center">
+        <div className="flex justify-between">
           <Button
-            className="!text-[#EAB308] !border-[#EAB308] !px-4 !py-3.5"
+            className="!text-[#EAB308] !border-[#EAB308]"
             onClick={() => form.resetFields()}
           >
             Tozalash
@@ -56,33 +60,16 @@ export default function PaymentHistoryTabsFilter({
         </div>
       }
     >
-      <Form
-        layout="vertical"
-        form={form}
-        hideRequiredMark
-        onFinish={onFinish}
-        initialValues={{
-          definition: "Boshlang’ich",
-          status: "Muvaffaqiyatli",
-        }}
-      >
+      <Form layout="vertical" form={form} onFinish={onFinish}>
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label="Boshlanish sanasi" name="startDate">
-              <DatePicker
-                onChange={onDateChange}
-                placeholder="Boshlanish sanasi"
-                className="!w-full"
-              />
+              <DatePicker placeholder="YYYY/MM/DD" className="!w-full" />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label="Tugash sanasi" name="endDate">
-              <DatePicker
-                onChange={onDateChange}
-                placeholder="Tugash sanasi"
-                className="!w-full"
-              />
+              <DatePicker placeholder="YYYY/MM/DD" className="!w-full" />
             </Form.Item>
           </Col>
         </Row>
@@ -91,8 +78,7 @@ export default function PaymentHistoryTabsFilter({
           <Col span={24}>
             <Form.Item label="Foydalanuvchi bo’yicha" name="searchUser">
               <Input
-                type="search"
-                placeholder="Foydalanuvchi bo’yicha"
+                placeholder="Foydalanuvchi ismi yoki ID"
                 prefix={<Icons.search />}
               />
             </Form.Item>
@@ -116,13 +102,13 @@ export default function PaymentHistoryTabsFilter({
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label="Maksimum summasi" name="maxAmount">
-              <Input suffix="so'm" placeholder="Maksimum summasi" />
+            <Form.Item label="Minimum summa" name="minAmount">
+              <Input suffix="so'm" placeholder="Min summa" />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Minimum summasi" name="minAmount">
-              <Input suffix="so'm" placeholder="Minimum summasi" />
+            <Form.Item label="Maksimum summa" name="maxAmount">
+              <Input suffix="so'm" placeholder="Max summa" />
             </Form.Item>
           </Col>
         </Row>
@@ -133,8 +119,8 @@ export default function PaymentHistoryTabsFilter({
               <Select
                 placeholder="Holat tanlang"
                 options={[
-                  { value: "Muvaffaqiyatli", label: "Muvaffaqiyatli" },
-                  { value: "Muvaffaqiysiz", label: "Muvaffaqiysiz" },
+                  { value: "Faol", label: "Faol" },
+                  { value: "Tugagan", label: "Tugagan" },
                 ]}
               />
             </Form.Item>

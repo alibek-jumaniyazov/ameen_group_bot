@@ -17,8 +17,16 @@ const menuItems = [
   { key: "/", icon: <Icons.dashboard />, label: "Dashboard" },
   { key: "/users", icon: <Icons.person />, label: "Foydalanuvchilar ro'yxati" },
   { key: "/subscribe", icon: <Icons.ticket />, label: "Obuna tariflari" },
-  { key: "/payment-history", icon: <Icons.files />, label: "To‘lovlar ro‘yxati" },
-  { key: "/3", icon: <Icons.document />, label: "Obunalar ro‘yxati" },
+  {
+    key: "/payment-history",
+    icon: <Icons.files />,
+    label: "To‘lovlar ro‘yxati",
+  },
+  {
+    key: "/subscription-list",
+    icon: <Icons.document />,
+    label: "Obunalar ro‘yxati",
+  },
   { key: "/4", icon: <Icons.refresh />, label: "Avtomatik to‘lov urinishlari" },
   { key: "/5", icon: <Icons.sim />, label: "Statik xabarlar" },
   { key: "/6", icon: <Icons.email />, label: "Xabar yuborish va hisobotlar" },
@@ -40,7 +48,8 @@ export default function Sidebar() {
     const match = menuItems.find((item) => item.key === location.pathname);
     if (match) return match.label;
 
-    if (location.pathname.startsWith("/user/")) return "Foydalanuvchi tafsiloti";
+    if (location.pathname.startsWith("/user/"))
+      return "Foydalanuvchi tafsiloti";
     if (location.pathname === "/subscription-statistics")
       return "Foydalanuvchilar obunasi statistikasi";
 
@@ -86,7 +95,7 @@ export default function Sidebar() {
       <Layout>
         <Header
           style={{ padding: 0, background: colorBgContainer }}
-          className="flex items-center justify-between pr-8"
+          className="flex items-center justify-between !pr-10"
         >
           <div className="flex items-center gap-2.5">
             <Button
@@ -95,13 +104,21 @@ export default function Sidebar() {
               onClick={() => setCollapsed(!collapsed)}
               style={{ fontSize: 16, width: 64, height: 64 }}
             />
-            <h1 className="text-[#1D2026] text-3xl font-bold">{currentPageTitle}</h1>
+            <h1 className="text-[#1D2026] text-3xl font-bold">
+              {currentPageTitle}
+            </h1>
           </div>
           <div className="flex items-center gap-2.5">
             <Icons.bell className="size-6 text-black" />
             <Avatar
               size="large"
-              icon={hasImage ? <Image src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" /> : <UserOutlined />}
+              icon={
+                hasImage ? (
+                  <Image src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" />
+                ) : (
+                  <UserOutlined />
+                )
+              }
             />
           </div>
         </Header>

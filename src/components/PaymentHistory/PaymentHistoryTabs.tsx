@@ -14,19 +14,35 @@ export default function PaymentHistoryTabs({ filters }: { filters: any }) {
     id: (i + 1).toString(),
     user: "Alibek Jumaniyazov",
     definition: [Math.random() > 0.5 ? "Premium" : "Boshlang’ich"],
-    amout: "200000", // filterlash uchun son bo‘lishi kerak
+    amout: "200000",
     date: "2025/06/20 09:00",
     status: [Math.random() > 0.5 ? "Muvaffaqiyatli" : "Muvaffaqiysiz"],
   }));
 
   const filteredData = filters
     ? allData.filter((item) => {
-        const matchUser = item.user.toLowerCase().includes(filters.searchUser?.toLowerCase() || "");
-        const matchDef = filters.definition ? item.definition.includes(filters.definition) : true;
-        const matchStatus = filters.status ? item.status.includes(filters.status) : true;
-        const matchAmountMin = filters.minAmount ? +item.amout >= +filters.minAmount : true;
-        const matchAmountMax = filters.maxAmount ? +item.amout <= +filters.maxAmount : true;
-        return matchUser && matchDef && matchStatus && matchAmountMin && matchAmountMax;
+        const matchUser = item.user
+          .toLowerCase()
+          .includes(filters.searchUser?.toLowerCase() || "");
+        const matchDef = filters.definition
+          ? item.definition.includes(filters.definition)
+          : true;
+        const matchStatus = filters.status
+          ? item.status.includes(filters.status)
+          : true;
+        const matchAmountMin = filters.minAmount
+          ? +item.amout >= +filters.minAmount
+          : true;
+        const matchAmountMax = filters.maxAmount
+          ? +item.amout <= +filters.maxAmount
+          : true;
+        return (
+          matchUser &&
+          matchDef &&
+          matchStatus &&
+          matchAmountMin &&
+          matchAmountMax
+        );
       })
     : allData;
 
@@ -59,7 +75,7 @@ export default function PaymentHistoryTabs({ filters }: { filters: any }) {
   ];
 
   return (
-    <div className="SubscriptionList">
+    <div className="PaymentHistoryTabs">
       <Table
         columns={columns}
         dataSource={filteredData}

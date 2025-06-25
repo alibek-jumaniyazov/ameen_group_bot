@@ -1,4 +1,4 @@
-import { Button, Modal, Pagination, Table, Tag } from "antd";
+import { Modal, Table, Tag } from "antd";
 import type { TableProps } from "antd";
 import { Icons } from "../../assets/icons";
 import { QuestionCircleOutlined } from "@ant-design/icons";

@@ -6,8 +6,7 @@ import { useState } from "react";
 
 export default function PaymentHistory() {
   const [open, setOpen] = useState<boolean>(false);
-  const [filters, setFilters] = useState<any>(null); // 🔁 filter holatini saqlash
-
+  const [filters, setFilters] = useState<any>(null);
   const onClose = () => setOpen(false);
 
   const handleFilter = (values: any) => {
