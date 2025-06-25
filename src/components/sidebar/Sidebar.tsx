@@ -24,10 +24,14 @@ const menuItems = [
   },
   {
     key: "/subscription-list",
-    icon: <Icons.document />,
+    icon: <Icons.document />,                                                  
     label: "Obunalar ro‘yxati",
   },
-  { key: "/4", icon: <Icons.refresh />, label: "Avtomatik to‘lov urinishlari" },
+  {
+    key: "/auto-payment",
+    icon: <Icons.refresh />,
+    label: "Avtomatik to‘lov urinishlari",
+  },
   { key: "/5", icon: <Icons.sim />, label: "Statik xabarlar" },
   { key: "/6", icon: <Icons.email />, label: "Xabar yuborish va hisobotlar" },
   { key: "/7", icon: <Icons.setting />, label: "Sozlamalar" },
@@ -48,7 +52,7 @@ export default function Sidebar() {
     const match = menuItems.find((item) => item.key === location.pathname);
     if (match) return match.label;
 
-    if (location.pathname.startsWith("/user/"))
+    if (location.pathname.startsWith("/user"))
       return "Foydalanuvchi tafsiloti";
     if (location.pathname === "/subscription-statistics")
       return "Foydalanuvchilar obunasi statistikasi";

@@ -1,4 +1,6 @@
 import Login from "../pages/auth/Login";
+import AutoPayment from "../pages/autoPayment/AutoPayment";
+import AutoPaymentUser from "../pages/autoPayment/AutoPaymentUser";
 import Dashboard from "../pages/dashboard/Dashboard";
 import PaymentHistory from "../pages/paymentHistory/PaymentHistory";
 import Subscribe from "../pages/subscribe/Subscribe";
@@ -49,14 +51,26 @@ export const MainRoute = {
     },
     {
       id: 6,
+      path: "/subscription-statistics",
+      element: <SubscriptionStatistics />,
+      fallback: <h1>Loading...</h1>,
+    },
+    {
+      id: 7,
       path: "/subscription-list",
       element: <SubscriptionListPage />,
       fallback: <h1>Loading...</h1>,
     },
     {
-      id: 7,
-      path: "/subscription-statistics",
-      element: <SubscriptionStatistics />,
+      id: 8,
+      path: "/auto-payment",
+      element: <AutoPayment />,
+      fallback: <h1>Loading...</h1>,
+    },
+    {
+      id: 8,
+      path: "/user-payment/:id",
+      element: <AutoPaymentUser />,
       fallback: <h1>Loading...</h1>,
     },
   ],
