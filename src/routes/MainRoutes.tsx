@@ -3,6 +3,7 @@ import AutoPayment from "../pages/autoPayment/AutoPayment";
 import AutoPaymentUser from "../pages/autoPayment/AutoPaymentUser";
 import Dashboard from "../pages/dashboard/Dashboard";
 import PaymentHistory from "../pages/paymentHistory/PaymentHistory";
+import SendMessage from "../pages/SendMessage/SendMessage";
 import Subscribe from "../pages/subscribe/Subscribe";
 import SubscriptionListPage from "../pages/SubscriptionList/SubscriptionListPage";
 import SubscriptionStatistics from "../pages/subscriptionStatistics/SubscriptionStatistics";
@@ -71,6 +72,12 @@ export const MainRoute = {
       id: 8,
       path: "/user-payment/:id",
       element: <AutoPaymentUser />,
+      fallback: <h1>Loading...</h1>,
+    },
+    {
+      id: 9,
+      path: "/send-message",
+      element: <SendMessage />,
       fallback: <h1>Loading...</h1>,
     },
   ],
