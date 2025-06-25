@@ -6,25 +6,36 @@ import TextArea from "antd/es/input/TextArea";
 export default function SendMessageAction({
   onClose,
   open,
-  onFilter,
 }: {
   onClose: () => void;
   open: boolean;
-  onFilter: (values: any) => void;
 }) {
   const [form] = useForm();
 
   const onFinish = (values: any) => {
+    const plainMessage: string = values.message || "";
+
+    const markdownMessage: string = plainMessage
+      .split("\n")
+      .map((line: string, i: number) => (i === 0 ? `# ${line}` : `**${line}**`))
+      .join("\n");
+
     const payload = {
       ...values,
-      date: values.date ? dayjs(values.date).format("YYYY/MM/DD") : undefined,
+      date: values.date
+        ? dayjs(values.date).format("YYYY/MM/DD HH:mm")
+        : undefined,
+      message: markdownMessage,
     };
-    onFilter(payload);
+
+    console.log("Markdown formatdagi xabar:", payload);
+    form.resetFields();
+    onClose();
   };
 
   return (
     <Drawer
-      title="Filter"
+      title={"Yangi xabar yuborish"}
       width={600}
       onClose={onClose}
       open={open}
@@ -50,15 +61,19 @@ export default function SendMessageAction({
                 { required: true, message: "Iltimos, xabar matnini kiriting" },
               ]}
             >
-              <TextArea rows={4} />
+              <TextArea rows={6} placeholder="Xabar matnini kiriting" />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item label="Sana" name="date">
-              <DatePicker className="!w-full" format="YYYY/MM/DD" />
+            <Form.Item label="Sana va vaqt" name="date">
+              <DatePicker
+                className="!w-full"
+                format="YYYY-MM-DD HH:mm"
+                showTime={{ format: "HH:mm" }}
+              />
             </Form.Item>
           </Col>
         </Row>

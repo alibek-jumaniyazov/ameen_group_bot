@@ -55,11 +55,7 @@ export default function SendMessage() {
 
       <SendMessageTable filters={filters} />
 
-      <SendMessageAction
-        open={open}
-        onClose={onClose}
-        onFilter={handleFilter}
-      />
+      <SendMessageAction open={open} onClose={onClose} />
     </div>
   );
 }

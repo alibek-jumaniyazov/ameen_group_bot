@@ -16,7 +16,7 @@ export default function SendMessageTable({ filters }: { filters: any }) {
     return Array.from({ length: 30 }, (_, i) => ({
       id: (i + 1).toString(),
       message: "Yangi Tarif",
-      date: "2025/06/25",
+      date: "2025/06/25 07:07",
       numberRecipients: 30 + i,
       status: [Math.random() > 0.5 ? "Muvaffaqiyatli" : "Xato"],
       error: [
@@ -42,7 +42,7 @@ export default function SendMessageTable({ filters }: { filters: any }) {
   const columns: TableProps<DataType>["columns"] = [
     { title: "ID", dataIndex: "id", key: "id" },
     { title: "Matn", dataIndex: "message", key: "message" },
-    { title: "Sana", dataIndex: "date", key: "date" },
+    { title: "Sana va vaqat", dataIndex: "date", key: "date" },
     {
       title: "Qabul qiluvchilar soni",
       dataIndex: "numberRecipients",
