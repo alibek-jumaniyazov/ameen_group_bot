@@ -15,7 +15,7 @@ import FullLogo from "../../assets/full_logo.png";
 
 const menuItems = [
   { key: "/", icon: <Icons.dashboard />, label: "Dashboard" },
-  { key: "/users", icon: <Icons.person />, label: "Foydalanuvchilar ro'yxati" },
+  { key: "/users", icon: <Icons.person />, label: "Mijozlar ro'yxati" },
   { key: "/subscribe", icon: <Icons.ticket />, label: "Obuna tariflari" },
   {
     key: "/payment-history",
