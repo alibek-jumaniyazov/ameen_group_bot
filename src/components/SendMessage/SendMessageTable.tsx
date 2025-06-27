@@ -1,4 +1,4 @@
-import { Button, Table, Tag, type TableProps } from "antd";
+import { Table, Tag, type TableProps } from "antd";
 import { useMemo } from "react";
 import dayjs from "dayjs";
 
@@ -65,11 +65,11 @@ export default function SendMessageTable({ filters }: { filters: any }) {
       key: "error",
       render: (error: string[]) => error.join(", "),
     },
-    {
-      title: "Harakat",
-      key: "action",
-      render: () => <Button type="default">Qayta yuborish</Button>,
-    },
+    // {
+    //   title: "Harakat",
+    //   key: "action",
+    //   render: () => <Button type="default">Qayta yuborish</Button>,
+    // },
   ];
 
   return (

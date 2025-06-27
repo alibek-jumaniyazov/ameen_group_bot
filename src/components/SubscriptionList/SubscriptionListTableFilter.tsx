@@ -2,7 +2,6 @@ import {
   Button,
   Col,
   DatePicker,
-  Drawer,
   Form,
   Input,
   Row,
@@ -13,12 +12,8 @@ import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 
 export default function SubscriptionListTableFilter({
-  onClose,
-  open,
   onFilter,
 }: {
-  onClose: () => void;
-  open: boolean;
   onFilter: (values: any) => void;
 }) {
   const [form] = useForm();
@@ -34,32 +29,11 @@ export default function SubscriptionListTableFilter({
         : undefined,
     };
     onFilter(payload);
+    form.resetFields();
   };
 
   return (
-    <Drawer
-      title="Filter"
-      width={600}
-      onClose={onClose}
-      open={open}
-      footer={
-        <div className="flex justify-between">
-          <Button
-            className="!text-[#EAB308] !border-[#EAB308]"
-            onClick={() => form.resetFields()}
-          >
-            Tozalash
-          </Button>
-          <Button
-            type="primary"
-            className="bg-[#528AF9]"
-            onClick={() => form.submit()}
-          >
-            Ko’rish
-          </Button>
-        </div>
-      }
-    >
+    <div className="bg-white rounded-lg border shadow p-4">
       <Form layout="vertical" form={form} onFinish={onFinish}>
         <Row gutter={16}>
           <Col span={12}>
@@ -126,7 +100,19 @@ export default function SubscriptionListTableFilter({
             </Form.Item>
           </Col>
         </Row>
+
+        <div className="flex justify-between mt-4">
+          <Button
+            className="!text-[#EAB308] !border-[#EAB308]"
+            onClick={() => form.resetFields()}
+          >
+            Tozalash
+          </Button>
+          <Button type="primary" className="bg-[#528AF9]" onClick={() => form.submit()}>
+            Ko’rish
+          </Button>
+        </div>
       </Form>
-    </Drawer>
+    </div>
   );
 }

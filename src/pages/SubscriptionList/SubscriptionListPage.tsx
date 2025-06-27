@@ -1,6 +1,6 @@
 import { Icons } from "../../assets/icons";
 import { Button, Input } from "antd";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SubscriptionListTableFilter from "../../components/SubscriptionList/SubscriptionListTableFilter";
 import SubscriptionListTable from "../../components/SubscriptionList/SubscriptionListTable";
 
@@ -9,11 +9,11 @@ export default function SubscriptionListPage() {
   const [filters, setFilters] = useState<any>(null);
   const [search, setSearch] = useState<string>("");
 
-  const onClose = () => setOpen(false);
+  const filterRef = useRef<HTMLDivElement>(null);
 
   const handleFilter = (values: any) => {
     setFilters(values);
-    setSearch(""); 
+    setSearch("");
     setOpen(false);
   };
 
@@ -22,8 +22,8 @@ export default function SubscriptionListPage() {
   };
 
   return (
-    <div className="SubscriptionListPage flex flex-col gap-4">
-      <div className="w-full flex items-center justify-between">
+    <div className="SubscriptionListPage relative flex flex-col gap-4">
+      <div className="w-full flex items-center justify-between relative z-10">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 w-[357px] h-[44px] rounded-lg border border-[#92959C] px-2.5">
             <Icons.search className="w-5" />
@@ -45,19 +45,21 @@ export default function SubscriptionListPage() {
           </Button>
         </div>
         <Button
-          onClick={() => setOpen(true)}
-          type="text"
+          onClick={() => setOpen((prev) => !prev)}
+          type="default"
           className="!bg-[#E1E4E8] !w-[100px] !h-[44px] !font-semibold !text-[16px]"
         >
           <Icons.adjustments /> Filter
         </Button>
       </div>
+
+      {open && (
+        <div ref={filterRef} className="mt-1 z-20 relative">
+          <SubscriptionListTableFilter onFilter={handleFilter} />
+        </div>
+      )}
+
       <SubscriptionListTable filters={filters} />
-      <SubscriptionListTableFilter
-        onClose={onClose}
-        open={open}
-        onFilter={handleFilter}
-      />
     </div>
   );
 }

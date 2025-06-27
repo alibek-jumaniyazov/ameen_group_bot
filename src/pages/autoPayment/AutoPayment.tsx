@@ -5,16 +5,13 @@ import AutoPaymentTable from "../../components/AutoPayment/AutoPaymentTable";
 import AutoPaymentTableFilter from "../../components/AutoPayment/AutoPaymentTableFilter";
 
 export default function AutoPayment() {
-  const [open, setOpen] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
   const [filters, setFilters] = useState<any>(null);
   const [search, setSearch] = useState<string>("");
-
-  const onClose = () => setOpen(false);
 
   const handleFilter = (values: any) => {
     setFilters(values);
     setSearch("");
-    setOpen(false);
   };
 
   const handleSearch = () => {
@@ -23,7 +20,7 @@ export default function AutoPayment() {
 
   return (
     <div className="AutoPayment flex flex-col gap-4">
-      <div className="w-full flex items-center justify-between">
+      <div className="w-full flex items-center justify-between relative z-10">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 w-[357px] h-[44px] rounded-lg border border-[#92959C] px-2.5">
             <Icons.search className="w-5" />
@@ -45,19 +42,21 @@ export default function AutoPayment() {
           </Button>
         </div>
         <Button
-          onClick={() => setOpen(true)}
+          onClick={() => setShowFilter((prev) => !prev)}
           type="text"
           className="!bg-[#E1E4E8] !w-[100px] !h-[44px] !font-semibold !text-[16px]"
         >
           <Icons.adjustments /> Filter
         </Button>
       </div>
+
+      {showFilter && (
+        <div className="border border-[#E2E8F0] rounded-xl p-4 bg-white z-20">
+          <AutoPaymentTableFilter onFilter={handleFilter} />
+        </div>
+      )}
+
       <AutoPaymentTable filters={filters} />
-      <AutoPaymentTableFilter
-        onClose={onClose}
-        open={open}
-        onFilter={handleFilter}
-      />
     </div>
   );
 }

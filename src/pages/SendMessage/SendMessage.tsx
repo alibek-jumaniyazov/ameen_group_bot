@@ -11,12 +11,6 @@ export default function SendMessage() {
 
   const onClose = () => setOpen(false);
 
-  const handleFilter = (values: any) => {
-    setFilters(values);
-    setSearch("");
-    setOpen(false);
-  };
-
   const handleSearch = () => {
     setFilters({ ...filters, searchUser: search });
   };
@@ -52,9 +46,7 @@ export default function SendMessage() {
           <Icons.plus /> Yangi tarif qo‘shish
         </Button>
       </div>
-
       <SendMessageTable filters={filters} />
-
       <SendMessageAction open={open} onClose={onClose} />
     </div>
   );
