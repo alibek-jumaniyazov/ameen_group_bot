@@ -9,10 +9,8 @@ export function RequireAuth() {
 
   useEffect(() => {
     try {
-      const authData = JSON.parse(
-        localStorage.getItem("isAuthenticated") || "null"
-      );
-      const hasToken = Boolean(authData?.token);
+      const token = localStorage.getItem("accessToken");
+      const hasToken = Boolean(token);
       setIsAuthenticated(hasToken);
     } catch (error) {
       console.error("Failed to parse auth data:", error);

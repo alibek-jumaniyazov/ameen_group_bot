@@ -4,33 +4,43 @@ import { Input } from "antd";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import { motion } from "motion/react";
 import { AuroraBackground } from "../../components/ui/aurora-background";
+import { useAdminLogin } from "../../hooks/useAdminAuth";
+import { message } from "antd";
 
 const Login = (): JSX.Element => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [user, setUser] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
+  const [error, setError] = useState<string | null>(null);
+  const loginMutation = useAdminLogin();
   const navigate = useNavigate();
 
   const handleLogin = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
+    setError(null);
 
-    const validUser = "alibekjumaniyazov007@gmail.com";
-    const validPassword = "123";
+    const key = "loginToast";
+    message.loading({ content: "Logging in...", key });
 
-    if (user === validUser && password === validPassword) {
-      localStorage.setItem(
-        "isAuthenticated",
-        JSON.stringify({
-          user,
-          password,
-          token: "lokaydo",
-        })
-      );
-      navigate("/");
-    } else {
-      alert("Invalid user or password");
-    }
+    loginMutation.mutate(
+      { name: user, password },
+      {
+        onSuccess: () => {
+          message.success({ content: "Login successful!", key, duration: 2 });
+          navigate("/admin");
+        },
+        onError: (err: Error) => {
+          message.error({
+            content: err.message || "Login failed",
+            key,
+            duration: 2,
+          });
+          setError(err.message);
+          console.log(err);
+          
+        },
+      }
+    );
   };
 
   return (
@@ -77,9 +87,10 @@ const Login = (): JSX.Element => {
               </div>
               <button
                 type="submit"
+                disabled={loginMutation.isPending}
                 className="w-full bg-[#151518] hover:bg-[#18181b] text-white font-semibold p-2 rounded-xl transition duration-200 cursor-pointer"
               >
-                Login
+                {loginMutation.isPending ? "Logging in..." : "Login"}
               </button>
             </form>
           </div>

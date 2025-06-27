@@ -9,7 +9,8 @@ const ApiContext = createContext<ApiContextType>({} as ApiContextType);
 
 export default function ApiProvider({ children }: ApiProviderProps) {
   function logout() {
-    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     window.location.href = "/login";
   }
   const data: DataType[] = Array.from({ length: 20 }, (_, i) => ({

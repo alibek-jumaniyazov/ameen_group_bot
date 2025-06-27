@@ -6,9 +6,12 @@ import { useState } from "react";
 import EditUserModal from "./EditUserModal";
 import { useNavigate } from "react-router-dom";
 import { useApi } from "../../context/ApiContext";
+import { useUsers } from "../../hooks/useUser";
 
 export default function UsersTabs() {
-  const { data } = useApi();
+  // const { data } = useApi();
+  const { data, isLoading } = useUsers({ page: 1, limit: 10, name: "John" });
+
   const { confirm } = Modal;
   const navigate = useNavigate();
 

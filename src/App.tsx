@@ -10,11 +10,10 @@ import { MainRoute } from "./routes/MainRoutes";
 import { RequireAuth } from "./pages/require-auth/RequireAuth";
 
 const isUserAuthenticated = (): boolean => {
-  return !!localStorage.getItem("isAuthenticated");
+  return !!localStorage.getItem("accessToken");
 };
 
 const App = () => {
-
   const navigate = useNavigate();
   const location = useLocation();
   const isAuthenticated = isUserAuthenticated();
