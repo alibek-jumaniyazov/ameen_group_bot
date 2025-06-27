@@ -115,7 +115,7 @@ export default function Sidebar() {
             </h1>
           </div>
           <div className="flex items-center gap-2.5">
-            <Icons.bell className="size-6 text-black" />
+            {/* <Icons.bell className="size-6 text-black" /> */}
             <Avatar
               size="large"
               icon={

@@ -16,7 +16,13 @@ export default function PaymentHistoryTabs({ filters }: { filters: any }) {
     definition: [Math.random() > 0.5 ? "Premium" : "Boshlang’ich"],
     amout: "200000",
     date: "2025/06/20 09:00",
-    status: [Math.random() > 0.5 ? "Muvaffaqiyatli" : "Muvaffaqiysiz"],
+    status: [
+      Math.random() > 0.6
+        ? "Muvaffaqiyatli"
+        : Math.random() > 0.3
+        ? "Muvaffaqiysiz"
+        : "Kutilmoqda",
+    ],
   }));
 
   const filteredData = filters
@@ -62,6 +68,7 @@ export default function PaymentHistoryTabs({ filters }: { filters: any }) {
             const colorMap: Record<string, string> = {
               Muvaffaqiyatli: "green",
               Muvaffaqiysiz: "red",
+              Kutilmoqda: "orange",
             };
             return (
               <Tag color={colorMap[tag]} key={tag}>

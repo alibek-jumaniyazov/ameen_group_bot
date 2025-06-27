@@ -4,7 +4,6 @@ import { Icons } from "../../assets/icons";
 import DefnModal from "../../components/subscribe/DefnModal";
 import { useState } from "react";
 import SubsStatis from "../../components/subscribe/SubsStatis";
-import UserInfo from "../../components/subscribe/UserInfo";
 
 export default function Subscribe() {
   const [open, setOpen] = useState<boolean>(false);

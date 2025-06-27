@@ -77,7 +77,21 @@ export default function SendMessageAction({
             </Form.Item>
           </Col>
         </Row>
-
+        <Row gutter={16}>
+          <Col span={24}>
+            <Form.Item label="Tarif" name="receivers">
+              <Select
+                placeholder="Tarifni tanlang"
+                options={[
+                  { value: "premium", label: "Premium" },
+                  { value: "biznes", label: "Biznes" },
+                  { value: "beginner", label: "Boshlang'ich" },
+                  // { value: "beginner", label: "Boshlang'ich" },
+                ]}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item label="Qabul qiluvchilar" name="receivers">

@@ -7,8 +7,7 @@ interface DataType {
   message: string;
   date: string;
   numberRecipients: number;
-  status: string[];
-  error: string[];
+  // status: string[];
 }
 
 export default function SendMessageTable({ filters }: { filters: any }) {
@@ -18,10 +17,8 @@ export default function SendMessageTable({ filters }: { filters: any }) {
       message: "Yangi Tarif",
       date: "2025/06/25 07:07",
       numberRecipients: 30 + i,
-      status: [Math.random() > 0.5 ? "Muvaffaqiyatli" : "Xato"],
-      error: [
-        Math.random() > 0.5 ? "Yechildi" : "Kartada mablag' yetarli emas",
-      ],
+      // status: [Math.random() > 0.5 ? "Muvaffaqiyatli" : "Xato"],
+
     }));
   }, []);
 
@@ -48,23 +45,23 @@ export default function SendMessageTable({ filters }: { filters: any }) {
       dataIndex: "numberRecipients",
       key: "numberRecipients",
     },
-    {
-      title: "Holati",
-      dataIndex: "status",
-      key: "status",
-      render: (status: string[]) =>
-        status.map((tag) => (
-          <Tag color={tag === "Muvaffaqiyatli" ? "green" : "red"} key={tag}>
-            {tag}
-          </Tag>
-        )),
-    },
-    {
-      title: "Xato sababi",
-      dataIndex: "error",
-      key: "error",
-      render: (error: string[]) => error.join(", "),
-    },
+    // {
+    //   title: "Holati",
+    //   dataIndex: "status",
+    //   key: "status",
+    //   render: (status: string[]) =>
+    //     status.map((tag) => (
+    //       <Tag color={tag === "Muvaffaqiyatli" ? "green" : "red"} key={tag}>
+    //         {tag}
+    //       </Tag>
+    //     )),
+    // },
+    // {
+    //   title: "Xato sababi",
+    //   dataIndex: "error",
+    //   key: "error",
+    //   render: (error: string[]) => error.join(", "),
+    // },
     // {
     //   title: "Harakat",
     //   key: "action",

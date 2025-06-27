@@ -43,7 +43,7 @@ export default function SendMessage() {
           type="primary"
           className=" !w-[190px] !h-[44px] !rounded-lg !font-normal !text-[14.5px] flex items-center justify-center gap-1.5"
         >
-          <Icons.plus /> Yangi tarif qo‘shish
+          <Icons.plus /> Yangi xabar qo'shish
         </Button>
       </div>
       <SendMessageTable filters={filters} />
