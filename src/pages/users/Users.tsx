@@ -1,8 +1,11 @@
 import UsersTabs from "../../components/users/UsersTabs";
 import { Icons } from "../../assets/icons";
 import { Button, Input } from "antd";
+import { useState } from "react";
 
 export default function Users() {
+  const [search, setSearch] = useState("");
+
   return (
     <div className="Users flex flex-col gap-4">
       <div className="w-full flex items-center justify-between">
@@ -11,6 +14,8 @@ export default function Users() {
             <Icons.search className={"w-5"} />
             <Input
               type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               color="#92959C"
               placeholder="Search"
               bordered={false}
@@ -28,7 +33,7 @@ export default function Users() {
           <Icons.adjustments /> Filter
         </Button>
       </div>
-      <UsersTabs />
+      <UsersTabs search={search} />
     </div>
   );
 }

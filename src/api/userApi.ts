@@ -2,15 +2,35 @@ import { axiosInstance } from "./axiosInstance";
 
 export interface User {
   id: number;
-  name: string;
-  phoneNumber: string;
   telegramId: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  lastActiveAt: string;
+  lastMessageAt: string;
+  phoneNumber: string;
+  inGroup: boolean;
+  email: string | null;
   status: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+  subscription: Subscription[];
+}
+export interface Subscription {
+  id: number;
+  userId: number;
+  expiredDate: string;
+  startDate: string;
+  alertCount: number;
+  price: number;
+  paymentType: "STRIPE" | "CLICK" | "PAYME" | string;
+  status: "Created" | "Active" | "Expired" | string;
   subscriptionTypeId: number;
   createdAt: string;
   updatedAt: string;
+  transactionId: string | null;
 }
-
 export interface UserQueryParams {
   page?: number;
   limit?: number;

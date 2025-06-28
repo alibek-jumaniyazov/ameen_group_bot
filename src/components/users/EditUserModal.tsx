@@ -1,6 +1,18 @@
-import { Button, Col, Drawer, Form, Input, Row, Space } from "antd";
+import {
+  Button,
+  Col,
+  Drawer,
+  Form,
+  Input,
+  Row,
+  Space,
+  Switch,
+  message,
+} from "antd";
 import { useEffect, useState } from "react";
 import { Icons } from "../../assets/icons";
+import { useUpdateUser, useDeleteUser } from "../../hooks/useUser";
+import type { User } from "../../api/userApi";
 
 export default function EditUserModal({
   onClose,
@@ -9,21 +21,63 @@ export default function EditUserModal({
 }: {
   onClose: () => void;
   open: boolean;
-  record: any;
+  record: User | null;
 }) {
-  const [showEditInputs, setShowEditInputs] = useState(true);
   const [form] = Form.useForm();
+  const [showEditInputs, setShowEditInputs] = useState(true);
+
+  const updateUser = useUpdateUser();
+  const deleteUser = useDeleteUser();
 
   useEffect(() => {
     if (record) {
-      form.setFieldsValue(record);
+      form.setFieldsValue({ ...record });
     }
   }, [record, form]);
 
-  const onFinish = (values: any) => {
-    console.log("Form yuborildi:", values);
-    onClose();
+  const onFinish = (values: Partial<User>) => {
+    if (!record) return;
+
+    const cleanedData = {
+      firstName: values.firstName,
+      lastName: values.lastName,
+      phoneNumber: values.phoneNumber,
+      email: values.email,
+      inGroup: values.inGroup,
+      status: values.status,
+      username: values.username,
+      lastActiveAt: values.lastActiveAt,
+    };
+
+    updateUser.mutate(
+      { id: record.id, data: cleanedData },
+      {
+        onSuccess: () => {
+          message.success("Foydalanuvchi muvaffaqiyatli yangilandi");
+          onClose();
+        },
+        onError: (err) => {
+          console.log(err);
+
+          message.error("Xatolik yuz berdi");
+        },
+      }
+    );
   };
+
+  const handleDelete = () => {
+    if (!record) return;
+    deleteUser.mutate(record.id, {
+      onSuccess: () => {
+        message.success("Foydalanuvchi o‘chirildi");
+        onClose();
+      },
+      onError: () => {
+        message.error("O‘chirishda xatolik yuz berdi");
+      },
+    });
+  };
+
   return (
     <Drawer
       title="Foydalanuvchi ma’lumotlari"
@@ -33,37 +87,38 @@ export default function EditUserModal({
       extra={
         <Space>
           <button
-            onClick={() => setShowEditInputs(!showEditInputs)}
+            onClick={() => setShowEditInputs((prev) => !prev)}
             className="p-2 border border-yellow-500 rounded-lg cursor-pointer"
           >
             <Icons.pencilY />
           </button>
-          <button className="p-2 border border-red-500 rounded-lg cursor-pointer">
+          <button
+            onClick={handleDelete}
+            className="p-2 border border-red-500 rounded-lg cursor-pointer"
+          >
             <Icons.delete />
           </button>
         </Space>
       }
     >
-      <Form layout="vertical" hideRequiredMark form={form} onFinish={onFinish}>
+      <Form layout="vertical" form={form} onFinish={onFinish}>
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               label="Ismi"
-              name="name"
-              rules={[{ required: true, message: "Iltimos, ismini kiriting" }]}
+              name="firstName"
+              rules={[{ required: true, message: "Ism kiriting" }]}
             >
               <Input disabled={showEditInputs} placeholder="Ism" />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
-              label="Familya"
+              label="Familiya"
               name="lastName"
-              rules={[
-                { required: true, message: "Iltimos, familyasini kiriting" },
-              ]}
+              rules={[{ required: true, message: "Familiya kiriting" }]}
             >
-              <Input disabled={showEditInputs} placeholder="Familya" />
+              <Input disabled={showEditInputs} placeholder="Familiya" />
             </Form.Item>
           </Col>
         </Row>
@@ -72,145 +127,71 @@ export default function EditUserModal({
           <Col span={12}>
             <Form.Item
               label="Telefon raqam"
-              name="phone"
-              rules={[{ required: true, message: "Telefon raqamini kiriting" }]}
+              name="phoneNumber"
+              rules={[
+                { required: true, message: "Telefon raqam kiriting" },
+                {
+                  pattern: /^\+998\d{9}$/,
+                  message:
+                    "Telefon raqam +998 bilan va 9 ta raqam bilan yozilishi kerak",
+                },
+              ]}
             >
-              <Input disabled={showEditInputs} placeholder="+998..." />
+              <Input disabled={showEditInputs} placeholder="+998901234567" />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[{ required: true, message: "Emailni kiriting" }]}
-            >
+            <Form.Item label="Email" name="email">
               <Input disabled={showEditInputs} placeholder="example@mail.com" />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
-          <Col span={24}>
-            <Form.Item
-              label="Oxirgi aktivlik sanasi"
-              name="lastActive"
-              rules={[
-                {
-                  required: true,
-                  message: "Oxirgi aktivlik sanasini kiriting",
-                },
-              ]}
-            >
-              <Input disabled={showEditInputs} placeholder="2025-01-01" />
+          <Col span={12}>
+            <Form.Item label="Username" name="username">
+              <Input disabled={showEditInputs} placeholder="username" />
             </Form.Item>
           </Col>
-        </Row>
-
-        <h1 className="text-[#111827] mb-4 font-inter font-semibold text-[20px]">
-          Obunalar tarixi
-        </h1>
-        <Row gutter={16}>
           <Col span={12}>
-            <Form.Item
-              label="Tarif"
-              name="tariff"
-              rules={[{ required: true, message: "Tarif nomini kiriting" }]}
-            >
+            <Form.Item label="Holat" name="status">
               <Input
                 disabled={showEditInputs}
-                placeholder="Premium, Basic..."
-              />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label="Boshlanish sanasi"
-              name="tariffStart"
-              rules={[
-                { required: true, message: "Boshlanish sanasini kiriting" },
-              ]}
-            >
-              <Input disabled={showEditInputs} placeholder="2025-01-01" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col span={24}>
-            <Form.Item
-              label="Tugash sanasi"
-              name="tariffEnd"
-              rules={[{ required: true, message: "Tugash sanasini kiriting" }]}
-            >
-              <Input disabled={showEditInputs} placeholder="2025-12-31" />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <h1 className="text-[#111827] mb-4 font-inter font-semibold text-[20px]">
-          To‘lovlar tarixi
-        </h1>
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              label="To‘lov summasi"
-              name="paymentAmount"
-              rules={[{ required: true, message: "To‘lov summasini kiriting" }]}
-            >
-              <Input disabled={showEditInputs} placeholder="100 000 so'm" />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label="To‘lov sanasi"
-              name="paymentDate"
-              rules={[{ required: true, message: "To‘lov sanasini kiriting" }]}
-            >
-              <Input disabled={showEditInputs} placeholder="2025-05-01" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col span={24}>
-            <Form.Item
-              label="To‘lov holati"
-              name="paymentStatus"
-              rules={[{ required: true, message: "To‘lov holatini kiriting" }]}
-            >
-              <Input
-                disabled={showEditInputs}
-                placeholder="To‘langan / Kutilmoqda"
+                placeholder="REGISTERED | ACTIVE"
               />
             </Form.Item>
           </Col>
         </Row>
 
-        <h1 className="text-[#111827] mb-4  font-inter font-semibold text-[20px]">
-          Yuborilgan xabarlar ro‘yxati
-        </h1>
-        <Row gutter={16}>
+        {/* <Row gutter={16}>
           <Col span={12}>
-            <Form.Item
-              label="Yuborilgan sana"
-              name="messageDate"
-              rules={[{ required: true, message: "Sana kiriting" }]}
-            >
-              <Input disabled={showEditInputs} placeholder="2025-06-01" />
+            <Form.Item label="Guruhda" name="inGroup" valuePropName="checked">
+              <Switch disabled={showEditInputs} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item
-              label="Xabar matni"
-              name="messageText"
-              rules={[{ required: true, message: "Xabar matnini kiriting" }]}
-            >
-              <Input disabled={showEditInputs} placeholder="Xabar mazmuni..." />
+            <Form.Item label="Oxirgi faollik" name="lastActiveAt">
+              <Input
+                disabled={showEditInputs}
+                placeholder="2025-06-27T10:11:59.193Z"
+              />
             </Form.Item>
           </Col>
-        </Row>
+        </Row> */}
 
-        <Button type="primary" htmlType="submit" className="w-full mt-4">
-          Saqlash
-        </Button>
+        <Form.Item shouldUpdate>
+          {() => (
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="w-full mt-4"
+              disabled={showEditInputs}
+              loading={updateUser.isPending}
+            >
+              Saqlash
+            </Button>
+          )}
+        </Form.Item>
       </Form>
     </Drawer>
   );
