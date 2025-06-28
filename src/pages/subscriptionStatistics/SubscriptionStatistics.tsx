@@ -1,20 +1,14 @@
-import { Modal, Table, Tag } from "antd";
+// pages/SubscriptionStatisticsTabs.tsx
+import { message, Table, Tag } from "antd";
 import type { TableProps } from "antd";
-import { useState } from "react";
-import { QuestionCircleOutlined } from "@ant-design/icons";
-import { Icons } from "../../assets/icons";
-import EditUserModal from "../../components/users/EditUserModal";
+import { useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
-
-interface DataType {
-  key: string;
-  name: string;
-  lastName: string;
-  phone: number;
-  email: string;
-  active: string;
-  subscribe: string[];
-}
+import dayjs from "dayjs";
+import { Icons } from "../../assets/icons";
+import { QuestionCircleOutlined } from "@ant-design/icons";
+import confirm from "antd/es/modal/confirm";
+import EditUserModal from "../../components/users/EditUserModal";
+import { useDeleteUser, useUsersBySubscriptionId } from "../../hooks/useUser";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -25,71 +19,110 @@ export default function SubscriptionStatisticsTabs() {
     "faol"
   );
   const [open, setOpen] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState<DataType | null>(null);
+  const [selectedRecord, setSelectedRecord] = useState<any>(null);
 
   const query = useQuery();
-  const definition = query.get("definition");
+  const subscriptionTypeId = query.get("id") ?? "";
+  const title = query.get("title");
+  const subscriptionStatus = useMemo(() => {
+    if (selectedTab === "faol") return "SUBSCRIBED";
+    if (selectedTab === "tugagan") return "EXPIRED";
+    return undefined;
+  }, [selectedTab]);
 
-  const showDeleteConfirm = () => {
-    Modal.confirm({
-      title: "Ushbu foydalanuvchini o'chirmoqchimisiz?",
+  const { data, isLoading } = useUsersBySubscriptionId(
+    subscriptionTypeId,
+    subscriptionStatus
+  );
+  const users = data?.data || [];
+
+  const deleteUser = useDeleteUser();
+  const onClose = () => setOpen(false);
+
+  const showDeleteConfirm = (id: number) => {
+    confirm({
+      title: "Ushbu mijozni o'chirmoqchimisiz?",
       icon: <QuestionCircleOutlined style={{ color: "red" }} />,
       okText: "Ha",
       okType: "danger",
       cancelText: "Yo'q",
-      onOk() {
-        console.log("O'chirildi");
-      },
+      onOk: () => handleDelete(id),
     });
   };
 
-  const showDrawer = () => setOpen(true);
-  const onClose = () => setOpen(false);
-
-  const allData: DataType[] = Array.from({ length: 30 }, (_, i) => ({
-    key: (i + 1).toString(),
-    name: "Alibek",
-    lastName: "Jumaniyazov",
-    phone: 886003230 + i,
-    email: `alibek00${i + 1}@gmail.com`,
-    active: "2025.06.19 17:19",
-    subscribe: [Math.random() > 0.5 ? "Aktiv" : "Deaktiv"],
-  }));
-
-  const filteredData =
-    selectedTab === "faol"
-      ? allData.filter((item) => item.subscribe.includes("Aktiv"))
-      : selectedTab === "tugagan"
-      ? allData.filter((item) => item.subscribe.includes("Deaktiv"))
-      : allData;
-
-  const columns: TableProps<DataType>["columns"] = [
-    { title: "Id", dataIndex: "key", key: "key" },
-    { title: "Ism", dataIndex: "name", key: "name" },
+  const handleDelete = (id: number) => {
+    deleteUser.mutate(id, {
+      onSuccess: () => {
+        message.success("Mijoz o‘chirildi");
+        onClose();
+      },
+      onError: () => {
+        message.error("O‘chirishda xatolik yuz berdi");
+      },
+    });
+  };
+  console.log(users);
+  const columns: TableProps<any>["columns"] = [
+    { title: "Id", dataIndex: "id", key: "id" },
+    { title: "Ism", dataIndex: "firstName", key: "firstName" },
     { title: "Familiya", dataIndex: "lastName", key: "lastName" },
-    { title: "Telefon", dataIndex: "phone", key: "phone" },
+    { title: "Telefon", dataIndex: "phoneNumber", key: "phoneNumber" },
     { title: "Email", dataIndex: "email", key: "email" },
-    { title: "Oxirgi aktivlik", dataIndex: "active", key: "active" },
     {
-      title: "Obuna",
-      key: "subscribe",
-      dataIndex: "subscribe",
-      render: (_, record) =>
-        record.subscribe.map((tag) => (
-          <Tag color={tag === "Aktiv" ? "green" : "red"} key={tag}>
-            {tag.toUpperCase()}
+      title: "Oxirgi aktivlik",
+      dataIndex: "lastActiveAt",
+      key: "lastActiveAt",
+      render: (value) =>
+        value ? dayjs(value).format("YYYY.MM.DD HH:mm") : "-",
+    },
+    {
+      title: "Holat",
+      key: "subscriptionStatus",
+      render: (_, user) => {
+        const tag =
+          new Date(
+            user.subscription.find(
+              (sub: any) => sub.subscriptionTypeId == subscriptionTypeId
+            ).expiredDate
+          ).getTime() > Date.now()
+            ? "Aktiv"
+            : "Deaktiv";
+        return (
+          <Tag
+            color={
+              new Date(
+                user.subscription.find(
+                  (sub: any) => sub.subscriptionTypeId == subscriptionTypeId
+                ).expiredDate
+              ).getTime() > Date.now()
+                ? "green"
+                : "red"
+            }
+          >
+            {tag}
           </Tag>
-        )),
+        );
+      },
     },
     {
       title: "Amal",
       key: "action",
-      render: () => (
+      render: (_, record) => (
         <div className="flex items-center gap-4">
-          <button onClick={showDrawer}>
+          <button
+            onClick={() => {
+              setSelectedRecord(record);
+              setOpen(true);
+            }}
+          >
             <Icons.pencil />
           </button>
-          <button onClick={showDeleteConfirm}>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              showDeleteConfirm(record.id);
+            }}
+          >
             <Icons.delete />
           </button>
         </div>
@@ -98,66 +131,34 @@ export default function SubscriptionStatisticsTabs() {
   ];
 
   return (
-    <div className="SubscriptionStatisticsTabs">
-      <div className="w-full flex justify-between items-center mb-4">
-        <h1 className="font-semibold text-[20px] text-start mb-4">
-          {definition || "Noma'lum"} tarifi
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-[20px] font-semibold">
+          {title?.toUpperCase()} tarif mijozlari
         </h1>
-        <div className=" flex justify-end items-center mb-4">
-          <div className="flex bg-[#eef3fe] rounded-lg overflow-hidden p-[4px]">
+        <div className="flex bg-[#eef3fe] rounded-lg overflow-hidden p-[4px]">
+          {["faol", "tugagan", "umumiy"].map((type) => (
             <button
-              onClick={() => setSelectedTab("faol")}
+              key={type}
+              onClick={() => setSelectedTab(type as any)}
               className={`px-4 py-2 text-sm font-medium ${
-                selectedTab === "faol"
-                  ? "bg-[#528af9] text-white rounded-[6px] cursor-pointer"
-                  : "text-gray-600 cursor-pointer"
+                selectedTab === type
+                  ? "bg-[#528af9] text-white rounded-[6px]"
+                  : "text-gray-600"
               }`}
             >
-              Faol obunalar
+              {type.charAt(0).toUpperCase() + type.slice(1)} obunalar
             </button>
-            <button
-              onClick={() => setSelectedTab("tugagan")}
-              className={`px-4 py-2 text-sm font-medium ${
-                selectedTab === "tugagan"
-                  ? "bg-[#528af9] text-white rounded-[6px] cursor-pointer"
-                  : "text-gray-600 cursor-pointer"
-              }`}
-            >
-              Tugagan obunalar
-            </button>
-            <button
-              onClick={() => setSelectedTab("umumiy")}
-              className={`px-4 py-2 text-sm font-medium ${
-                selectedTab === "umumiy"
-                  ? "bg-[#528af9] text-white rounded-[6px] cursor-pointer"
-                  : "text-gray-600 cursor-pointer"
-              }`}
-            >
-              Umumiy foydalanuvchilar
-            </button>
-          </div>
+          ))}
         </div>
       </div>
 
-      <div className="flex gap-6 text-sm text-[#92959C] mb-4">
-        <p>
-          Total active:
-          <span className="text-[#1D9629]">
-            {allData.filter((d) => d.subscribe.includes("Aktiv")).length}
-          </span>
-        </p>
-        <p>
-          Total deactive:
-          <span className="text-[#D52A2A]">
-            {allData.filter((d) => d.subscribe.includes("Deaktiv")).length}
-          </span>
-        </p>
-      </div>
-
       <Table
+        rowKey="id"
         columns={columns}
-        dataSource={filteredData}
-        pagination={{ showSizeChanger: false }}
+        dataSource={users}
+        loading={isLoading}
+        pagination={false}
         onRow={(record) => ({
           onClick: () => {
             setSelectedRecord(record);
@@ -166,7 +167,7 @@ export default function SubscriptionStatisticsTabs() {
         })}
       />
 
-      <EditUserModal onClose={onClose} open={open} record={selectedRecord} />
+      <EditUserModal open={open} onClose={onClose} record={selectedRecord} />
     </div>
   );
 }

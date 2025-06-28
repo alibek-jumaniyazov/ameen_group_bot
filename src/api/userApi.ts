@@ -47,7 +47,6 @@ export interface PaginatedResponse<T> {
   limit: number;
   data: T[];
 }
-
 export const UserApi = {
   getAll: async (
     params?: UserQueryParams
@@ -68,5 +67,20 @@ export const UserApi = {
 
   delete: async (id: number): Promise<void> => {
     await axiosInstance.delete(`/user/${id}`);
+  },
+
+  getBySubscriptionTypeId: async (
+    subscriptionTypeId: string | number,
+    subscriptionStatus?: string
+  ): Promise<PaginatedResponse<User>> => {
+    const { data } = await axiosInstance.get("/user", {
+      params: {
+        page: 1,
+        limit: 100,
+        subscriptionTypeId,
+        ...(subscriptionStatus ? { subscriptionStatus } : {}),
+      },
+    });
+    return data;
   },
 };

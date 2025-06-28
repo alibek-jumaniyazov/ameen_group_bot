@@ -7,6 +7,17 @@ export const useUsers = (params?: UserQueryParams) => {
     queryFn: () => UserApi.getAll(params),
   });
 };
+export const useUsersBySubscriptionId = (
+  subscriptionTypeId: string,
+  subscriptionStatus?: "SUBSCRIBED" | "EXPIRED"
+) => {
+  return useQuery({
+    queryKey: ["users", { subscriptionTypeId, subscriptionStatus }],
+    queryFn: () =>
+      UserApi.getBySubscriptionTypeId(subscriptionTypeId, subscriptionStatus),
+    enabled: !!subscriptionTypeId,
+  });
+};
 
 export const useUserById = (id: number) => {
   return useQuery({

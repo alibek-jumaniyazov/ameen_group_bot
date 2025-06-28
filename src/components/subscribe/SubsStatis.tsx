@@ -1,79 +1,78 @@
-import { Table, type TableProps } from "antd";
-import { useState } from "react";
+import { Table, Tag, type TableProps } from "antd";
 import { useNavigate } from "react-router-dom";
-export default function SubsStatis() {
-  interface DataType {
-    key: string;
-    definition: string;
-    ActiveSubscribe: number;
-    ExpiredSubs: number;
-    AllUsers: number;
-  }
+import { useSubscriptionStatistics } from "../../hooks/useSubscription";
 
-  const columns: TableProps<DataType>["columns"] = [
+type SubscriptionStatisticsItem = {
+  id: string;
+  title: string;
+  activeCount: number;
+  expiredCount: number;
+  total: number;
+};
+
+export default function SubsStatis() {
+  const { data, isLoading } = useSubscriptionStatistics();
+  const navigate = useNavigate();
+
+  const columns: TableProps<SubscriptionStatisticsItem>["columns"] = [
     {
       title: "Tarif nomi",
-      dataIndex: "definition",
-      key: "definition",
+      dataIndex: "title",
+      key: "title",
     },
     {
       title: "Faol obunalar",
-      dataIndex: "ActiveSubscribe",
-      key: "ActiveSubscribe",
+      dataIndex: "activeCount",
+      key: "activeCount",
     },
     {
       title: "Tugagan obunalar",
-      dataIndex: "ExpiredSubs",
-      key: "ExpiredSubs",
+      dataIndex: "expiredCount",
+      key: "expiredCount",
     },
     {
       title: "Umumiy foydalanuvchilar",
-      dataIndex: "AllUsers",
-      key: "AllUsers",
+      dataIndex: "total",
+      key: "total",
+    },
+    {
+      title: "Holat",
+      dataIndex: "isDeleted",
+      key: "isDeleted",
+      render: (isDeleted: boolean) => (
+        <Tag color={isDeleted ? "red" : "green"}>
+          {isDeleted ? "O'chirilgan" : "Active"}
+        </Tag>
+      ),
     },
   ];
 
-  const data: DataType[] = [
-    {
-      key: "1",
-      definition: "Boshlang’ich",
-      ActiveSubscribe: 120,
-      ExpiredSubs: 45,
-      AllUsers: 165,
-    },
-    {
-      key: "2",
-      definition: "Premium",
-      ActiveSubscribe: 300,
-      ExpiredSubs: 80,
-      AllUsers: 380,
-    },
-    {
-      key: "3",
-      definition: "Biznes",
-      ActiveSubscribe: 180,
-      ExpiredSubs: 20,
-      AllUsers: 200,
-    },
-  ];
-  const [selectedRecord, setSelectedRecord] = useState<DataType | null>(null);
-  const navigate = useNavigate();
+  const tableData: SubscriptionStatisticsItem[] = Array.isArray(data)
+    ? data.map((item) => ({
+        id: String(item.subscriptionType.id),
+        title: item.subscriptionType.title,
+        activeCount: item.activeCount,
+        expiredCount: item.expiredCount,
+        isDeleted: item.subscriptionType.isDeleted,
+        total: item.total,
+      }))
+    : [];
 
   return (
     <div className="UserInfo">
-      <Table<DataType>
+      <Table<SubscriptionStatisticsItem>
         columns={columns}
-        dataSource={data}
+        rowKey="id"
+        dataSource={tableData}
+        loading={isLoading}
         pagination={false}
-        onRow={(record) => {
-          return {
-            onClick: () => {
-              navigate(
-                `/subscription-statistics?definition=${record.definition}`
-              );
-            },
-          };
-        }}
+        onRow={(record) => ({
+          onClick: () => {
+            navigate(
+              `/subscription-statistics?title=${record.title}&id=${record.id}`
+            );
+          },
+        })}
       />
     </div>
   );
