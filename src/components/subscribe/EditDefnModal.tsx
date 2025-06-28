@@ -1,19 +1,30 @@
-import { Button, Col, Drawer, Form, Input, Row, Select, Space } from "antd";
+import { Button, Col, Drawer, Form, Input, message, Row, Space } from "antd";
 import { useEffect, useState } from "react";
 import { Icons } from "../../assets/icons";
 import TextArea from "antd/es/input/TextArea";
+import type { SubscriptionType } from "../../api/subscriptionApi";
+import {
+  useDeleteSubscription,
+  useUpdateSubscription,
+} from "../../hooks/useSubscription";
+import confirm from "antd/es/modal/confirm";
+import { QuestionCircleOutlined } from "@ant-design/icons";
+
+interface EditDefnModalProps {
+  onClose: () => void;
+  open: boolean;
+  record: SubscriptionType | null;
+}
 
 export default function EditDefnModal({
   onClose,
   open,
   record,
-}: {
-  onClose: () => void;
-  open: boolean;
-  record: any;
-}) {
+}: EditDefnModalProps) {
   const [showEditInputs, setShowEditInputs] = useState(true);
   const [form] = Form.useForm();
+  const updateSubscription = useUpdateSubscription();
+  const deleteSubscription = useDeleteSubscription();
 
   useEffect(() => {
     if (record) {
@@ -21,13 +32,62 @@ export default function EditDefnModal({
     }
   }, [record, form]);
 
-  const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
+  const onFinish = (values: Partial<SubscriptionType>) => {
+    if (!record) return;
+
+    const cleanedData: Omit<
+      SubscriptionType,
+      "id" | "createdAt" | "updatedAt"
+    > = {
+      price: Number(values.price),
+      title: values.title ?? "",
+      description: values.description ?? "",
+      expireDays: Number(values.expireDays),
+      telegramTopicIds: record.telegramTopicIds || [],
+    };
+
+    updateSubscription.mutate(
+      { id: record.id, data: cleanedData },
+      {
+        onSuccess: () => {
+          message.success("Tarif muvaffaqiyatli yangilandi");
+          onClose();
+        },
+        onError: (err) => {
+          console.error(err);
+          message.error("Xatolik yuz berdi");
+        },
+      }
+    );
   };
 
-  const onFinish = (values: any) => {
-    console.log("Form yuborildi:", values);
-    onClose();
+  const handleDelete = () => {
+    if (!record) return;
+    deleteSubscription.mutate(record.id, {
+      onSuccess: () => {
+        message.success("Tarif o‘chirildi");
+        onClose();
+      },
+      onError: (err) => {
+        console.error(err);
+        message.error("O‘chirishda xatolik yuz berdi");
+      },
+    });
+  };
+  const showDeleteConfirm = () => {
+    confirm({
+      title: "Ushbu Ta'rif o'chirmoqchimisiz?",
+      icon: <QuestionCircleOutlined style={{ color: "red" }} />,
+      okText: "Ha",
+      okType: "danger",
+      cancelText: "Yo'q",
+      onOk() {
+        handleDelete();
+      },
+      onCancel() {
+        console.log("Bekor qilindi");
+      },
+    });
   };
 
   return (
@@ -44,7 +104,10 @@ export default function EditDefnModal({
           >
             <Icons.pencilY />
           </button>
-          <button className="p-2 border border-red-500 rounded-lg cursor-pointer">
+          <button
+            onClick={showDeleteConfirm}
+            className="p-2 border border-red-500 rounded-lg cursor-pointer"
+          >
             <Icons.delete />
           </button>
         </Space>
@@ -55,9 +118,9 @@ export default function EditDefnModal({
           <Col span={12}>
             <Form.Item
               label="Tarif nomi"
-              name="definition"
+              name="title"
               rules={[
-                { required: true, message: "Iltimos, Tarif nomi kiriting" },
+                { required: true, message: "Iltimos, tarif nomini kiriting" },
               ]}
             >
               <Input disabled={showEditInputs} placeholder="Tarif nomi" />
@@ -68,43 +131,31 @@ export default function EditDefnModal({
               label="Tarif narxi"
               name="price"
               rules={[
-                { required: true, message: "Iltimos, Tarif narxi kiriting" },
+                { required: true, message: "Iltimos, tarif narxini kiriting" },
               ]}
             >
-              <Input disabled={showEditInputs} placeholder="Tarif narxi" />
+              <Input
+                disabled={showEditInputs}
+                placeholder="Tarif narxi"
+                type="number"
+              />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
-          <Col span={12}>
+          <Col span={24}>
             <Form.Item
-              label="Muddati"
-              name="term"
-              rules={[{ required: true, message: "Muddati kiriting" }]}
+              label="Muddati (kunlarda)"
+              name="expireDays"
+              rules={[
+                { required: true, message: "Iltimos, muddatini kiriting" },
+              ]}
             >
-              <Input disabled={showEditInputs} placeholder="Muddati" />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label="Holati"
-              name="status"
-              rules={[{ required: true, message: "Holati kiriting" }]}
-            >
-              <Select
+              <Input
                 disabled={showEditInputs}
-                onChange={handleChange}
-                options={[
-                  {
-                    value: "Aktiv",
-                    label: <p className="text-green-500">Aktiv</p>,
-                  },
-                  {
-                    value: "Deaktiv",
-                    label: <p className="text-red-500">Deaktiv</p>,
-                  },
-                ]}
+                placeholder="Muddati"
+                type="number"
               />
             </Form.Item>
           </Col>
@@ -114,22 +165,25 @@ export default function EditDefnModal({
           <Col span={24}>
             <Form.Item
               label="Xususiyatlari"
-              name="features"
+              name="description"
               rules={[
-                {
-                  required: true,
-                  message: "Iltimos, xususiyatlarini kiriting",
-                },
+                { required: true, message: "Iltimos, taʼrifni kiriting" },
               ]}
             >
-              <TextArea rows={4} disabled={showEditInputs} />
+              <TextArea
+                rows={4}
+                disabled={showEditInputs}
+                placeholder="Xususiyatlari"
+              />
             </Form.Item>
           </Col>
         </Row>
 
-        <Button type="primary" className="w-full mt-4" htmlType="submit">
-          Saqlash
-        </Button>
+        {!showEditInputs && (
+          <Button type="primary" className="w-full mt-4" htmlType="submit">
+            Saqlash
+          </Button>
+        )}
       </Form>
     </Drawer>
   );

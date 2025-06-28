@@ -16,7 +16,7 @@ import FullLogo from "../../assets/full_logo.png";
 const menuItems = [
   { key: "/", icon: <Icons.dashboard />, label: "Dashboard" },
   { key: "/users", icon: <Icons.person />, label: "Mijozlar ro'yxati" },
-  { key: "/subscribe", icon: <Icons.ticket />, label: "Obuna tariflari" },
+  { key: "/subscription", icon: <Icons.ticket />, label: "Obuna tariflari" },
   {
     key: "/payment-history",
     icon: <Icons.files />,
@@ -55,7 +55,7 @@ export default function Sidebar() {
     const match = menuItems.find((item) => item.key === location.pathname);
     if (match) return match.label;
 
-    if (location.pathname.startsWith("/user")) return "Foydalanuvchi tafsiloti";
+    if (location.pathname.startsWith("/user")) return "Mijoz tafsiloti";
     if (location.pathname === "/subscription-statistics")
       return "Foydalanuvchilar obunasi statistikasi";
 
@@ -115,7 +115,6 @@ export default function Sidebar() {
             </h1>
           </div>
           <div className="flex items-center gap-2.5">
-            {/* <Icons.bell className="size-6 text-black" /> */}
             <Avatar
               size="large"
               icon={

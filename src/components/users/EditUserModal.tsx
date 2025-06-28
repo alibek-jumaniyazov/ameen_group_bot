@@ -1,14 +1,4 @@
-import {
-  Button,
-  Col,
-  Drawer,
-  Form,
-  Input,
-  Row,
-  Space,
-  Switch,
-  message,
-} from "antd";
+import { Button, Col, Drawer, Form, Input, Row, Space, message } from "antd";
 import { useEffect, useState } from "react";
 import { Icons } from "../../assets/icons";
 import { useUpdateUser, useDeleteUser } from "../../hooks/useUser";

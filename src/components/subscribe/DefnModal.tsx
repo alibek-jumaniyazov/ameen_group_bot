@@ -1,5 +1,8 @@
-import { Button, Col, Drawer, Form, Input, Row, Select, Space } from "antd";
+import { Button, Col, Drawer, Form, Input, message, Row } from "antd";
 import TextArea from "antd/es/input/TextArea";
+import { useEffect } from "react";
+import type { SubscriptionType } from "../../api/subscriptionApi";
+import { useCreateSubscriptionType } from "../../hooks/useSubscription";
 
 export default function DefnModal({
   onClose,
@@ -9,9 +12,33 @@ export default function DefnModal({
   open: boolean;
 }) {
   const [form] = Form.useForm();
+  const createSubscription = useCreateSubscriptionType();
 
-  const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
+  useEffect(() => {
+    if (open) {
+      form.resetFields();
+    }
+  }, [open]);
+
+  const onFinish = (values: Partial<SubscriptionType>) => {
+    const cleanedData = {
+      price: Number(values.price),
+      title: values.title ?? "",
+      description: values.description ?? "",
+      expireDays: Number(values.expireDays),
+      telegramTopicIds: [123456, 654321],
+    };
+
+    createSubscription.mutate(cleanedData, {
+      onSuccess: () => {
+        message.success("Tarif muvaffaqiyatli qo‘shildi");
+        onClose();
+      },
+      onError: (err) => {
+        message.error("Xatolik yuz berdi");
+        console.log(err);
+      },
+    });
   };
 
   return (
@@ -20,63 +47,38 @@ export default function DefnModal({
       width={600}
       onClose={onClose}
       open={open}
+      destroyOnClose
     >
-      <Form layout="vertical" form={form} hideRequiredMark>
+      <Form layout="vertical" form={form} onFinish={onFinish} hideRequiredMark>
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               label="Tarif nomi"
-              name="definition"
-              rules={[
-                { required: true, message: "Iltimos, Tarif nomi kiriting" },
-              ]}
+              name="title"
+              rules={[{ required: true, message: "Tarif nomi kiriting" }]}
             >
-              <Input placeholder="Tarif nomi" />
+              <Input placeholder="Premum" />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
-              label="Tarif narxi"
+              label="Narxi"
               name="price"
-              rules={[
-                { required: true, message: "Iltimos, Tarif narxi kiriting" },
-              ]}
+              rules={[{ required: true, message: "Narx kiriting" }]}
             >
-              <Input placeholder="Tarif narxi" />
+              <Input type="number" placeholder="Masalan: 20000" />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
-          <Col span={12}>
+          <Col span={24}>
             <Form.Item
-              label="Muddati"
-              name="term"
+              label="Muddati (kunlarda)"
+              name="expireDays"
               rules={[{ required: true, message: "Muddati kiriting" }]}
             >
-              <Input placeholder="Muddati" />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label="Holati"
-              name="status"
-              rules={[{ required: true, message: "Holati kiriting" }]}
-            >
-              <Select
-                defaultValue="active"
-                onChange={handleChange}
-                options={[
-                  {
-                    value: "active",
-                    label: <p className="text-green-500">Aktiv</p>,
-                  },
-                  {
-                    value: "deactive",
-                    label: <p className="text-red-500">Deaktiv</p>,
-                  },
-                ]}
-              />
+              <Input type="number" placeholder="Masalan: 30" />
             </Form.Item>
           </Col>
         </Row>
@@ -85,7 +87,7 @@ export default function DefnModal({
           <Col span={24}>
             <Form.Item
               label="Xususiyatlari"
-              name="features"
+              name="description"
               rules={[
                 {
                   required: true,
@@ -93,15 +95,15 @@ export default function DefnModal({
                 },
               ]}
             >
-              <TextArea rows={4} />
+              <TextArea rows={4} placeholder="Tarif haqida ma'lumot" />
             </Form.Item>
           </Col>
         </Row>
-      </Form>
 
-      <Button type="primary" className="w-full mt-4">
-        Qo'shish
-      </Button>
+        <Button type="primary" htmlType="submit" className="w-full mt-4">
+          Qo‘shish
+        </Button>
+      </Form>
     </Drawer>
   );
 }
