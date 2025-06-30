@@ -86,7 +86,6 @@ export default function SendMessageAction({
                   { value: "premium", label: "Premium" },
                   { value: "biznes", label: "Biznes" },
                   { value: "beginner", label: "Boshlang'ich" },
-                  // { value: "beginner", label: "Boshlang'ich" },
                 ]}
               />
             </Form.Item>

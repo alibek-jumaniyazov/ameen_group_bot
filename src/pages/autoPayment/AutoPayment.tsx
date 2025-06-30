@@ -14,6 +14,7 @@ export default function AutoPayment() {
   const handleFilter = (values: any) => {
     setFilters(values);
     setSearch("");
+    setShowFilter(false);
   };
 
   const handleSearch = () => {
@@ -54,7 +55,7 @@ export default function AutoPayment() {
 
       {showFilter && (
         <div className="border border-[#E2E8F0] rounded-xl p-4 bg-white z-20">
-          <AutoPaymentTableFilter onFilter={handleFilter} />
+          <AutoPaymentTableFilter onFilter={handleFilter} filters={filters} />
         </div>
       )}
 

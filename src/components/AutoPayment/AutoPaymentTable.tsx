@@ -6,7 +6,7 @@ import type { Transaction } from "../../api/transactionApi";
 interface DataType {
   id: string;
   user: string;
-  definition: string[];
+  definition: string;
   amout: string;
   date: string;
   status: string;
@@ -27,9 +27,9 @@ export default function AutoPaymentTable({
     return {
       id: item.id.toString(),
       user: `${item.user?.firstName || ""} ${item.user?.lastName || ""}`,
-      definition: [item.subscriptionType?.title || "Noma'lum"],
+      definition: item.subscriptionType?.title || "Noma'lum",
       amout: `${item.price?.toString()} so'm`,
-      date: new Date(item.createdAt).toLocaleString("uz-UZ"),
+      date: dayjs(item.createdAt).format("YYYY-MM-DD"),
       status: isPaid ? "Muvaffaqiyatli" : "Xato",
       error: isPaid ? "Yechildi" : "Kartada mablag' yetarli emas",
     };
@@ -42,23 +42,25 @@ export default function AutoPaymentTable({
       : true;
 
     const defMatch = filters?.definition
-      ? item.definition.includes(filters.definition)
+      ? item.definition === filters.definition
       : true;
 
     const statusMatch = filters?.status ? item.status === filters.status : true;
 
     const errorMatch = filters?.error ? item.error === filters.error : true;
 
+    const amount = parseInt(item.amout.replace(/\D/g, ""));
+
     const minAmountMatch = filters?.minAmount
-      ? parseInt(item.amout.replace(/\D/g, "")) >= +filters.minAmount
+      ? amount >= Number(filters.minAmount)
       : true;
 
     const maxAmountMatch = filters?.maxAmount
-      ? parseInt(item.amout.replace(/\D/g, "")) <= +filters.maxAmount
+      ? amount <= Number(filters.maxAmount)
       : true;
 
     const dateMatch = filters?.date
-      ? dayjs(item.date).format("YYYY/MM/DD") === filters.date
+      ? dayjs(item.date).isSame(filters.date, "day")
       : true;
 
     return (
@@ -75,29 +77,20 @@ export default function AutoPaymentTable({
   const columns: TableProps<DataType>["columns"] = [
     { title: "To‘lov ID", dataIndex: "id", key: "id" },
     { title: "Foydalanuvchi", dataIndex: "user", key: "user" },
-    {
-      title: "Tarif",
-      dataIndex: "definition",
-      key: "definition",
-      render: (def) => def[0],
-    },
+    { title: "Tarif", dataIndex: "definition", key: "definition" },
     { title: "Summa", dataIndex: "amout", key: "amout" },
     { title: "Sana", dataIndex: "date", key: "date" },
     {
       title: "Holati",
       dataIndex: "status",
       key: "status",
-      render: (status: string) => (
+      render: (status) => (
         <Tag color={status === "Muvaffaqiyatli" ? "green" : "red"}>
           {status}
         </Tag>
       ),
     },
-    {
-      title: "Xato sababi",
-      dataIndex: "error",
-      key: "error",
-    },
+    { title: "Xato sababi", dataIndex: "error", key: "error" },
   ];
 
   return (

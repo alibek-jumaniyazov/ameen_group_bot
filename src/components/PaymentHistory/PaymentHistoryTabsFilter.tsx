@@ -2,54 +2,53 @@ import { Button, Col, DatePicker, Form, Input, Row, Select } from "antd";
 import { Icons } from "../../assets/icons";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
+import { useEffect } from "react";
 
 export default function PaymentHistoryTabsFilter({
   onFilter,
+  filters,
 }: {
   onFilter: (values: any) => void;
+  filters: any;
 }) {
   const [form] = useForm();
 
   const onFinish = (values: any) => {
     const payload = {
       ...values,
-      startDate: values.startDate
-        ? dayjs(values.startDate).format("YYYY/MM/DD")
-        : undefined,
-      endDate: values.endDate
-        ? dayjs(values.endDate).format("YYYY/MM/DD")
-        : undefined,
+      date: values.date ? dayjs(values.date).format("YYYY-MM-DD HH:mm") : undefined,
     };
     onFilter(payload);
-    form.resetFields();
   };
+
+  const handleClear = () => {
+    form.resetFields();
+    onFilter(null);
+  };
+
+  useEffect(() => {
+    if (filters) {
+      form.setFieldsValue({
+        ...filters,
+        date: filters.date ? dayjs(filters.date, "YYYY-MM-DD HH:mm") : undefined,
+      });
+    }
+  }, [filters]);
 
   return (
     <div className="bg-white border rounded-lg p-4 mt-2 shadow">
-      <Form
-        layout="vertical"
-        form={form}
-        onFinish={onFinish}
-        initialValues={{
-          definition: "Boshlang’ich",
-          status: "Muvaffaqiyatli",
-        }}
-      >
+      <Form layout="vertical" form={form} onFinish={onFinish}>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label="Boshlanish sanasi" name="startDate">
-              <DatePicker className="w-full" />
+            <Form.Item label="Sana va vaqt" name="date">
+              <DatePicker
+                showTime={{ format: "HH:mm" }}
+                format="YYYY-MM-DD HH:mm"
+                className="w-full"
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Tugash sanasi" name="endDate">
-              <DatePicker className="w-full" />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col span={24}>
             <Form.Item label="Foydalanuvchi bo’yicha" name="searchUser">
               <Input
                 type="search"
@@ -77,13 +76,13 @@ export default function PaymentHistoryTabsFilter({
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label="Maksimum summasi" name="maxAmount">
-              <Input suffix="so'm" />
+            <Form.Item label="Minimum summa" name="minAmount">
+              <Input suffix="so'm" placeholder="Min summa" />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Minimum summasi" name="minAmount">
-              <Input suffix="so'm" />
+            <Form.Item label="Maksimum summa" name="maxAmount">
+              <Input suffix="so'm" placeholder="Max summa" />
             </Form.Item>
           </Col>
         </Row>
@@ -93,6 +92,7 @@ export default function PaymentHistoryTabsFilter({
             <Form.Item label="Holati" name="status">
               <Select
                 placeholder="Holat tanlang"
+                allowClear
                 options={[
                   { value: "Muvaffaqiyatli", label: "Muvaffaqiyatli" },
                   { value: "Muvaffaqiysiz", label: "Muvaffaqiysiz" },
@@ -104,7 +104,7 @@ export default function PaymentHistoryTabsFilter({
 
         <div className="flex justify-between mt-4">
           <Button
-            onClick={() => form.resetFields()}
+            onClick={handleClear}
             className="!text-[#EAB308] !border-[#EAB308]"
           >
             Tozalash

@@ -8,11 +8,17 @@ import { useTransactionByPaymentType } from "../../hooks/useTransaction";
 export default function PaymentHistory() {
   const [open, setOpen] = useState(false);
   const [filters, setFilters] = useState<any>(null);
+  const [search, setSearch] = useState("");
   const { data } = useTransactionByPaymentType("NORMAL");
 
   const handleFilter = (values: any) => {
     setFilters(values);
+    setSearch("");
     setOpen(false);
+  };
+
+  const handleSearch = () => {
+    setFilters({ ...filters, searchUser: search });
   };
 
   return (
@@ -26,9 +32,16 @@ export default function PaymentHistory() {
               placeholder="Search"
               bordered={false}
               className="placeholder:!text-[#94A3B8]"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onPressEnter={handleSearch}
             />
           </div>
-          <Button type="primary" className="!bg-[#528AF9] !w-[87px] !h-[44px]">
+          <Button
+            type="primary"
+            className="!bg-[#528AF9] !w-[87px] !h-[44px]"
+            onClick={handleSearch}
+          >
             Search
           </Button>
         </div>
@@ -42,7 +55,7 @@ export default function PaymentHistory() {
       </div>
       {open && (
         <div className="transition-all duration-300 ease-in-out">
-          <PaymentHistoryTabsFilter onFilter={handleFilter} />
+          <PaymentHistoryTabsFilter onFilter={handleFilter} filters={filters}/>
         </div>
       )}
       <PaymentHistoryTabs filters={filters} data={data?.data ?? []} />

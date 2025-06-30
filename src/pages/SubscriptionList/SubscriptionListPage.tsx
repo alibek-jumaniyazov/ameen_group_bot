@@ -1,6 +1,6 @@
 import { Icons } from "../../assets/icons";
 import { Button, Input } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import SubscriptionListTableFilter from "../../components/SubscriptionList/SubscriptionListTableFilter";
 import SubscriptionListTable from "../../components/SubscriptionList/SubscriptionListTable";
 
@@ -55,7 +55,10 @@ export default function SubscriptionListPage() {
 
       {open && (
         <div ref={filterRef} className="mt-1 z-20 relative">
-          <SubscriptionListTableFilter onFilter={handleFilter} />
+          <SubscriptionListTableFilter
+            onFilter={handleFilter}
+            filters={filters}
+          />
         </div>
       )}
 

@@ -1,37 +1,50 @@
-import {
-  Button,
-  Col,
-  DatePicker,
-  Form,
-  Input,
-  Row,
-  Select,
-} from "antd";
-import { Icons } from "../../assets/icons";
+import { Button, Col, DatePicker, Form, Input, Row, Select } from "antd";
 import { useForm } from "antd/es/form/Form";
+import { useEffect } from "react";
+import { Icons } from "../../assets/icons";
 import dayjs from "dayjs";
 
 export default function AutoPaymentTableFilter({
   onFilter,
+  filters,
 }: {
   onFilter: (values: any) => void;
+  filters: any;
 }) {
   const [form] = useForm();
 
   const onFinish = (values: any) => {
     const payload = {
       ...values,
-      date: values.date ? dayjs(values.date).format("YYYY/MM/DD") : undefined,
+      date: values.date ? dayjs(values.date).format("YYYY-MM-DD") : undefined,
     };
     onFilter(payload);
   };
+
+  const handleClear = () => {
+    form.resetFields();
+    onFilter(null);
+  };
+
+  useEffect(() => {
+    if (filters) {
+      form.setFieldsValue({
+        ...filters,
+        date: filters.date ? dayjs(filters.date) : undefined,
+      });
+    }
+  }, [filters]);
 
   return (
     <Form layout="vertical" form={form} onFinish={onFinish}>
       <Row gutter={16}>
         <Col span={24}>
           <Form.Item label="Sana" name="date">
-            <DatePicker placeholder="YYYY/MM/DD" className="!w-full" />
+            <DatePicker
+              placeholder="YYYY-MM-DD"
+              className="!w-full"
+              format="YYYY-MM-DD"
+            />
           </Form.Item>
         </Col>
       </Row>
@@ -56,6 +69,7 @@ export default function AutoPaymentTableFilter({
                 { value: "Boshlang’ich", label: "Boshlang’ich" },
                 { value: "Premium", label: "Premium" },
               ]}
+              allowClear
             />
           </Form.Item>
         </Col>
@@ -83,6 +97,7 @@ export default function AutoPaymentTableFilter({
                 { value: "Muvaffaqiyatli", label: "Muvaffaqiyatli" },
                 { value: "Xato", label: "Xato" },
               ]}
+              allowClear
             />
           </Form.Item>
         </Col>
@@ -97,6 +112,7 @@ export default function AutoPaymentTableFilter({
                   label: "Kartada mablag' yetarli emas",
                 },
               ]}
+              allowClear
             />
           </Form.Item>
         </Col>
@@ -105,7 +121,7 @@ export default function AutoPaymentTableFilter({
       <div className="flex justify-between mt-4">
         <Button
           className="!text-[#EAB308] !border-[#EAB308]"
-          onClick={() => form.resetFields()}
+          onClick={handleClear}
         >
           Tozalash
         </Button>

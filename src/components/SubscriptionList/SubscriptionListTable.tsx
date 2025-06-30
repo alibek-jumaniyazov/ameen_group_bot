@@ -26,7 +26,6 @@ interface DataType {
 
 export default function SubscriptionListTable({ filters }: Props) {
   const navigate = useNavigate();
-
   const { data, isLoading } = useSubscriptionsPayment();
 
   const allData: DataType[] =
