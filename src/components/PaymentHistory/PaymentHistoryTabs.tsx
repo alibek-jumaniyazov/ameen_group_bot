@@ -1,4 +1,5 @@
 import { Table, Tag, type TableProps } from "antd";
+import type { Transaction } from "../../api/transactionApi";
 
 interface DataType {
   id: string;
@@ -9,21 +10,23 @@ interface DataType {
   status: string[];
 }
 
-export default function PaymentHistoryTabs({ filters }: { filters: any }) {
-  const allData: DataType[] = Array.from({ length: 30 }, (_, i) => ({
-    id: (i + 1).toString(),
-    user: "Alibek Jumaniyazov",
-    definition: [Math.random() > 0.5 ? "Premium" : "Boshlang’ich"],
-    amout: "200000",
-    date: "2025/06/20 09:00",
-    status: [
-      Math.random() > 0.6
-        ? "Muvaffaqiyatli"
-        : Math.random() > 0.3
-        ? "Muvaffaqiysiz"
-        : "Kutilmoqda",
-    ],
-  }));
+export default function PaymentHistoryTabs({
+  filters,
+  data,
+}: {
+  filters: any;
+  data: Transaction[];
+}) {
+  const allData: DataType[] = data
+    .filter((item) => item.status === "Paid")
+    .map((item) => ({
+      id: item.id.toString(),
+      user: `${item.user?.firstName || ""} ${item.user?.lastName || ""}`,
+      definition: [item.subscriptionType?.title || "Noma'lum"],
+      amout: `${item.price?.toString()} so'm`,
+      date: new Date(item.createdAt).toLocaleString("uz-UZ"),
+      status: ["Muvaffaqiyatli"],
+    }));
 
   const filteredData = filters
     ? allData.filter((item) => {
@@ -71,7 +74,7 @@ export default function PaymentHistoryTabs({ filters }: { filters: any }) {
               Kutilmoqda: "orange",
             };
             return (
-              <Tag color={colorMap[tag]} key={tag}>
+              <Tag color={colorMap[tag] || "default"} key={tag}>
                 {tag.toUpperCase()}
               </Tag>
             );

@@ -2,14 +2,20 @@ import { Table, Tag, type TableProps } from "antd";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import type { SubscriptionPayment } from "../../api/subscriptionPaymentApi";
+import { useSubscriptionsPayment } from "../../hooks/useSubscriptionPayment";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
+interface Props {
+  filters: any;
+}
+
 interface DataType {
   id: string;
+  userId: string;
   user: string;
   definition: string[];
   amout: string;
@@ -18,19 +24,22 @@ interface DataType {
   status: string[];
 }
 
-export default function SubscriptionListTable({ filters }: { filters: any }) {
-  const [selectedRecord, setSelectedRecord] = useState<DataType | null>(null);
+export default function SubscriptionListTable({ filters }: Props) {
   const navigate = useNavigate();
 
-  const allData: DataType[] = Array.from({ length: 30 }, (_, i) => ({
-    id: (i + 1).toString(),
-    user: "Alibek Jumaniyazov",
-    definition: [Math.random() > 0.5 ? "Premium" : "Boshlang’ich"],
-    amout: (Math.floor(Math.random() * 500000) + 50000).toString(),
-    startDate: "2025/06/15",
-    endDate: "2025/07/15",
-    status: [Math.random() > 0.5 ? "Faol" : "Tugagan"],
-  }));
+  const { data, isLoading } = useSubscriptionsPayment();
+
+  const allData: DataType[] =
+    data?.data.map((item: SubscriptionPayment) => ({
+      id: item.id.toString(),
+      userId: item.user.id.toString(),
+      user: `${item.user?.firstName || ""} ${item.user?.lastName || ""}`,
+      definition: [item.subscriptionType?.title || "Noma'lum"],
+      amout: `${item.subscriptionType?.price || 0}`,
+      startDate: dayjs(item.startDate).format("YYYY-MM-DD"),
+      endDate: dayjs(item.expiredDate).format("YYYY-MM-DD"),
+      status: [item.status === "ACTIVE" ? "Faol" : "Tugagan"],
+    })) || [];
 
   const filteredData = allData.filter((item) => {
     const matchUser = filters?.searchUser
@@ -106,6 +115,7 @@ export default function SubscriptionListTable({ filters }: { filters: any }) {
 
   return (
     <Table
+      loading={isLoading}
       columns={columns}
       dataSource={filteredData}
       pagination={{
@@ -118,8 +128,7 @@ export default function SubscriptionListTable({ filters }: { filters: any }) {
       onRow={(record) => {
         return {
           onClick: () => {
-            setSelectedRecord(record);
-            navigate(`/user/${record.id}`);
+            navigate(`/user/${record.userId}`);
           },
         };
       }}

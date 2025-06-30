@@ -3,10 +3,12 @@ import { Button, Input } from "antd";
 import PaymentHistoryTabs from "../../components/PaymentHistory/PaymentHistoryTabs";
 import PaymentHistoryTabsFilter from "../../components/PaymentHistory/PaymentHistoryTabsFilter";
 import { useState } from "react";
+import { useTransactionByPaymentType } from "../../hooks/useTransaction";
 
 export default function PaymentHistory() {
   const [open, setOpen] = useState(false);
   const [filters, setFilters] = useState<any>(null);
+  const { data } = useTransactionByPaymentType("NORMAL");
 
   const handleFilter = (values: any) => {
     setFilters(values);
@@ -43,7 +45,7 @@ export default function PaymentHistory() {
           <PaymentHistoryTabsFilter onFilter={handleFilter} />
         </div>
       )}
-      <PaymentHistoryTabs filters={filters} />
+      <PaymentHistoryTabs filters={filters} data={data?.data ?? []} />
     </div>
   );
 }

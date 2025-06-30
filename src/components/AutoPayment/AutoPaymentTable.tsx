@@ -1,6 +1,7 @@
 import { Table, Tag, type TableProps } from "antd";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
+import type { Transaction } from "../../api/transactionApi";
 
 interface DataType {
   id: string;
@@ -8,22 +9,31 @@ interface DataType {
   definition: string[];
   amout: string;
   date: string;
-  status: string[];
-  error: string[];
+  status: string;
+  error: string;
 }
 
-export default function AutoPaymentTable({ filters }: { filters: any }) {
+export default function AutoPaymentTable({
+  filters,
+  data,
+}: {
+  filters: any;
+  data: Transaction[];
+}) {
   const navigate = useNavigate();
 
-  const allData: DataType[] = Array.from({ length: 30 }, (_, i) => ({
-    id: (i + 1).toString(),
-    user: "Alibek Jumaniyazov",
-    definition: [Math.random() > 0.5 ? "Premium" : "Boshlang’ich"],
-    amout: `${Math.floor(Math.random() * 500000 + 50000)} so'm`,
-    date: "2025/06/25",
-    status: [Math.random() > 0.5 ? "Muvaffaqiyatli" : "Xato"],
-    error: [Math.random() > 0.5 ? "Yechildi" : "Kartada mablag' yetarli emas"],
-  }));
+  const allData: DataType[] = data.map((item) => {
+    const isPaid = item.status === "Paid";
+    return {
+      id: item.id.toString(),
+      user: `${item.user?.firstName || ""} ${item.user?.lastName || ""}`,
+      definition: [item.subscriptionType?.title || "Noma'lum"],
+      amout: `${item.price?.toString()} so'm`,
+      date: new Date(item.createdAt).toLocaleString("uz-UZ"),
+      status: isPaid ? "Muvaffaqiyatli" : "Xato",
+      error: isPaid ? "Yechildi" : "Kartada mablag' yetarli emas",
+    };
+  });
 
   const filteredData = allData.filter((item) => {
     const userMatch = filters?.searchUser
@@ -35,13 +45,9 @@ export default function AutoPaymentTable({ filters }: { filters: any }) {
       ? item.definition.includes(filters.definition)
       : true;
 
-    const statusMatch = filters?.status
-      ? item.status.includes(filters.status)
-      : true;
+    const statusMatch = filters?.status ? item.status === filters.status : true;
 
-    const errorMatch = filters?.error
-      ? item.error.includes(filters.error)
-      : true;
+    const errorMatch = filters?.error ? item.error === filters.error : true;
 
     const minAmountMatch = filters?.minAmount
       ? parseInt(item.amout.replace(/\D/g, "")) >= +filters.minAmount
@@ -81,18 +87,16 @@ export default function AutoPaymentTable({ filters }: { filters: any }) {
       title: "Holati",
       dataIndex: "status",
       key: "status",
-      render: (status: string[]) =>
-        status.map((tag) => (
-          <Tag color={tag === "Muvaffaqiyatli" ? "green" : "red"} key={tag}>
-            {tag}
-          </Tag>
-        )),
+      render: (status: string) => (
+        <Tag color={status === "Muvaffaqiyatli" ? "green" : "red"}>
+          {status}
+        </Tag>
+      ),
     },
     {
       title: "Xato sababi",
       dataIndex: "error",
       key: "error",
-      render: (error: string[]) => error.join(", "),
     },
   ];
 

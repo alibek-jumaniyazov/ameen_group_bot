@@ -3,11 +3,13 @@ import { Button, Input } from "antd";
 import { useState } from "react";
 import AutoPaymentTable from "../../components/AutoPayment/AutoPaymentTable";
 import AutoPaymentTableFilter from "../../components/AutoPayment/AutoPaymentTableFilter";
+import { useTransactionByPaymentType } from "../../hooks/useTransaction";
 
 export default function AutoPayment() {
   const [showFilter, setShowFilter] = useState(false);
   const [filters, setFilters] = useState<any>(null);
   const [search, setSearch] = useState<string>("");
+  const { data } = useTransactionByPaymentType("AUTO");
 
   const handleFilter = (values: any) => {
     setFilters(values);
@@ -56,7 +58,7 @@ export default function AutoPayment() {
         </div>
       )}
 
-      <AutoPaymentTable filters={filters} />
+      <AutoPaymentTable filters={filters} data={data?.data ?? []} />
     </div>
   );
 }
