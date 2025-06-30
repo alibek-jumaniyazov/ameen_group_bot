@@ -26,7 +26,6 @@ export default function DefnModal({
       title: values.title ?? "",
       description: values.description ?? "",
       expireDays: Number(values.expireDays),
-      telegramTopicIds: [123456, 654321],
     };
 
     createSubscription.mutate(cleanedData, {

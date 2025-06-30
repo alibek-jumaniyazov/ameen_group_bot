@@ -6,7 +6,6 @@ export interface SubscriptionType {
   title: string;
   description: string;
   expireDays: number;
-  telegramTopicIds: number[];
   createdAt: string;
   updatedAt: string;
 }

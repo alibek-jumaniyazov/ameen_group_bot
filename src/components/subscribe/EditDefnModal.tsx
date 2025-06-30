@@ -43,7 +43,6 @@ export default function EditDefnModal({
       title: values.title ?? "",
       description: values.description ?? "",
       expireDays: Number(values.expireDays),
-      telegramTopicIds: record.telegramTopicIds || [],
     };
 
     updateSubscription.mutate(
