@@ -1,7 +1,10 @@
-import { Button, Col, DatePicker, Drawer, Form, Row, Select } from "antd";
+import { Button, Col, Drawer, Form, Row, Select, Spin, message } from "antd";
 import { useForm } from "antd/es/form/Form";
-import dayjs from "dayjs";
 import TextArea from "antd/es/input/TextArea";
+import { useCreateMessage } from "../../hooks/useMessage";
+import { useUsers } from "../../hooks/useUser";
+import { useEffect } from "react";
+import { useSubscriptions } from "../../hooks/useSubscription";
 
 export default function SendMessageAction({
   onClose,
@@ -11,31 +14,60 @@ export default function SendMessageAction({
   open: boolean;
 }) {
   const [form] = useForm();
+  const { data: subscriptions } = useSubscriptions();
+  const { data: userList, isLoading } = useUsers();
+
+  const createMessage = useCreateMessage();
+  const userOptions =
+    userList?.data?.map((user) => ({
+      value: user.id,
+      label: `${user.firstName} ${user.lastName} (${user.phoneNumber})`,
+    })) || [];
 
   const onFinish = (values: any) => {
     const plainMessage: string = values.message || "";
 
     const markdownMessage: string = plainMessage
       .split("\n")
-      .map((line: string, i: number) => (i === 0 ? `# ${line}` : `**${line}**`))
+      .map((line: string, i: number) => (i === 0 ? `*${line}*` : `_${line}_`))
       .join("\n");
 
-    const payload = {
-      ...values,
-      date: values.date
-        ? dayjs(values.date).format("YYYY/MM/DD HH:mm")
-        : undefined,
-      message: markdownMessage,
+    const payload: any = {
+      text: markdownMessage,
+      status: values.status ? values.status : "",
+      userIds: values.userIds ? values.userIds : [],
+      subscriptionTypeId: values.subscriptionTypeId
+        ? values.subscriptionTypeId
+        : "",
     };
 
-    console.log("Markdown formatdagi xabar:", payload);
-    form.resetFields();
-    onClose();
+    if (values.subscriptionTypeId) {
+      payload.subscriptionTypeId = Number(values.subscriptionTypeId);
+    }
+    console.log(payload);
+
+    createMessage.mutate(payload, {
+      onSuccess: () => {
+        form.resetFields();
+        onClose();
+        message.success("Xabar muvaffaqiyatli yuborildi");
+      },
+      onError: (err) => {
+        console.log(err);
+        message.error("Xatolik yuz berdi");
+      },
+    });
   };
+
+  useEffect(() => {
+    if (!open) {
+      form.resetFields();
+    }
+  }, [open, form]);
 
   return (
     <Drawer
-      title={"Yangi xabar yuborish"}
+      title="Yangi xabar yuborish"
       width={600}
       onClose={onClose}
       open={open}
@@ -57,9 +89,7 @@ export default function SendMessageAction({
             <Form.Item
               label="Xabar matni"
               name="message"
-              rules={[
-                { required: true, message: "Iltimos, xabar matnini kiriting" },
-              ]}
+              rules={[{ required: true, message: "Xabar matni kerak" }]}
             >
               <TextArea rows={6} placeholder="Xabar matnini kiriting" />
             </Form.Item>
@@ -67,25 +97,33 @@ export default function SendMessageAction({
         </Row>
 
         <Row gutter={16}>
-          <Col span={24}>
-            <Form.Item label="Sana va vaqt" name="date">
-              <DatePicker
-                className="!w-full"
-                format="YYYY-MM-DD HH:mm"
-                showTime={{ format: "HH:mm" }}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col span={24}>
-            <Form.Item label="Tarif" name="receivers">
+          <Col span={12}>
+            <Form.Item label="Tarif" name="subscriptionTypeId">
               <Select
                 placeholder="Tarifni tanlang"
+                options={subscriptions?.data?.map((sub) => ({
+                  value: sub.id.toString(),
+                  label: sub.title,
+                }))}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item
+              label="Foydalanuvchi holati"
+              name="status"
+              rules={[
+                { required: true, message: "Foydalanuvchi holatini tanlang" },
+              ]}
+            >
+              <Select
+                placeholder="Status tanlang"
                 options={[
-                  { value: "premium", label: "Premium" },
-                  { value: "biznes", label: "Biznes" },
-                  { value: "beginner", label: "Boshlang'ich" },
+                  { value: "SUBSCRIBE", label: "Faol" },
+                  { value: "EXPIRED", label: "Muddati tugagan" },
+                  { value: "REGISTERED", label: "Obuna olmagan" },
+                  { value: " ", label: "Barcha" },
                 ]}
               />
             </Form.Item>
@@ -93,14 +131,22 @@ export default function SendMessageAction({
         </Row>
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item label="Qabul qiluvchilar" name="receivers">
-              <Select
-                placeholder="Qabul qiluvchilarni tanlang"
-                options={[
-                  { value: "activeUsers", label: "Faol obunali" },
-                  { value: "all", label: "Barchasi" },
-                ]}
-              />
+            <Form.Item label="Foydalanuvchilarni tanlang" name="userIds">
+              {isLoading ? (
+                <Spin />
+              ) : (
+                <Select
+                  mode="multiple"
+                  placeholder="Foydalanuvchilarni yozing va tanlang"
+                  showSearch
+                  filterOption={(input, option) =>
+                    (option?.label as string)
+                      ?.toLowerCase()
+                      ?.includes(input.toLowerCase())
+                  }
+                  options={userOptions}
+                />
+              )}
             </Form.Item>
           </Col>
         </Row>
