@@ -1,10 +1,10 @@
 import { Button, Col, Drawer, Form, Row, Select, Spin, message } from "antd";
 import { useForm } from "antd/es/form/Form";
-import TextArea from "antd/es/input/TextArea";
 import { useCreateMessage } from "../../hooks/useMessage";
 import { useUsers } from "../../hooks/useUser";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSubscriptions } from "../../hooks/useSubscription";
+import MessageEditor from "./MessageEditor";
 
 export default function SendMessageAction({
   onClose,
@@ -14,10 +14,12 @@ export default function SendMessageAction({
   open: boolean;
 }) {
   const [form] = useForm();
+  const [editorValue, setEditorValue] = useState<string>("");
+
   const { data: subscriptions } = useSubscriptions();
   const { data: userList, isLoading } = useUsers();
-
   const createMessage = useCreateMessage();
+
   const userOptions =
     userList?.data?.map((user) => ({
       value: user.id,
@@ -25,30 +27,22 @@ export default function SendMessageAction({
     })) || [];
 
   const onFinish = (values: any) => {
-    const plainMessage: string = values.message || "";
-
-    const markdownMessage: string = plainMessage
-      .split("\n")
-      .map((line: string, i: number) => (i === 0 ? `*${line}*` : `_${line}_`))
-      .join("\n");
+    const plainMessage = editorValue;
 
     const payload: any = {
-      text: markdownMessage,
-      status: values.status ? values.status : "",
-      userIds: values.userIds ? values.userIds : [],
+      text: plainMessage,
+      status: values.status == " " ? undefined : values.status || undefined,
+      userIds: values.userIds || undefined,
       subscriptionTypeId: values.subscriptionTypeId
-        ? values.subscriptionTypeId
-        : "",
+        ? Number(values.subscriptionTypeId)
+        : undefined,
     };
-
-    if (values.subscriptionTypeId) {
-      payload.subscriptionTypeId = Number(values.subscriptionTypeId);
-    }
     console.log(payload);
 
     createMessage.mutate(payload, {
       onSuccess: () => {
         form.resetFields();
+        setEditorValue("");
         onClose();
         message.success("Xabar muvaffaqiyatli yuborildi");
       },
@@ -62,8 +56,9 @@ export default function SendMessageAction({
   useEffect(() => {
     if (!open) {
       form.resetFields();
+      setEditorValue("");
     }
-  }, [open, form]);
+  }, [open]);
 
   return (
     <Drawer
@@ -91,7 +86,7 @@ export default function SendMessageAction({
               name="message"
               rules={[{ required: true, message: "Xabar matni kerak" }]}
             >
-              <TextArea rows={6} placeholder="Xabar matnini kiriting" />
+              <MessageEditor value={editorValue} onChange={setEditorValue} />
             </Form.Item>
           </Col>
         </Row>
@@ -110,13 +105,7 @@ export default function SendMessageAction({
           </Col>
 
           <Col span={12}>
-            <Form.Item
-              label="Foydalanuvchi holati"
-              name="status"
-              rules={[
-                { required: true, message: "Foydalanuvchi holatini tanlang" },
-              ]}
-            >
+            <Form.Item label="Foydalanuvchi holati" name="status">
               <Select
                 placeholder="Status tanlang"
                 options={[
@@ -129,6 +118,7 @@ export default function SendMessageAction({
             </Form.Item>
           </Col>
         </Row>
+
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item label="Foydalanuvchilarni tanlang" name="userIds">
