@@ -1,81 +1,80 @@
-import { Table, Tag, type TableProps } from "antd";
-import { useMemo } from "react";
+import { Table, type TableProps } from "antd";
+import { useMemo, useState } from "react";
 import dayjs from "dayjs";
+import { useMessages } from "../../hooks/useMessage";
+import type { MessageQueryParams, Message } from "../../api/messageApi";
 
-interface DataType {
-  id: string;
-  message: string;
-  date: string;
-  numberRecipients: number;
-  // status: string[];
+interface SendMessageTableProps {
+  filters?: {
+    searchUser?: string;
+    date?: string;
+    status?: string;
+  };
 }
 
-export default function SendMessageTable({ filters }: { filters: any }) {
-  const allData: DataType[] = useMemo(() => {
-    return Array.from({ length: 30 }, (_, i) => ({
-      id: (i + 1).toString(),
-      message: "Yangi Tarif",
-      date: "2025/06/25 07:07",
-      numberRecipients: 30 + i,
-      // status: [Math.random() > 0.5 ? "Muvaffaqiyatli" : "Xato"],
+export default function SendMessageTable({ filters }: SendMessageTableProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
 
-    }));
-  }, []);
+  const queryParams: MessageQueryParams = useMemo(() => {
+    const params: MessageQueryParams = {
+      page: currentPage,
+      limit: pageSize,
+    };
+    if (filters?.searchUser) params.text = filters.searchUser;
+    if (filters?.status && filters.status !== " ")
+      params.status = filters.status;
+    return params;
+  }, [filters, currentPage, pageSize]);
 
-  const filteredData = useMemo(() => {
-    return allData.filter((item) => {
-      const userMatch = filters?.searchUser
-        ? item.id.includes(filters.searchUser)
-        : true;
+  const { data, isLoading } = useMessages(queryParams);
 
-      const dateMatch = filters?.date
-        ? dayjs(item.date).format("YYYY/MM/DD") === filters.date
-        : true;
+  const messages = Array.isArray(data) ? data : data?.data || [];
+  const total = data?.total || messages.length;
 
-      return userMatch && dateMatch;
-    });
-  }, [filters, allData]);
-
-  const columns: TableProps<DataType>["columns"] = [
-    { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Matn", dataIndex: "message", key: "message" },
-    { title: "Sana va vaqat", dataIndex: "date", key: "date" },
+  const columns: TableProps<Message>["columns"] = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "Matn",
+      dataIndex: "text",
+      key: "text",
+      render: (text: string) => (
+        <div dangerouslySetInnerHTML={{ __html: text }} />
+      ),
+    },
+    {
+      title: "Sana va vaqt",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (date: string) => dayjs(date).format("YYYY-MM-DD HH:mm"),
+    },
     {
       title: "Qabul qiluvchilar soni",
-      dataIndex: "numberRecipients",
-      key: "numberRecipients",
+      dataIndex: "users",
+      key: "users",
+      render: (users: any) => {
+        if (Array.isArray(users)) return users.length;
+        if (typeof users === "number") return 1;
+        return 0;
+      },
     },
-    // {
-    //   title: "Holati",
-    //   dataIndex: "status",
-    //   key: "status",
-    //   render: (status: string[]) =>
-    //     status.map((tag) => (
-    //       <Tag color={tag === "Muvaffaqiyatli" ? "green" : "red"} key={tag}>
-    //         {tag}
-    //       </Tag>
-    //     )),
-    // },
-    // {
-    //   title: "Xato sababi",
-    //   dataIndex: "error",
-    //   key: "error",
-    //   render: (error: string[]) => error.join(", "),
-    // },
-    // {
-    //   title: "Harakat",
-    //   key: "action",
-    //   render: () => <Button type="default">Qayta yuborish</Button>,
-    // },
   ];
+  console.log(messages);
 
   return (
     <Table
       columns={columns}
-      dataSource={filteredData}
+      dataSource={messages}
+      loading={isLoading}
       pagination={{
-        pageSize: 10,
-        total: filteredData.length,
+        current: currentPage,
+        pageSize: pageSize,
+        total: total,
+        onChange: (page) => setCurrentPage(page),
         showTotal: (total) => `Jami: ${total} ta yuborilgan xabar`,
         showSizeChanger: false,
       }}

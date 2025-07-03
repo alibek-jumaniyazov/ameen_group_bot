@@ -5,7 +5,6 @@ import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 
 const { TextArea } = Input;
-
 export default function MessageEditor({
   value,
   onChange,
@@ -17,8 +16,10 @@ export default function MessageEditor({
 
   const handleEmojiSelect = (emoji: any) => {
     const emojiChar = emoji.native || emoji.colons || emoji.id || "";
-    onChange(value + " " + emojiChar);
+    const safeValue = value || "";
+    onChange(safeValue.trim() === "" ? emojiChar : safeValue + " " + emojiChar);
   };
+
   const emojiContent = (
     <Picker
       data={data}
@@ -39,16 +40,18 @@ export default function MessageEditor({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Xabar matnini shu yerga yozing..."
+        name="text"
       />
       <Popover
         content={emojiContent}
         trigger="click"
-        open={showEmoji}
-        onOpenChange={(open) => setShowEmoji(open)}
+        visible={showEmoji}
+        onVisibleChange={(visible) => setShowEmoji(visible)}
       >
         <Button
           icon={<SmileOutlined />}
           style={{ position: "absolute", bottom: 10, right: 10 }}
+          onClick={() => setShowEmoji(!showEmoji)}
         />
       </Popover>
     </div>

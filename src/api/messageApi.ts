@@ -35,6 +35,7 @@ export interface PaginatedResponse<T> {
   limit: number;
   data: T[];
 }
+
 export const MessageApi = {
   getAll: async (
     params?: MessageQueryParams

@@ -83,7 +83,7 @@ export default function SendMessageAction({
           <Col span={24}>
             <Form.Item
               label="Xabar matni"
-              name="message"
+              name="text"
               rules={[{ required: true, message: "Xabar matni kerak" }]}
             >
               <MessageEditor value={editorValue} onChange={setEditorValue} />
