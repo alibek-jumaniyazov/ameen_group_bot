@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import dayjs from "dayjs";
 import { useMessages } from "../../hooks/useMessage";
 import type { MessageQueryParams, Message } from "../../api/messageApi";
+import { useNavigate } from "react-router-dom";
 
 interface SendMessageTableProps {
   filters?: {
@@ -56,20 +57,19 @@ export default function SendMessageTable({ filters }: SendMessageTableProps) {
       title: "Qabul qiluvchilar soni",
       dataIndex: "users",
       key: "users",
-      render: (users: any) => {
-        if (Array.isArray(users)) return users.length;
-        if (typeof users === "number") return 1;
-        return 0;
-      },
+    
     },
   ];
   console.log(messages);
-
+  const navigate = useNavigate();
   return (
     <Table
       columns={columns}
       dataSource={messages}
       loading={isLoading}
+      onRow={(record) => ({
+        onClick: () => navigate(`/send-message/${record.id}`),
+      })}
       pagination={{
         current: currentPage,
         pageSize: pageSize,
