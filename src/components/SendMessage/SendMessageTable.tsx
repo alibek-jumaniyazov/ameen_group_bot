@@ -16,6 +16,7 @@ interface SendMessageTableProps {
 export default function SendMessageTable({ filters }: SendMessageTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
+  const navigate = useNavigate();
 
   const queryParams: MessageQueryParams = useMemo(() => {
     const params: MessageQueryParams = {
@@ -43,10 +44,14 @@ export default function SendMessageTable({ filters }: SendMessageTableProps) {
       title: "Matn",
       dataIndex: "text",
       key: "text",
-      render: (text: string) => (
-        <div dangerouslySetInnerHTML={{ __html: text }} />
-      ),
+      render: (text: string) => {
+        const plainText = text.replace(/<[^>]+>/g, ""); // HTML taglarni olib tashlaydi
+        const shortText =
+          plainText.length > 50 ? plainText.slice(0, 50) + "..." : plainText;
+        return <div title={plainText}>{shortText}</div>;
+      },
     },
+
     {
       title: "Sana va vaqt",
       dataIndex: "createdAt",
@@ -57,11 +62,9 @@ export default function SendMessageTable({ filters }: SendMessageTableProps) {
       title: "Qabul qiluvchilar soni",
       dataIndex: "users",
       key: "users",
-    
     },
   ];
   console.log(messages);
-  const navigate = useNavigate();
   return (
     <Table
       columns={columns}

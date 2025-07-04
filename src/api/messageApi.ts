@@ -1,4 +1,5 @@
 import { axiosInstance } from "./axiosInstance";
+import type { User } from "./userApi";
 
 export interface Message {
   id: number;
@@ -42,6 +43,7 @@ export interface MessageUser {
   status: "DELIVERED" | "NOTSENT";
   createdAt: string;
   updatedAt: string;
+  user: User;
 }
 export const MessageApi = {
   getAll: async (
@@ -65,7 +67,7 @@ export const MessageApi = {
     params?: MessageQueryParams
   ): Promise<Message[]> => {
     const { data } = await axiosInstance.get("/message/user", { params });
-    return data;
+    return data.data;
   },
 
   create: async (payload: CreateMessageDto): Promise<Message> => {

@@ -5,7 +5,7 @@ import {
   useUserMessagesByStatus,
 } from "../../hooks/useMessage";
 import { UserApi, type User } from "../../api/userApi";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { MessageUser } from "../../api/messageApi";
 
 const { Title, Paragraph } = Typography;
@@ -24,9 +24,9 @@ export default function UserMessage() {
       isLoading: boolean;
     };
 
-  const filteredUserMessages = userMessages.filter(
-    (item) => item.messageId === messageId
-  );
+  const filteredUserMessages = useMemo(() => {
+    return (userMessages || []).filter((item) => item.messageId === messageId);
+  }, [userMessages, messageId]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -56,7 +56,15 @@ export default function UserMessage() {
         </Paragraph>
         <Paragraph>
           <strong>Yaratilgan vaqt:</strong>{" "}
-          {new Date(messageData?.createdAt || "").toLocaleString()}
+          {new Date(messageData?.createdAt || "").toLocaleString("uz-UZ", {
+            timeZone: "Asia/Tashkent",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          })}
         </Paragraph>
       </Card>
 
@@ -91,17 +99,36 @@ export default function UserMessage() {
               key: "status",
               render: (status: string) => {
                 let color: string = "default";
-                if (status === "DELIVERED") color = "blue";
-                else if (status === "READ") color = "green";
-                else color = "red";
-                return <Tag color={color}>{status}</Tag>;
+                let label = "Yuborilmadi";
+
+                if (status === "DELIVERED") {
+                  color = "blue";
+                  label = "Yuborildi";
+                } else if (status === "READ") {
+                  color = "green";
+                  label = "O'qildi";
+                } else {
+                  color = "red";
+                  label = "Yuborilmadi";
+                }
+
+                return <Tag color={color}>{label}</Tag>;
               },
             },
             {
               title: "Yuborilgan vaqt",
               dataIndex: "createdAt",
               key: "createdAt",
-              render: (date: string) => new Date(date).toLocaleString(),
+              render: (date: string) =>
+                new Date(date).toLocaleString("uz-UZ", {
+                  timeZone: "Asia/Tashkent",
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                }),
             },
           ]}
         />
