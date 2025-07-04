@@ -58,7 +58,8 @@ export default function Sidebar() {
     if (location.pathname.startsWith("/user")) return "Mijoz tafsiloti";
     if (location.pathname === "/subscription-statistics")
       return "Foydalanuvchilar obunasi statistikasi";
-
+    if (location.pathname.startsWith("/send-message"))
+      return "Xabar yuborish va hisobotlar";
     return "Sahifa topilmadi";
   }, [location.pathname]);
 
