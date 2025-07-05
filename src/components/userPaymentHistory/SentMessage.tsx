@@ -1,11 +1,16 @@
 import { Table, Tag, type TableProps } from "antd";
 import { useUserMessageById } from "../../hooks/useMessage";
+import type {
+  Message,
+  MessageUserId,
+  MessageUserIdText,
+} from "../../api/messageApi";
 
 interface DataType {
   id: string;
   createdAt: string;
-  message: string;
-  status: string[];
+  message: MessageUserIdText[];
+  status: string;
 }
 
 export default function SentMessage({
@@ -16,12 +21,13 @@ export default function SentMessage({
   const { data, isLoading } = useUserMessageById(Number(userId));
   console.log(data);
 
-  const allData: DataType[] = Array.from({ length: 30 }, (_, i) => ({
-    id: (i + 1).toString(),
-    createdAt: "2025/06/20 09:00",
-    message: "Obuna muddati tugayapti",
-    status: [Math.random() > 0.5 ? "Yetkazildi" : "Oqildi"],
-  }));
+  const allData: DataType[] =
+    data?.data.map((item: MessageUserId) => ({
+      id: item.id.toString(),
+      createdAt: item.createdAt,
+      message: item.message.text,
+      status: item.status,
+    })) || [];
 
   const columns: TableProps<DataType>["columns"] = [
     { title: "ID", dataIndex: "id", key: "id" },

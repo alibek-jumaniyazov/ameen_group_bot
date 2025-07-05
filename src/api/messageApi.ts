@@ -8,6 +8,21 @@ export interface Message {
   updatedAt: string;
   users?: number | any[];
 }
+export interface MessageUserId {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  status: string;
+  userId: number;
+  message: MessageUserIdText[];
+}
+
+export interface MessageUserIdText {
+  id: number;
+  text: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface CreateMessageDto {
   text: string;
@@ -60,7 +75,7 @@ export const MessageApi = {
 
   getUserMessageById: async (
     id: number
-  ): Promise<PaginatedResponse<Message>> => {
+  ): Promise<PaginatedResponse<MessageUserId>> => {
     const { data } = await axiosInstance.get(`/message/user/${id}`);
     return data;
   },
