@@ -76,7 +76,7 @@ export default function SubscriptionList({
             showSizeChanger: false,
             align: "center",
             total: allData.length,
-            showTotal: (total) => `Jami: ${total} foydalanuvchi`,
+            showTotal: (total) => `Jami: ${total} ta obuna`,
           }}
           rowKey="id"
         />

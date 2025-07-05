@@ -1,15 +1,11 @@
-import { Table, Tag, type TableProps } from "antd";
+import { Spin, Table, Tag, type TableProps } from "antd";
 import { useUserMessageById } from "../../hooks/useMessage";
-import type {
-  Message,
-  MessageUserId,
-  MessageUserIdText,
-} from "../../api/messageApi";
+import type { MessageUserId } from "../../api/messageApi";
 
 interface DataType {
   id: string;
   createdAt: string;
-  message: MessageUserIdText[];
+  message: string;
   status: string;
 }
 
@@ -19,7 +15,6 @@ export default function SentMessage({
   userId: string | undefined;
 }) {
   const { data, isLoading } = useUserMessageById(Number(userId));
-  console.log(data);
 
   const allData: DataType[] =
     data?.data.map((item: MessageUserId) => ({
@@ -70,20 +65,23 @@ export default function SentMessage({
       },
     },
   ];
+
   return (
     <div className="SubscriptionList">
-      <Table
-        columns={columns}
-        dataSource={allData}
-        pagination={{
-          pageSize: 6,
-          showSizeChanger: false,
-          align: "center",
-          total: allData.length,
-          showTotal: (total) => `Jami: ${total} foydalanuvchi`,
-        }}
-        rowKey="id"
-      />
+      <Spin spinning={isLoading}>
+        <Table
+          columns={columns}
+          dataSource={allData}
+          pagination={{
+            pageSize: 6,
+            showSizeChanger: false,
+            align: "center",
+            total: allData.length,
+            showTotal: (total) => `Jami: ${total} foydalanuvchi`,
+          }}
+          rowKey="id"
+        />
+      </Spin>
     </div>
   );
 }

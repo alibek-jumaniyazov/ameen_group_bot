@@ -14,7 +14,7 @@ export interface MessageUserId {
   updatedAt: string;
   status: string;
   userId: number;
-  message: MessageUserIdText[];
+  message: MessageUserIdText;
 }
 
 export interface MessageUserIdText {
