@@ -26,6 +26,13 @@ export const useTransactionById = (id: number) => {
     enabled: !!id,
   });
 };
+export const useTransactionUserPaymentHistoryById = (id: number) => {
+  return useQuery({
+    queryKey: ["transaction", id],
+    queryFn: () => TransactionApi.getUserPaymentHistoryById(id),
+    enabled: !!id,
+  });
+};
 
 export const useUpdateTransaction = () => {
   const queryClient = useQueryClient();

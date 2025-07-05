@@ -14,6 +14,19 @@ export interface Transaction {
   status: string;
   subscriptionType: SubscriptionTransaction;
 }
+export interface TransactionUserId {
+  id: number;
+  price: number;
+  transactionId: string;
+  paymentType: string;
+  userId: string;
+  subscriptionTypeId: number;
+  type: string;
+  createdAt: string;
+  updatedAt: string;
+  status: string;
+  subscriptionType: SubscriptionTransaction;
+}
 export interface UserTransaction {
   id: number;
   telegramId: string;
@@ -66,7 +79,12 @@ export const TransactionApi = {
     const { data } = await axiosInstance.get(`/transaction/${id}`);
     return data;
   },
-
+  getUserPaymentHistoryById: async (
+    id: number
+  ): Promise<PaginatedResponse<TransactionUserId>> => {
+    const { data } = await axiosInstance.get(`/transaction/user/${id}`);
+    return data;
+  },
   update: async (
     id: number,
     updatedFields: Partial<Transaction>

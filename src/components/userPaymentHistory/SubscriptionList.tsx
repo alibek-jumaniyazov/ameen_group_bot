@@ -9,7 +9,7 @@ interface DataType {
   remainingPeriod: string[];
 }
 
-export default function SubscriptionList() {
+export default function SubscriptionList({ userId }: { userId: string | undefined }) {
   const allData: DataType[] = Array.from({ length: 30 }, (_, i) => ({
     id: (i + 1).toString(),
     definition: [Math.random() > 0.5 ? "Premium" : "Boshlang’ich"],

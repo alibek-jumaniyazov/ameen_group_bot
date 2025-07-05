@@ -131,9 +131,13 @@ export default function User() {
       </div>
 
       <div className="w-full">
-        {selectedTab === "To’lovlar tarixi" && <UserPaymentHistory />}
-        {selectedTab === "Obunalar ro‘yxati" && <SubscriptionList />}
-        {selectedTab === "Yuborilgan xabarlar" && <SentMessage />}
+        {selectedTab === "To’lovlar tarixi" && (
+          <UserPaymentHistory userId={id} />
+        )}
+        {selectedTab === "Obunalar ro‘yxati" && (
+          <SubscriptionList userId={id} />
+        )}
+        {selectedTab === "Yuborilgan xabarlar" && <SentMessage userId={id} />}
       </div>
     </div>
   );

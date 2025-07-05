@@ -1,35 +1,39 @@
 import { Table, type TableProps } from "antd";
+import { useTransactionUserPaymentHistoryById } from "../../hooks/useTransaction";
+import dayjs from "dayjs";
 
 interface DataType {
   id: string;
-  amount: string;
+  price: string;
   date: string;
-  status: string[];
-  method: string;
-  additionalInfo: string;
+  status: string;
 }
 
-export default function UserPaymentHistory() {
-  const allData: DataType[] = Array.from({ length: 30 }, (_, i) => ({
-    id: (i + 1).toString(),
-    amount: "100 000 so’m",
-    date: "2025/09/19 14:30",
-    status: [Math.random() > 0.5 ? "Muvaffaqiyatli" : "Muvaffaqiyatsiz"],
-    method: "Karta(1234)",
-    additionalInfo: "To‘lov rad etildi",
+export default function UserPaymentHistory({
+  userId,
+}: {
+  userId: string | undefined;
+}) {
+  const { data, isLoading } = useTransactionUserPaymentHistoryById(userId);
+  console.log(data);
+
+  const allData: DataType[] = data?.data.map((item) => ({
+    id: item.id,
+    price: `${item.price?.toString()} so'm`,
+    date: new Date(item.createdAt).toISOString(),
+    status: item.status == "Paid" ? "Muvaffaqiyatli" : "Muvaffaqiysiz",
   }));
 
   const columns: TableProps<DataType>["columns"] = [
     { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Summasi", dataIndex: "amount", key: "amount" },
-    { title: "Sanasi", dataIndex: "date", key: "date" },
-    { title: "Holati", dataIndex: "status", key: "status" },
-    { title: "Usuli", dataIndex: "method", key: "method" },
+    { title: "Summasi", dataIndex: "price", key: "price" },
     {
-      title: "Qo‘shimcha ma’lumot",
-      dataIndex: "additionalInfo",
-      key: "additionalInfo",
+      title: "Sanasi",
+      dataIndex: "date",
+      key: "date",
+      render: (date: string) => dayjs(date).format("YYYY-MM-DD HH:mm"),
     },
+    { title: "Holati", dataIndex: "status", key: "status" },
   ];
 
   return (
@@ -41,8 +45,8 @@ export default function UserPaymentHistory() {
           pageSize: 6,
           showSizeChanger: false,
           align: "center",
-          total: allData.length,
-          showTotal: (total) => `Jami: ${total} foydalanuvchi`,
+          total: data?.data.length,
+          showTotal: (total) => `Jami: ${total} to'lov ro'yxati`,
         }}
         rowKey="id"
       />

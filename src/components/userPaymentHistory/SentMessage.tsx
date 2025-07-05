@@ -7,7 +7,7 @@ interface DataType {
   status: string[];
 }
 
-export default function SentMessage() {
+export default function SentMessage({ userId }: { userId: string | undefined }) {
   const allData: DataType[] = Array.from({ length: 30 }, (_, i) => ({
     id: (i + 1).toString(),
     date: "2025/06/20 09:00",
