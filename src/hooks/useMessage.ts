@@ -12,7 +12,6 @@ export const useMessages = (params?: MessageQueryParams) => {
     queryFn: () => MessageApi.getAll(params),
   });
 };
-
 export const useMessageById = (id: number) => {
   return useQuery({
     queryKey: ["message", id],
@@ -20,7 +19,13 @@ export const useMessageById = (id: number) => {
     enabled: !!id,
   });
 };
-
+export const useUserMessageById = (id: number) => {
+  return useQuery({
+    queryKey: ["message", id],
+    queryFn: () => MessageApi.getUserMessageById(id),
+    enabled: !!id,
+  });
+};
 export const useUserMessage = (id: number) => {
   return useQuery({
     queryKey: ["message-user", id],

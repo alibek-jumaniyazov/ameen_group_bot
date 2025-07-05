@@ -58,6 +58,12 @@ export const MessageApi = {
     return data;
   },
 
+  getUserMessageById: async (
+    id: number
+  ): Promise<PaginatedResponse<Message>> => {
+    const { data } = await axiosInstance.get(`/message/user/${id}`);
+    return data;
+  },
   getUserMessage: async (id: number): Promise<Message> => {
     const { data } = await axiosInstance.get(`/message/message/${id}`);
     return data;

@@ -7,9 +7,9 @@ interface DataType {
   id: string;
   definition: string[];
   startDate: string;
-  endDate: string[];
+  endDate: string;
   status: string[];
-  days: number;
+  days: string;
 }
 
 export default function SubscriptionList({
@@ -18,7 +18,6 @@ export default function SubscriptionList({
   userId: string | undefined;
 }) {
   const { data, isLoading } = useUserSubscriptionById(Number(userId));
-  console.log(data);
 
   const allData: DataType[] =
     data?.data.map((item: SubscriptionPaymentUserID) => ({
@@ -64,22 +63,6 @@ export default function SubscriptionList({
       title: "Qoldiq muddat",
       dataIndex: "days",
       key: "days",
-      render: (_, record: DataType) => (
-        <>
-          {record.days.map((tag) => {
-            const colorMap: Record<string, string> = {
-              Tugagan: "red",
-            };
-
-            const color = colorMap[tag] || (tag.length > 5 ? "" : "red");
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
     },
   ];
   return (

@@ -25,6 +25,8 @@ export interface SubscriptionPaymentUserID {
   createdAt: string;
   updatedAt: string;
   subscriptionType: SubscriptionPaymentType;
+  status: "ACTIVE" | "EXPIRED" | string;
+  days: string;
 }
 
 export interface SubscriptionPaymentUser {
