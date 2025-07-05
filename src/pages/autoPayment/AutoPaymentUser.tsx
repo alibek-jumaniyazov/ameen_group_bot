@@ -8,9 +8,6 @@ export default function AutoPaymentUser() {
   const { data } = useApi();
   const user = data.find((user) => user.key === id);
 
-  console.log(user);
-  console.log(id);
-
   return (
     <div className="User flex flex-col items-center justify-center gap-4">
       <div className="w-full !h-[282px] flex items-center justify-start gap-6 border-b border-[#92959C] pb-6">

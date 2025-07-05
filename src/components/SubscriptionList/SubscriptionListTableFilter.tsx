@@ -40,7 +40,7 @@ export default function SubscriptionListTableFilter({
   }, [filters]);
 
   return (
-    <div className="bg-white rounded-lg border shadow p-4">
+    <div className="bg-white shadow-[0px_12px_39px_-17px_rgba(34,60,80,0.29)] rounded-lg  shadow p-4">
       <Form layout="vertical" form={form} onFinish={onFinish}>
         <Row gutter={16}>
           <Col span={12}>

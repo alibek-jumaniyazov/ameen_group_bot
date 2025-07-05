@@ -7,7 +7,13 @@ import { useDeleteSubscription } from "../../hooks/useSubscription";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import confirm from "antd/es/modal/confirm";
 
-export default function SubscribeList({ data }: { data: SubscriptionType[] }) {
+export default function SubscribeList({
+  data,
+  isLoading,
+}: {
+  data: SubscriptionType[];
+  isLoading: boolean;
+}) {
   const deleteSubscription = useDeleteSubscription();
 
   const showDeleteConfirm = (id: number) => {
@@ -68,6 +74,7 @@ export default function SubscribeList({ data }: { data: SubscriptionType[] }) {
       render: (_, record) => (
         <div className="flex justify-start items-center gap-2">
           <button
+            className="cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
               setSelectedRecord(record);
@@ -77,6 +84,7 @@ export default function SubscribeList({ data }: { data: SubscriptionType[] }) {
             <Icons.pencilY />
           </button>
           <button
+            className="cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
               showDeleteConfirm(record.id);
@@ -103,6 +111,7 @@ export default function SubscribeList({ data }: { data: SubscriptionType[] }) {
       <Table<SubscriptionType>
         columns={columns}
         dataSource={data}
+        loading={isLoading}
         pagination={false}
         rowKey="id"
         onRow={(record) => ({

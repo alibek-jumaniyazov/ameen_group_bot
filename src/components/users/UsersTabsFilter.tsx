@@ -4,7 +4,7 @@ import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { useEffect } from "react";
 
-export default function PaymentHistoryTabsFilter({
+export default function UsersTabsFilter({
   onFilter,
   filters,
 }: {
@@ -56,18 +56,18 @@ export default function PaymentHistoryTabsFilter({
             <Form.Item label="Foydalanuvchi bo’yicha" name="searchUser">
               <Input
                 type="search"
-                placeholder="Foydalanuvchi bo’yicha"
+                placeholder="Foydalanuvchi"
                 prefix={<Icons.search />}
               />
             </Form.Item>
           </Col>
         </Row>
-
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item label="Tarif" name="definition">
               <Select
                 placeholder="Tarif tanlang"
+                allowClear
                 options={[
                   { value: "Boshlang’ich", label: "Boshlang’ich" },
                   { value: "Premium", label: "Premium" },
@@ -77,35 +77,6 @@ export default function PaymentHistoryTabsFilter({
             </Form.Item>
           </Col>
         </Row>
-
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item label="Minimum summa" name="minAmount">
-              <Input suffix="so'm" placeholder="Min summa" />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label="Maksimum summa" name="maxAmount">
-              <Input suffix="so'm" placeholder="Max summa" />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col span={24}>
-            <Form.Item label="Holati" name="status">
-              <Select
-                placeholder="Holat tanlang"
-                allowClear
-                options={[
-                  { value: "Muvaffaqiyatli", label: "Muvaffaqiyatli" },
-                  { value: "Muvaffaqiysiz", label: "Muvaffaqiysiz" },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-
         <div className="flex justify-between mt-4">
           <Button
             onClick={handleClear}

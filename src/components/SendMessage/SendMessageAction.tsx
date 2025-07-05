@@ -1,5 +1,4 @@
 import { Button, Col, Drawer, Form, Row, Select, Spin, message } from "antd";
-import { useForm } from "antd/es/form/Form";
 import { useCreateMessage } from "../../hooks/useMessage";
 import { useUsers } from "../../hooks/useUser";
 import { useEffect, useState } from "react";
@@ -13,7 +12,7 @@ export default function SendMessageAction({
   onClose: () => void;
   open: boolean;
 }) {
-  const [form] = useForm();
+  const [form] = Form.useForm();
   const [editorValue, setEditorValue] = useState<string>("");
 
   const { data: subscriptions } = useSubscriptions();
@@ -27,8 +26,11 @@ export default function SendMessageAction({
     })) || [];
 
   const onFinish = (values: any) => {
+    if (!editorValue.trim()) {
+      message.warning("Xabar matni bo‘sh bo‘lishi mumkin emas");
+      return;
+    }
     const plainMessage = editorValue;
-
     const payload: any = {
       text: plainMessage,
       status: values.status == " " ? undefined : values.status || undefined,
@@ -37,7 +39,6 @@ export default function SendMessageAction({
         ? Number(values.subscriptionTypeId)
         : undefined,
     };
-    console.log(payload);
 
     createMessage.mutate(payload, {
       onSuccess: () => {

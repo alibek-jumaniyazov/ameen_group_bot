@@ -40,23 +40,44 @@ interface DataType {
   updatedAt: string;
   subscription: Subscription[];
 }
-export default function UsersTabs({ search }: { search: string }) {
-  const { data } = useUsers();
+export default function UsersTabs({
+  search,
+  filters,
+}: {
+  search: string;
+  filters: any;
+}) {
+  const { data, isLoading } = useUsers();
   const { confirm } = Modal;
   const deleteUser = useDeleteUser();
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
   const [selectedRecord, setSelectedRecord] = useState<DataType | null>(null);
 
-  console.log(data);
-
   const filteredData = data?.data?.filter((user) => {
-    const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
-    return (
-      user.id.toString().includes(search) ||
-      fullName.includes(search.toLowerCase()) ||
-      user.phoneNumber.includes(search)
-    );
+    const lowerSearch = search.toLowerCase();
+    const fullName = `${user.firstName ?? ""} ${
+      user.lastName ?? ""
+    }`.toLowerCase();
+    const phone = user.phoneNumber ?? "";
+    const idStr = user.id.toString();
+
+    const matchesSearch =
+      idStr.includes(lowerSearch) ||
+      fullName.includes(lowerSearch) ||
+      phone.includes(lowerSearch);
+
+    const matchesFilter =
+      (!filters?.searchUser ||
+        fullName.includes(filters.searchUser.toLowerCase())) &&
+      (!filters?.definition ||
+        user.subscription?.some(
+          (s) => s.subscriptionTypeId === filters.definition
+        )) &&
+      (!filters?.date ||
+        dayjs(user.createdAt).isSame(dayjs(filters.date), "day"));
+
+    return matchesSearch && matchesFilter;
   });
 
   const showDeleteConfirm = (id: number) => {
@@ -138,6 +159,7 @@ export default function UsersTabs({ search }: { search: string }) {
       render: (_, record) => (
         <div className="flex justify-start items-center gap-6">
           <button
+            className="cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
               setSelectedRecord(record);
@@ -147,6 +169,7 @@ export default function UsersTabs({ search }: { search: string }) {
             <Icons.pencil />
           </button>
           <button
+            className="cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
               showDeleteConfirm(record.id);
@@ -181,7 +204,9 @@ export default function UsersTabs({ search }: { search: string }) {
       <div className="flex flex-col gap-4 w-full">
         <Table<DataType>
           columns={columns}
+          loading={isLoading}
           dataSource={filteredData}
+          rowKey="id"
           pagination={{
             showSizeChanger: false,
             align: "center",

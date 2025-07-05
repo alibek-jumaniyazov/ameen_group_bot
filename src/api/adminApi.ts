@@ -1,3 +1,4 @@
+import axios from "axios";
 import { axiosInstance } from "./axiosInstance";
 
 export interface AdminLoginRequest {
@@ -24,11 +25,12 @@ export const AdminApi = {
     const { data } = await axiosInstance.post("/admin/login", credentials);
     return data;
   },
-
   refresh: async (
     refreshToken: string
   ): Promise<Pick<AdminLoginResponse, "accessToken" | "refreshToken">> => {
-    const { data } = await axiosInstance.post("/refresh", { refreshToken });
+    const { data } = await axios.post("http://localhost:3000/api/refresh", {
+      refreshToken,
+    });
     return data;
   },
 

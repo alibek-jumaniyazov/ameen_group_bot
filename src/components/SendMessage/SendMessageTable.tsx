@@ -64,7 +64,6 @@ export default function SendMessageTable({ filters }: SendMessageTableProps) {
       key: "users",
     },
   ];
-  console.log(messages);
   return (
     <Table
       columns={columns}

@@ -1,6 +1,5 @@
 import axios from "axios";
 import { TokenManager } from "./tokenManager";
-import { AdminApi } from "./adminApi";
 
 const BASE_URL = "http://localhost:3000/api";
 
@@ -36,7 +35,7 @@ const processQueue = (error: unknown, token: string | null = null) => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+    const originalRequest = error.config as any;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
@@ -58,7 +57,17 @@ axiosInstance.interceptors.response.use(
         const refresh = TokenManager.getRefreshToken();
         if (!refresh) throw new Error("No refresh token");
 
-        const data = await AdminApi.refresh(refresh);
+        const plainAxios = axios.create();
+        const { data } = await plainAxios.post(
+          `${BASE_URL}/refresh`,
+          { refreshToken: refresh },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
         TokenManager.setTokens(data);
         axiosInstance.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
         processQueue(null, data.accessToken);

@@ -23,7 +23,7 @@ export default function SendMessage() {
             <Icons.search className="w-5" />
             <Input
               placeholder="Search (ID yoki Foydalanuvchi)"
-              bordered={false}
+              variant="borderless"
               className="placeholder:!text-[#94A3B8]"
               value={search}
               onChange={(e) => setSearch(e.target.value)}

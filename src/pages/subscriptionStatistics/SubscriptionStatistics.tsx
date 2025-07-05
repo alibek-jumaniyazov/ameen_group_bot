@@ -61,7 +61,7 @@ export default function SubscriptionStatisticsTabs() {
       },
     });
   };
-  console.log(users);
+
   const columns: TableProps<any>["columns"] = [
     { title: "Id", dataIndex: "id", key: "id" },
     { title: "Ism", dataIndex: "firstName", key: "firstName" },
@@ -110,6 +110,7 @@ export default function SubscriptionStatisticsTabs() {
       render: (_, record) => (
         <div className="flex items-center gap-4">
           <button
+          className="cursor-pointer"
             onClick={() => {
               setSelectedRecord(record);
               setOpen(true);
@@ -118,6 +119,7 @@ export default function SubscriptionStatisticsTabs() {
             <Icons.pencil />
           </button>
           <button
+          className="cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
               showDeleteConfirm(record.id);
@@ -141,7 +143,7 @@ export default function SubscriptionStatisticsTabs() {
             <button
               key={type}
               onClick={() => setSelectedTab(type as any)}
-              className={`px-4 py-2 text-sm font-medium ${
+              className={`px-4 py-2 text-sm font-medium cursor-pointer ${
                 selectedTab === type
                   ? "bg-[#528af9] text-white rounded-[6px]"
                   : "text-gray-600"

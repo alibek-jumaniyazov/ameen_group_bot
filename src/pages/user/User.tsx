@@ -101,7 +101,7 @@ export default function User() {
               <button
                 key={tab}
                 onClick={() => setSelectedTab(tab as typeof selectedTab)}
-                className={`px-4 py-2 text-sm font-medium ${
+                className={`px-4 py-2 text-sm font-medium cursor-pointer ${
                   selectedTab === tab
                     ? "bg-[#528af9] text-white rounded-[6px]"
                     : "text-gray-600"
@@ -120,7 +120,7 @@ export default function User() {
               type="text"
               color="#92959C"
               placeholder="Search"
-              bordered={false}
+              variant="borderless"
               className="placeholder:!text-[#94A3B8]"
             />
           </div>

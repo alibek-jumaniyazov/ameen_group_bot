@@ -15,6 +15,7 @@ export default function Subscribe() {
     setOpen(false);
   };
 
+
   const onChange = (key: string) => {
     setActiveTab(key);
   };
@@ -26,7 +27,7 @@ export default function Subscribe() {
       children: isLoading ? (
         <Spin />
       ) : (
-        <SubscribeList data={data?.data ?? []} />
+        <SubscribeList data={data?.data ?? []} isLoading={isLoading} />
       ),
     },
     {

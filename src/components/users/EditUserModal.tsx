@@ -20,10 +20,10 @@ export default function EditUserModal({
   const deleteUser = useDeleteUser();
 
   useEffect(() => {
-    if (record) {
+    if (record && open) {
       form.setFieldsValue({ ...record });
     }
-  }, [record, form]);
+  }, [record, open, form]);
 
   const onFinish = (values: Partial<User>) => {
     if (!record) return;
@@ -48,7 +48,6 @@ export default function EditUserModal({
         },
         onError: (err) => {
           console.log(err);
-
           message.error("Xatolik yuz berdi");
         },
       }

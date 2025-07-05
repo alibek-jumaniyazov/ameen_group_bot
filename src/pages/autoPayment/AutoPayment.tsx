@@ -29,7 +29,7 @@ export default function AutoPayment() {
             <Icons.search className="w-5" />
             <Input
               placeholder="Search (ID yoki Foydalanuvchi)"
-              bordered={false}
+              variant="borderless"
               className="placeholder:!text-[#94A3B8]"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -54,7 +54,7 @@ export default function AutoPayment() {
       </div>
 
       {showFilter && (
-        <div className="border border-[#E2E8F0] rounded-xl p-4 bg-white z-20">
+        <div className="shadow-[0px_12px_39px_-17px_rgba(34,60,80,0.29)] rounded-xl p-4 bg-white z-20">
           <AutoPaymentTableFilter onFilter={handleFilter} filters={filters} />
         </div>
       )}
