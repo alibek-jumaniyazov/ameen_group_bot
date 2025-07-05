@@ -1,23 +1,35 @@
-import { Table, Tag, type TableProps } from "antd";
+import { Spin, Table, Tag, type TableProps } from "antd";
+import { useUserSubscriptionById } from "../../hooks/useSubscriptionPayment";
+import type { SubscriptionPaymentUserID } from "../../api/subscriptionPaymentApi";
+import dayjs from "dayjs";
 
 interface DataType {
   id: string;
   definition: string[];
   startDate: string;
-  endDate: string;
+  endDate: string[];
   status: string[];
-  remainingPeriod: string[];
+  days: number;
 }
 
-export default function SubscriptionList({ userId }: { userId: string | undefined }) {
-  const allData: DataType[] = Array.from({ length: 30 }, (_, i) => ({
-    id: (i + 1).toString(),
-    definition: [Math.random() > 0.5 ? "Premium" : "Boshlang’ich"],
-    startDate: "2025-06-15",
-    endDate: "2025-07-15",
-    status: [Math.random() > 0.5 ? "Faol" : "Tugagan"],
-    remainingPeriod: [Math.random() > 0.5 ? "30 kun" : "Tugagan"],
-  }));
+export default function SubscriptionList({
+  userId,
+}: {
+  userId: string | undefined;
+}) {
+  const { data, isLoading } = useUserSubscriptionById(Number(userId));
+  console.log(data);
+
+  const allData: DataType[] =
+    data?.data.map((item: SubscriptionPaymentUserID) => ({
+      id: item.id.toString(),
+      definition: [item.subscriptionType?.title || "Noma'lum"],
+      amout: `${item.subscriptionType?.price || 0}`,
+      startDate: dayjs(item.startDate).format("YYYY-MM-DD"),
+      endDate: dayjs(item.expiredDate).format("YYYY-MM-DD"),
+      status: [item.status === "ACTIVE" ? "Faol" : "Tugagan"],
+      days: `${item.days} Kun`,
+    })) || [];
 
   const columns: TableProps<DataType>["columns"] = [
     { title: "ID", dataIndex: "id", key: "id" },
@@ -50,11 +62,11 @@ export default function SubscriptionList({ userId }: { userId: string | undefine
     },
     {
       title: "Qoldiq muddat",
-      dataIndex: "remainingPeriod",
-      key: "remainingPeriod",
+      dataIndex: "days",
+      key: "days",
       render: (_, record: DataType) => (
         <>
-          {record.remainingPeriod.map((tag) => {
+          {record.days.map((tag) => {
             const colorMap: Record<string, string> = {
               Tugagan: "red",
             };
@@ -72,18 +84,20 @@ export default function SubscriptionList({ userId }: { userId: string | undefine
   ];
   return (
     <div className="SubscriptionList">
-      <Table
-        columns={columns}
-        dataSource={allData}
-        pagination={{
-          pageSize: 6,
-          showSizeChanger: false,
-          align: "center",
-          total: allData.length,
-          showTotal: (total) => `Jami: ${total} foydalanuvchi`,
-        }}
-        rowKey="id"
-      />
+      <Spin spinning={isLoading}>
+        <Table
+          columns={columns}
+          dataSource={allData}
+          pagination={{
+            pageSize: 6,
+            showSizeChanger: false,
+            align: "center",
+            total: allData.length,
+            showTotal: (total) => `Jami: ${total} foydalanuvchi`,
+          }}
+          rowKey="id"
+        />
+      </Spin>
     </div>
   );
 }

@@ -14,6 +14,18 @@ export interface SubscriptionPayment {
   user: SubscriptionPaymentUser;
   subscriptionType: SubscriptionPaymentType;
 }
+export interface SubscriptionPaymentUserID {
+  id: number;
+  userId: number;
+  transactionId: number;
+  expiredDate: string;
+  startDate: string;
+  alertCount: number;
+  subscriptionTypeId: number;
+  createdAt: string;
+  updatedAt: string;
+  subscriptionType: SubscriptionPaymentType;
+}
 
 export interface SubscriptionPaymentUser {
   id: number;
@@ -71,6 +83,13 @@ export const SubscriptionApi = {
 
   getById: async (id: number): Promise<SubscriptionPayment> => {
     const { data } = await axiosInstance.get(`/subscription/${id}`);
+    return data;
+  },
+
+  getUserSubscriptionById: async (
+    id: number
+  ): Promise<PaginatedResponse<SubscriptionPaymentUserID>> => {
+    const { data } = await axiosInstance.get(`/subscription/user/${id}`);
     return data;
   },
 

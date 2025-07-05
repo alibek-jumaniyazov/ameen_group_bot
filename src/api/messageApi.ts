@@ -59,14 +59,14 @@ export const MessageApi = {
   },
 
   getUserMessage: async (id: number): Promise<Message> => {
-    const { data } = await axiosInstance.get(`/message/user/${id}`);
+    const { data } = await axiosInstance.get(`/message/message/${id}`);
     return data;
   },
 
   getUserMessagesByStatus: async (
     params?: MessageQueryParams
   ): Promise<Message[]> => {
-    const { data } = await axiosInstance.get("/message/user", { params });
+    const { data } = await axiosInstance.get("/message/message", { params });
     return data.data;
   },
 

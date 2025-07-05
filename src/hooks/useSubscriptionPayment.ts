@@ -5,7 +5,9 @@ import {
   type SubscriptionPaymentQueryParams,
 } from "../api/subscriptionPaymentApi";
 
-export const useSubscriptionsPayment = (params?: SubscriptionPaymentQueryParams) => {
+export const useSubscriptionsPayment = (
+  params?: SubscriptionPaymentQueryParams
+) => {
   return useQuery({
     queryKey: ["Subscriptions", params],
     queryFn: () => SubscriptionApi.getAll(params),
@@ -16,6 +18,14 @@ export const useSubscriptionPaymentById = (id: number) => {
   return useQuery({
     queryKey: ["Subscription", id],
     queryFn: () => SubscriptionApi.getById(id),
+    enabled: !!id,
+  });
+};
+
+export const useUserSubscriptionById = (id: number) => {
+  return useQuery({
+    queryKey: ["Subscription", id],
+    queryFn: () => SubscriptionApi.getUserSubscriptionById(id),
     enabled: !!id,
   });
 };
