@@ -1,4 +1,4 @@
-import { Table, type TableProps } from "antd";
+import { Spin, Table } from "antd";
 import { useTransactionUserPaymentHistoryById } from "../../hooks/useTransaction";
 import dayjs from "dayjs";
 
@@ -14,17 +14,19 @@ export default function UserPaymentHistory({
 }: {
   userId: string | undefined;
 }) {
-  const { data, isLoading } = useTransactionUserPaymentHistoryById(userId);
-  console.log(data);
+  const { data, isLoading } = useTransactionUserPaymentHistoryById(
+    Number(userId)
+  );
 
-  const allData: DataType[] = data?.data.map((item) => ({
-    id: item.id,
-    price: `${item.price?.toString()} so'm`,
-    date: new Date(item.createdAt).toISOString(),
-    status: item.status == "Paid" ? "Muvaffaqiyatli" : "Muvaffaqiysiz",
-  }));
+  const allData: DataType[] =
+    data?.data?.map((item: any) => ({
+      id: item.id.toString(),
+      price: `${item.price?.toString()} so'm`,
+      date: item.createdAt ? new Date(item.createdAt).toISOString() : "",
+      status: item.status === "Paid" ? "Muvaffaqiyatli" : "Muvaffaqiysiz",
+    })) || [];
 
-  const columns: TableProps<DataType>["columns"] = [
+  const columns = [
     { title: "ID", dataIndex: "id", key: "id" },
     { title: "Summasi", dataIndex: "price", key: "price" },
     {
@@ -38,18 +40,20 @@ export default function UserPaymentHistory({
 
   return (
     <div className="UserPaymentHistory">
-      <Table
-        columns={columns}
-        dataSource={allData}
-        pagination={{
-          pageSize: 6,
-          showSizeChanger: false,
-          align: "center",
-          total: data?.data.length,
-          showTotal: (total) => `Jami: ${total} to'lov ro'yxati`,
-        }}
-        rowKey="id"
-      />
+      <Spin spinning={isLoading}>
+        <Table
+          columns={columns}
+          dataSource={allData}
+          pagination={{
+            pageSize: 6,
+            showSizeChanger: false,
+            align: "center",
+            total: data?.data?.length || 0,
+            showTotal: (total) => `Jami: ${total} to'lov ro'yxati`,
+          }}
+          rowKey="id"
+        />
+      </Spin>
     </div>
   );
 }
