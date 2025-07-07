@@ -15,6 +15,7 @@ export interface MessageUserId {
   status: string;
   userId: number;
   message: MessageUserIdText;
+  messageId: number;
 }
 
 export interface MessageUserIdText {

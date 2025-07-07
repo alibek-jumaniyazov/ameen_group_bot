@@ -16,6 +16,7 @@ export interface User {
   createdAt: string;
   updatedAt: string;
   subscription: Subscription[];
+  subscriptionTitle: string;
 }
 export interface Subscription {
   id: number;

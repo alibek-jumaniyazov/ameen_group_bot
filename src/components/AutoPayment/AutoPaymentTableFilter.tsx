@@ -3,6 +3,7 @@ import { useForm } from "antd/es/form/Form";
 import { useEffect } from "react";
 import { Icons } from "../../assets/icons";
 import dayjs from "dayjs";
+import { useSubscriptions } from "../../hooks/useSubscription";
 
 export default function AutoPaymentTableFilter({
   onFilter,
@@ -12,6 +13,7 @@ export default function AutoPaymentTableFilter({
   filters: any;
 }) {
   const [form] = useForm();
+  const { data } = useSubscriptions();
 
   const onFinish = (values: any) => {
     const payload = {
@@ -65,10 +67,10 @@ export default function AutoPaymentTableFilter({
           <Form.Item label="Tarif" name="definition">
             <Select
               placeholder="Tarif tanlang"
-              options={[
-                { value: "Boshlang’ich", label: "Boshlang’ich" },
-                { value: "Premium", label: "Premium" },
-              ]}
+              options={data?.data.map((item) => ({
+                value: item.title,
+                label: item.title,
+              }))}
               allowClear
             />
           </Form.Item>

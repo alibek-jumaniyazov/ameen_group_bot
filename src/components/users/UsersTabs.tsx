@@ -1,45 +1,23 @@
 import { message, Modal, Table, Tag } from "antd";
-import type { TableProps } from "antd";
-import { Icons } from "../../assets/icons";
 import { QuestionCircleOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 import { useState } from "react";
 import EditUserModal from "./EditUserModal";
 import { useNavigate } from "react-router-dom";
 import { useDeleteUser, useUsers } from "../../hooks/useUser";
-import dayjs from "dayjs";
-
-export interface Subscription {
-  id: number;
-  userId: number;
-  expiredDate: string;
-  startDate: string;
-  alertCount: number;
-  price: number;
-  paymentType: "STRIPE" | "CLICK" | "PAYME" | string;
-  status: "Created" | "Active" | "Expired" | string;
-  subscriptionTypeId: number;
-  createdAt: string;
-  updatedAt: string;
-  transactionId: string | null;
-}
+import UsersTabsFilter from "../../components/users/UsersTabsFilter";
 
 interface DataType {
   id: number;
-  telegramId: string;
-  username: string;
   firstName: string;
   lastName: string;
-  lastActiveAt: string;
-  lastMessageAt: string;
   phoneNumber: string;
-  inGroup: boolean;
   email: string | null;
+  lastActiveAt: string;
   status: string;
-  role: string;
-  createdAt: string;
-  updatedAt: string;
-  subscription: Subscription[];
+  definition: string;
 }
+
 export default function UsersTabs({
   search,
   filters,
@@ -53,36 +31,44 @@ export default function UsersTabs({
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
   const [selectedRecord, setSelectedRecord] = useState<DataType | null>(null);
+  console.log(data);
 
-  const filteredData = data?.data?.filter((user) => {
-    const lowerSearch = search.toLowerCase();
-    const fullName = `${user.firstName ?? ""} ${
-      user.lastName ?? ""
-    }`.toLowerCase();
-    const phone = user.phoneNumber ?? "";
-    const idStr = user.id.toString();
+  const allData: DataType[] =
+    data?.data.map((item) => ({
+      id: item.id,
+      firstName: item.firstName,
+      lastName: item.lastName,
+      phoneNumber: item.phoneNumber,
+      email: item.email,
+      lastActiveAt: item.lastActiveAt,
+      status: item.status,
+      definition: item.subscriptionTitle || "Noma'lum",
+    })) || [];
 
-    const matchesSearch =
-      idStr.includes(lowerSearch) ||
-      fullName.includes(lowerSearch) ||
-      phone.includes(lowerSearch);
+  const filteredData = allData.filter((item) => {
+    const matchUser = filters?.searchUser
+      ? item.firstName
+          .toLowerCase()
+          .includes(filters.searchUser.toLowerCase()) ||
+        item.id.toString().includes(filters.searchUser)
+      : true;
 
-    const matchesFilter =
-      (!filters?.searchUser ||
-        fullName.includes(filters.searchUser.toLowerCase())) &&
-      (!filters?.definition ||
-        user.subscription?.some(
-          (s) => s.subscriptionTypeId === filters.definition
-        )) &&
-      (!filters?.date ||
-        dayjs(user.createdAt).isSame(dayjs(filters.date), "day"));
+    const matchDef = filters?.definition
+      ? item.definition === filters.definition
+      : true;
 
-    return matchesSearch && matchesFilter;
+    const matchStatus = filters?.status ? item.status === filters.status : true;
+
+    const matchDate = filters?.date
+      ? dayjs(item.lastActiveAt).format("YYYY-MM-DD HH:mm") === filters.date
+      : true;
+
+    return matchUser && matchDef && matchStatus && matchDate;
   });
 
   const showDeleteConfirm = (id: number) => {
     confirm({
-      title: "Ushbu Mijozni o'chirmoqchimisiz?",
+      title: "Ushbu mijozni o'chirmoqchimisiz?",
       icon: <QuestionCircleOutlined style={{ color: "red" }} />,
       okText: "Ha",
       okType: "danger",
@@ -91,7 +77,7 @@ export default function UsersTabs({
         handleDelete(id);
       },
       onCancel() {
-        console.log("Bekor qilindi");
+        console.log("O'chirish bekor qilindi");
       },
     });
   };
@@ -100,41 +86,20 @@ export default function UsersTabs({
     if (!id) return;
     deleteUser.mutate(id, {
       onSuccess: () => {
-        message.success("Mijoz o‘chirildi");
-        onClose();
+        message.success("Mijoz o'chirildi");
       },
       onError: () => {
-        message.error("O‘chirishda xatolik yuz berdi");
+        message.error("O'chirishda xatolik yuz berdi");
       },
     });
   };
 
-  const columns: TableProps<DataType>["columns"] = [
-    {
-      title: "Id",
-      dataIndex: "id",
-      key: "id",
-    },
-    {
-      title: "Ism",
-      dataIndex: "firstName",
-      key: "firstName",
-    },
-    {
-      title: "Familiya",
-      dataIndex: "lastName",
-      key: "lastName",
-    },
-    {
-      title: "Telefon",
-      dataIndex: "phoneNumber",
-      key: "phoneNumber",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
+  const columns = [
+    { title: "Id", dataIndex: "id", key: "id" },
+    { title: "Ism", dataIndex: "firstName", key: "firstName" },
+    { title: "Familiya", dataIndex: "lastName", key: "lastName" },
+    { title: "Telefon", dataIndex: "phoneNumber", key: "phoneNumber" },
+    { title: "Email", dataIndex: "email", key: "email" },
     {
       title: "Oxirgi faollik",
       dataIndex: "lastActiveAt",
@@ -152,11 +117,10 @@ export default function UsersTabs({
         </Tag>
       ),
     },
-
     {
       title: "Action",
       key: "action",
-      render: (_, record) => (
+      render: (_, record: DataType) => (
         <div className="flex justify-start items-center gap-6">
           <button
             className="cursor-pointer"
@@ -166,7 +130,7 @@ export default function UsersTabs({
               setOpen(true);
             }}
           >
-            <Icons.pencil />
+            Edit
           </button>
           <button
             className="cursor-pointer"
@@ -175,7 +139,7 @@ export default function UsersTabs({
               showDeleteConfirm(record.id);
             }}
           >
-            <Icons.delete />
+            Delete
           </button>
         </div>
       ),
@@ -185,10 +149,12 @@ export default function UsersTabs({
   const onClose = () => {
     setOpen(false);
   };
+
   const activeCount =
     filteredData?.filter((user) => user.status !== "REGISTERED").length || 0;
   const deactiveCount =
     filteredData?.filter((user) => user.status === "REGISTERED").length || 0;
+
   return (
     <div className="UsersTabs !w-full">
       <div className="flex justify-start items-center gap-4 mb-4">
@@ -201,26 +167,19 @@ export default function UsersTabs({
         </p>
       </div>
 
-      <div className="flex flex-col gap-4 w-full">
-        <Table<DataType>
-          columns={columns}
-          loading={isLoading}
-          dataSource={filteredData}
-          rowKey="id"
-          pagination={{
-            showSizeChanger: false,
-            align: "center",
-          }}
-          onRow={(record) => {
-            return {
-              onClick: () => {
-                setSelectedRecord(record);
-                navigate(`/user/${record.id}`);
-              },
-            };
-          }}
-        />
-      </div>
+      <Table
+        columns={columns}
+        loading={isLoading}
+        dataSource={filteredData}
+        rowKey="id"
+        pagination={{ showSizeChanger: false, align: "center" }}
+        onRow={(record) => ({
+          onClick: () => {
+            setSelectedRecord(record);
+            navigate(`/user/${record.id}`);
+          },
+        })}
+      />
       <EditUserModal onClose={onClose} open={open} record={selectedRecord} />
     </div>
   );

@@ -3,6 +3,7 @@ import { Icons } from "../../assets/icons";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { useEffect } from "react";
+import { useSubscriptions } from "../../hooks/useSubscription";
 
 export default function PaymentHistoryTabsFilter({
   onFilter,
@@ -12,6 +13,7 @@ export default function PaymentHistoryTabsFilter({
   filters: any;
 }) {
   const [form] = useForm();
+  const { data } = useSubscriptions();
 
   const onFinish = (values: any) => {
     const payload = {
@@ -68,11 +70,10 @@ export default function PaymentHistoryTabsFilter({
             <Form.Item label="Tarif" name="definition">
               <Select
                 placeholder="Tarif tanlang"
-                options={[
-                  { value: "Boshlang’ich", label: "Boshlang’ich" },
-                  { value: "Premium", label: "Premium" },
-                  { value: "Biznes", label: "Biznes" },
-                ]}
+                options={data?.data.map((item) => ({
+                  value: item.title,
+                  label: item.title,
+                }))}
               />
             </Form.Item>
           </Col>

@@ -1,12 +1,14 @@
 import { Spin, Table, Tag, type TableProps } from "antd";
 import { useUserMessageById } from "../../hooks/useMessage";
 import type { MessageUserId } from "../../api/messageApi";
+import { useNavigate } from "react-router-dom";
 
 interface DataType {
   id: string;
   createdAt: string;
   message: string;
   status: string;
+  messageId: number;
 }
 
 export default function SentMessage({
@@ -15,6 +17,8 @@ export default function SentMessage({
   userId: string | undefined;
 }) {
   const { data, isLoading } = useUserMessageById(Number(userId));
+  const navigate = useNavigate();
+  console.log(data?.data);
 
   const allData: DataType[] =
     data?.data.map((item: MessageUserId) => ({
@@ -22,6 +26,7 @@ export default function SentMessage({
       createdAt: item.createdAt,
       message: item.message.text,
       status: item.status,
+      messageId: item.messageId,
     })) || [];
 
   const columns: TableProps<DataType>["columns"] = [
@@ -72,6 +77,9 @@ export default function SentMessage({
         <Table
           columns={columns}
           dataSource={allData}
+          onRow={(record) => ({
+            onClick: () => navigate(`/send-message/${record.messageId}`),
+          })}
           pagination={{
             pageSize: 6,
             showSizeChanger: false,
