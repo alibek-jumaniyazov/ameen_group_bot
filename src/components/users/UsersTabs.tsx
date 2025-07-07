@@ -5,7 +5,6 @@ import { useState } from "react";
 import EditUserModal from "./EditUserModal";
 import { useNavigate } from "react-router-dom";
 import { useDeleteUser, useUsers } from "../../hooks/useUser";
-import UsersTabsFilter from "../../components/users/UsersTabsFilter";
 
 interface DataType {
   id: number;

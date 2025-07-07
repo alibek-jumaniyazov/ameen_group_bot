@@ -138,11 +138,6 @@ export default function EditUserModal({
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label="Username" name="username">
-              <Input disabled={showEditInputs} placeholder="username" />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
             <Form.Item label="Holat" name="status">
               <Input
                 disabled={showEditInputs}
@@ -151,23 +146,6 @@ export default function EditUserModal({
             </Form.Item>
           </Col>
         </Row>
-
-        {/* <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item label="Guruhda" name="inGroup" valuePropName="checked">
-              <Switch disabled={showEditInputs} />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label="Oxirgi faollik" name="lastActiveAt">
-              <Input
-                disabled={showEditInputs}
-                placeholder="2025-06-27T10:11:59.193Z"
-              />
-            </Form.Item>
-          </Col>
-        </Row> */}
-
         <Form.Item shouldUpdate>
           {() => (
             <Button
