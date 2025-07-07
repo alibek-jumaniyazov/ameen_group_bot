@@ -56,7 +56,6 @@ export default function AutoPaymentTableFilter({
           <Form.Item label="Foydalanuvchi yoki ID" name="searchUser">
             <Input
               placeholder="Foydalanuvchi ismi yoki ID"
-              prefix={<Icons.search />}
             />
           </Form.Item>
         </Col>

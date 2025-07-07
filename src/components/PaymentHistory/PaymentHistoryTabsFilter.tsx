@@ -59,7 +59,6 @@ export default function PaymentHistoryTabsFilter({
               <Input
                 type="search"
                 placeholder="Foydalanuvchi bo’yicha"
-                prefix={<Icons.search />}
               />
             </Form.Item>
           </Col>

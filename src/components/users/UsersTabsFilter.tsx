@@ -59,7 +59,7 @@ export default function UsersTabsFilter({
               <Input
                 type="search"
                 placeholder="Foydalanuvchi"
-                prefix={<Icons.search />}
+              
               />
             </Form.Item>
           </Col>

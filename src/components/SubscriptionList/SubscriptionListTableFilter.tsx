@@ -62,7 +62,6 @@ export default function SubscriptionListTableFilter({
             <Form.Item label="Foydalanuvchi bo’yicha" name="searchUser">
               <Input
                 placeholder="Foydalanuvchi ismi yoki ID"
-                prefix={<Icons.search />}
               />
             </Form.Item>
           </Col>

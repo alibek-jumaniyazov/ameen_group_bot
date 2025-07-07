@@ -78,13 +78,12 @@ export default function EditDefnModal({
       title: "Ushbu Ta'rif o'chirmoqchimisiz?",
       icon: <QuestionCircleOutlined style={{ color: "red" }} />,
       okText: "Ha",
-      okType: "danger",
       cancelText: "Yo'q",
+      okType: "danger",
+      closable: true,
+
       onOk() {
         handleDelete();
-      },
-      onCancel() {
-        console.log("Bekor qilindi");
       },
     });
   };
