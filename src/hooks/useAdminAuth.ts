@@ -1,8 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AdminApi,
+  type Admin,
   type AdminLoginRequest,
   type AdminLoginResponse,
+  type UpdateAdminDto,
 } from "../api/adminApi";
 import { TokenManager } from "../api/tokenManager";
 
@@ -48,3 +50,19 @@ export const useAdminLogout = () =>
       TokenManager.clearTokens();
     },
   });
+
+export const useAdminProfile = () =>
+  useQuery<Admin>({
+    queryKey: ["adminProfile"],
+    queryFn: AdminApi.getProfile,
+  });
+
+export const useUpdateAdmin = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: AdminApi.updateAdmin,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminProfile"] });
+    },
+  });
+};

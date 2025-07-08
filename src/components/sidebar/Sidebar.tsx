@@ -54,7 +54,7 @@ export default function Sidebar() {
   const currentPageTitle = useMemo(() => {
     const match = menuItems.find((item) => item.key === location.pathname);
     if (match) return match.label;
-
+    if (location.pathname === "/profile") return "Admin profili";
     if (location.pathname.startsWith("/user")) return "Mijoz tafsiloti";
     if (location.pathname === "/subscription-statistics")
       return "Foydalanuvchilar obunasi statistikasi";
@@ -115,7 +115,10 @@ export default function Sidebar() {
               {currentPageTitle}
             </h1>
           </div>
-          <div className="flex items-center gap-2.5">
+          <div
+            className="flex items-center gap-2.5 cursor-pointer"
+            onClick={() => navigate("/profile")}
+          >
             <Avatar
               size="large"
               icon={

@@ -4,6 +4,7 @@ import AutoPayment from "../pages/autoPayment/AutoPayment";
 import AutoPaymentUser from "../pages/autoPayment/AutoPaymentUser";
 import Dashboard from "../pages/dashboard/Dashboard";
 import PaymentHistory from "../pages/paymentHistory/PaymentHistory";
+import AdminProfile from "../pages/profile/AdminProfile";
 import SendMessage from "../pages/SendMessage/SendMessage";
 import UserMessage from "../pages/SendMessage/UserMessage";
 import Subscribe from "../pages/subscribe/Subscription";
@@ -32,6 +33,12 @@ export const MainRoute = {
       id: 1,
       path: "/",
       element: <Dashboard />,
+      fallback: <h1>Loading...</h1>,
+    },
+    {
+      id: 1,
+      path: "/profile",
+      element: <AdminProfile />,
       fallback: <h1>Loading...</h1>,
     },
     {

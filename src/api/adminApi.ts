@@ -17,7 +17,18 @@ export interface AdminLoginResponse {
   accessToken: string;
   refreshToken: string;
 }
+export interface Admin {
+  id: number;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
+export interface UpdateAdminDto {
+  name: string;
+  oldPassword: string;
+  newPassword: string;
+}
 export const AdminApi = {
   login: async (
     credentials: AdminLoginRequest
@@ -28,9 +39,12 @@ export const AdminApi = {
   refresh: async (
     refreshToken: string
   ): Promise<Pick<AdminLoginResponse, "accessToken" | "refreshToken">> => {
-    const { data } = await axios.post("http://localhost:3000/api/admin/refresh", {
-      refreshToken,
-    });
+    const { data } = await axios.post(
+      "http://localhost:3000/api/admin/refresh",
+      {
+        refreshToken,
+      }
+    );
     return data;
   },
 
@@ -38,5 +52,14 @@ export const AdminApi = {
     await axiosInstance.post("/logout", null, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
+  },
+  getProfile: async (): Promise<Admin> => {
+    const { data } = await axiosInstance.get("/admin/1"); // faqat bitta admin
+    return data;
+  },
+
+  updateAdmin: async (payload: UpdateAdminDto) => {
+    const { data } = await axiosInstance.patch(`/admin/1`, payload);
+    return data;
   },
 };
