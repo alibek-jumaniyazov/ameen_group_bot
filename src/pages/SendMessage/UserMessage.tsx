@@ -7,6 +7,7 @@ import {
 import { UserApi, type User } from "../../api/userApi";
 import { useEffect, useMemo, useState } from "react";
 import type { MessageUser } from "../../api/messageApi";
+import MarkdownPreview from "@uiw/react-markdown-preview";
 
 const { Title, Paragraph } = Typography;
 
@@ -50,10 +51,21 @@ export default function UserMessage() {
     <div className="flex flex-col gap-4">
       <Card>
         <Title level={4}>Xabar tafsilotlari</Title>
+
         <Paragraph>
           <strong>Matn:</strong>
-          <div dangerouslySetInnerHTML={{ __html: messageData?.text || "" }} />
+          <div className="mt-2" data-color-mode="light">
+            <MarkdownPreview
+              source={messageData?.text || "_Bo'sh matn_"}
+              style={{
+                background: "transparent",
+                padding: 0,
+                color: "black",
+              }}
+            />
+          </div>
         </Paragraph>
+
         <Paragraph>
           <strong>Yaratilgan vaqt:</strong>{" "}
           {new Date(messageData?.createdAt || "").toLocaleString("uz-UZ", {

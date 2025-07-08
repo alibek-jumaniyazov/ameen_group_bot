@@ -27,3 +27,6 @@
 .wmde-markdown {
   background-color: transparent !important;
 }
+.wmde-markdown .wmde-markdown-color {
+  color: #000 !important;
+}

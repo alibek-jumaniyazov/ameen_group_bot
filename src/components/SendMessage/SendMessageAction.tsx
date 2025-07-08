@@ -29,7 +29,6 @@ export default function SendMessageAction({
   const isSubscriptionDisabled =
     selectedStatus === "EXPIRED" || selectedStatus === "REGISTERED";
 
-  // 🔁 subscriptionTypeId qiymatini tozalovchi useEffect
   useEffect(() => {
     if (isSubscriptionDisabled) {
       form.setFieldValue("subscriptionTypeId", undefined);

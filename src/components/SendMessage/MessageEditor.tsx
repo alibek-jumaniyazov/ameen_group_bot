@@ -1,10 +1,10 @@
-import { Input, Popover, Button } from "antd";
+import MDEditor from "@uiw/react-md-editor";
+import { Popover, Button } from "antd";
 import { SmileOutlined } from "@ant-design/icons";
-import { useState } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
+import { useState } from "react";
 
-const { TextArea } = Input;
 export default function MessageEditor({
   value,
   onChange,
@@ -29,29 +29,25 @@ export default function MessageEditor({
       previewPosition="none"
       emojiButtonSize={32}
       emojiSize={24}
-      locale="en"
     />
   );
 
   return (
-    <div style={{ position: "relative" }}>
-      <TextArea
-        rows={5}
+    <div className="relative" data-color-mode="light">
+      <MDEditor
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Xabar matnini shu yerga yozing..."
-        name="text"
+        onChange={(val = "") => onChange(val)}
+        height={200}
       />
       <Popover
         content={emojiContent}
         trigger="click"
-        visible={showEmoji}
-        onVisibleChange={(visible) => setShowEmoji(visible)}
+        open={showEmoji}
+        onOpenChange={setShowEmoji}
       >
         <Button
           icon={<SmileOutlined />}
-          style={{ position: "absolute", bottom: 10, right: 10 }}
-          onClick={() => setShowEmoji(!showEmoji)}
+          style={{ position: "absolute", bottom: 12, right: 12 }}
         />
       </Popover>
     </div>

@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { useMessages } from "../../hooks/useMessage";
 import type { MessageQueryParams, Message } from "../../api/messageApi";
 import { useNavigate } from "react-router-dom";
+import MarkdownPreview from "@uiw/react-markdown-preview";
 
 interface SendMessageTableProps {
   filters?: {
@@ -45,13 +46,20 @@ export default function SendMessageTable({ filters }: SendMessageTableProps) {
       dataIndex: "text",
       key: "text",
       render: (text: string) => {
-        const plainText = text.replace(/<[^>]+>/g, ""); // HTML taglarni olib tashlaydi
+        const plainText = text.replace(/<[^>]+>/g, "");
         const shortText =
-          plainText.length > 50 ? plainText.slice(0, 50) + "..." : plainText;
-        return <div title={plainText}>{shortText}</div>;
+          plainText.length > 40 ? plainText.slice(0, 40) + "..." : plainText;
+
+        return (
+          <div title={plainText} data-color-mode="light">
+            <MarkdownPreview
+              source={shortText}
+              style={{ background: "transparent", color: "black" }}
+            />
+          </div>
+        );
       },
     },
-
     {
       title: "Sana va vaqt",
       dataIndex: "createdAt",
@@ -64,23 +72,26 @@ export default function SendMessageTable({ filters }: SendMessageTableProps) {
       key: "users",
     },
   ];
+
   return (
-    <Table
-      columns={columns}
-      dataSource={messages}
-      loading={isLoading}
-      onRow={(record) => ({
-        onClick: () => navigate(`/send-message/${record.id}`),
-      })}
-      pagination={{
-        current: currentPage,
-        pageSize: pageSize,
-        total: total,
-        onChange: (page) => setCurrentPage(page),
-        showTotal: (total) => `Jami: ${total} ta yuborilgan xabar`,
-        showSizeChanger: false,
-      }}
-      rowKey="id"
-    />
+    <div className="max-h-[730px] overflow-y-auto">
+      <Table
+        columns={columns}
+        dataSource={messages}
+        loading={isLoading}
+        onRow={(record) => ({
+          onClick: () => navigate(`/send-message/${record.id}`),
+        })}
+        pagination={{
+          current: currentPage,
+          pageSize: pageSize,
+          total: total,
+          onChange: (page) => setCurrentPage(page),
+          showTotal: (total) => `Jami: ${total} ta yuborilgan xabar`,
+          showSizeChanger: false,
+        }}
+        rowKey="id"
+      />
+    </div>
   );
 }
