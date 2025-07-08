@@ -9,6 +9,8 @@ import {
   ResponsiveContainer,
   CartesianGrid,
   Legend,
+  AreaChart,
+  Area,
 } from "recharts";
 import { useEffect, useState } from "react";
 import {
@@ -55,7 +57,6 @@ export default function Dashboard() {
       );
     }
   }, [subscriptionStats]);
-
   return (
     <div className="p-4 max-h-[800px] overflow-y-auto">
       <Row gutter={[16, 16]} className="">
@@ -99,22 +100,42 @@ export default function Dashboard() {
         <Col span={24}>
           <Card title="Oylik daromad va aktiv obunalar">
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart
+              <AreaChart
                 data={monthlyData}
                 margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
               >
-                <CartesianGrid strokeDasharray="3 3" />
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#1677FF" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#1677FF" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorSubs" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#52C41A" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#52C41A" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
                 <XAxis dataKey="month" />
                 <YAxis />
+                <CartesianGrid strokeDasharray="3 3" />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="revenue" fill="#4C9AFF" name="Daromad" />
-                <Bar
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#1677FF"
+                  fillOpacity={1}
+                  fill="url(#colorRevenue)"
+                  name="Daromad"
+                />
+                <Area
+                  type="monotone"
                   dataKey="activeSubscriptions"
-                  fill="#73D13D"
+                  stroke="#52C41A"
+                  fillOpacity={1}
+                  fill="url(#colorSubs)"
                   name="Aktiv obunalar"
                 />
-              </BarChart>
+              </AreaChart>
             </ResponsiveContainer>
           </Card>
         </Col>
@@ -134,7 +155,7 @@ export default function Dashboard() {
                 <YAxis type="category" dataKey="title" />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="active" fill="#52C41A" name="Aktiv" />
+                <Bar dataKey="active" fill="#1677FF" name="Aktiv" />
                 <Bar dataKey="expired" fill="#FAAD14" name="Muddati tugagan" />
               </BarChart>
             </ResponsiveContainer>
