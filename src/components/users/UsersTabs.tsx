@@ -5,6 +5,7 @@ import { useState } from "react";
 import EditUserModal from "./EditUserModal";
 import { useNavigate } from "react-router-dom";
 import { useDeleteUser, useUsers } from "../../hooks/useUser";
+import { Icons } from "../../assets/icons";
 
 interface DataType {
   id: number;
@@ -18,14 +19,12 @@ interface DataType {
 }
 
 export default function UsersTabs({
-  search,
   filters,
 }: {
   search: string;
   filters: any;
 }) {
   const { data, isLoading } = useUsers();
-  const { confirm } = Modal;
   const deleteUser = useDeleteUser();
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
@@ -66,7 +65,7 @@ export default function UsersTabs({
   });
 
   const showDeleteConfirm = (id: number) => {
-    confirm({
+    Modal.confirm({
       title: "Ushbu mijozni o'chirmoqchimisiz?",
       icon: <QuestionCircleOutlined style={{ color: "red" }} />,
       okText: "Ha",
@@ -119,7 +118,7 @@ export default function UsersTabs({
     {
       title: "Action",
       key: "action",
-      render: (_, record: DataType) => (
+      render: (_: any, record: DataType) => (
         <div className="flex justify-start items-center gap-6">
           <button
             className="cursor-pointer"
@@ -129,16 +128,7 @@ export default function UsersTabs({
               setOpen(true);
             }}
           >
-            Edit
-          </button>
-          <button
-            className="cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              showDeleteConfirm(record.id);
-            }}
-          >
-            Delete
+            <Icons.pencil />
           </button>
         </div>
       ),

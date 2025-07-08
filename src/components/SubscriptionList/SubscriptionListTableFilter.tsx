@@ -1,5 +1,4 @@
 import { Button, Col, DatePicker, Form, Input, Row, Select } from "antd";
-import { Icons } from "../../assets/icons";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { useEffect } from "react";
@@ -36,7 +35,8 @@ export default function SubscriptionListTableFilter({
     if (filters) {
       form.setFieldsValue({
         ...filters,
-        date: filters.date ? dayjs(filters.date) : undefined,
+        startDate: filters.startDate ? dayjs(filters.startDate) : undefined,
+        endDate: filters.endDate ? dayjs(filters.endDate) : undefined,
       });
     }
   }, [filters]);
@@ -60,9 +60,7 @@ export default function SubscriptionListTableFilter({
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item label="Foydalanuvchi bo’yicha" name="searchUser">
-              <Input
-                placeholder="Foydalanuvchi ismi yoki ID"
-              />
+              <Input placeholder="Foydalanuvchi ismi yoki ID" />
             </Form.Item>
           </Col>
         </Row>

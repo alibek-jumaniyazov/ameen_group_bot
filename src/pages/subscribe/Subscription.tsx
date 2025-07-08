@@ -15,7 +15,6 @@ export default function Subscribe() {
     setOpen(false);
   };
 
-
   const onChange = (key: string) => {
     setActiveTab(key);
   };

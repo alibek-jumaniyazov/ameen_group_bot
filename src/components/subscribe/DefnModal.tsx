@@ -2,7 +2,10 @@ import { Button, Col, Drawer, Form, Input, message, Row } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useEffect } from "react";
 import type { SubscriptionType } from "../../api/subscriptionApi";
-import { useCreateSubscriptionType } from "../../hooks/useSubscription";
+import {
+  useCreateSubscriptionType,
+  useSubscriptions,
+} from "../../hooks/useSubscription";
 
 export default function DefnModal({
   onClose,
@@ -13,6 +16,7 @@ export default function DefnModal({
 }) {
   const [form] = Form.useForm();
   const createSubscription = useCreateSubscriptionType();
+  const getSubscription = useSubscriptions();
 
   useEffect(() => {
     if (open) {
@@ -31,6 +35,7 @@ export default function DefnModal({
     createSubscription.mutate(cleanedData, {
       onSuccess: () => {
         message.success("Tarif muvaffaqiyatli qo‘shildi");
+        getSubscription.refetch();
         onClose();
       },
       onError: (err) => {

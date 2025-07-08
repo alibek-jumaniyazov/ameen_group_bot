@@ -25,7 +25,7 @@ export default function Users() {
           <div className="flex items-center gap-2 w-[357px] h-[44px] rounded-lg border border-[#92959C] px-2.5">
             <Icons.search className={"w-5"} />
             <Input
-              placeholder="Search (ID yoki Foydalanuvchi)"
+              placeholder="Search ( Id yoki Mijoz ismi )"
               variant="borderless"
               className="placeholder:!text-[#94A3B8]"
               value={search}

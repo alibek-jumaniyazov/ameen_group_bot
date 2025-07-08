@@ -1,4 +1,14 @@
-import { Button, Col, Drawer, Form, Input, message, Row, Space } from "antd";
+import {
+  Button,
+  Col,
+  Drawer,
+  Form,
+  Input,
+  message,
+  Modal,
+  Row,
+  Space,
+} from "antd";
 import { useEffect, useState } from "react";
 import { Icons } from "../../assets/icons";
 import TextArea from "antd/es/input/TextArea";
@@ -74,7 +84,7 @@ export default function EditDefnModal({
     });
   };
   const showDeleteConfirm = () => {
-    confirm({
+    Modal.confirm({
       title: "Ushbu Ta'rif o'chirmoqchimisiz?",
       icon: <QuestionCircleOutlined style={{ color: "red" }} />,
       okText: "Ha",

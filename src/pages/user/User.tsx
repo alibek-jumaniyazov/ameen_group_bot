@@ -113,7 +113,7 @@ export default function User() {
           </div>
         </div>
 
-        <div className="flex items-start justify-start gap-1.5">
+        {/* <div className="flex items-start justify-start gap-1.5">
           <div className="flex items-center justify-start gap-1 w-[357px] h-[44px] rounded-lg border border-[#92959C] py-3 px-2.5">
             <Icons.search className={"w-5"} />
             <Input
@@ -127,7 +127,7 @@ export default function User() {
           <Button type="primary" className="!bg-[#528AF9] !w-[87px] !h-[44px]">
             Search
           </Button>
-        </div>
+        </div> */}
       </div>
 
       <div className="w-full">

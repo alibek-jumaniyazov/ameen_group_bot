@@ -4,6 +4,17 @@ import { Icons } from "../../assets/icons";
 import { useUpdateUser, useDeleteUser } from "../../hooks/useUser";
 import type { User } from "../../api/userApi";
 
+interface DataType {
+  id: number;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string | null;
+  lastActiveAt: string;
+  status: string;
+  definition: string;
+}
+
 export default function EditUserModal({
   onClose,
   open,
@@ -11,7 +22,7 @@ export default function EditUserModal({
 }: {
   onClose: () => void;
   open: boolean;
-  record: User | null;
+  record: DataType | null;
 }) {
   const [form] = Form.useForm();
   const [showEditInputs, setShowEditInputs] = useState(true);
@@ -33,10 +44,6 @@ export default function EditUserModal({
       lastName: values.lastName,
       phoneNumber: values.phoneNumber,
       email: values.email,
-      inGroup: values.inGroup,
-      status: values.status,
-      username: values.username,
-      lastActiveAt: values.lastActiveAt,
     };
 
     updateUser.mutate(
@@ -130,22 +137,28 @@ export default function EditUserModal({
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Email" name="email">
-              <Input disabled={showEditInputs} placeholder="example@mail.com" />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item label="Holat" name="status">
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                {
+                  required: true,
+                  message: "Email manzilini kiriting",
+                },
+                {
+                  pattern: /^[\w.%+-]+@gmail\.com$/,
+                  message: "Faqat @gmail.com bilan tugaydigan email kiriting",
+                },
+              ]}
+            >
               <Input
                 disabled={showEditInputs}
-                placeholder="REGISTERED | ACTIVE"
+                placeholder="example@gmail.com"
               />
             </Form.Item>
           </Col>
         </Row>
+
         <Form.Item shouldUpdate>
           {() => (
             <Button

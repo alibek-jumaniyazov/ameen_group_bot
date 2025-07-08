@@ -1,11 +1,10 @@
-import { message, Table, type TableProps } from "antd";
+import { message, Modal, Table, type TableProps } from "antd";
 import { Icons } from "../../assets/icons";
 import EditDefnModal from "./EditDefnModal";
 import { useState } from "react";
 import type { SubscriptionType } from "../../api/subscriptionApi";
 import { useDeleteSubscription } from "../../hooks/useSubscription";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import confirm from "antd/es/modal/confirm";
 
 export default function SubscribeList({
   data,
@@ -17,7 +16,7 @@ export default function SubscribeList({
   const deleteSubscription = useDeleteSubscription();
 
   const showDeleteConfirm = (id: number) => {
-    confirm({
+    Modal.confirm({
       title: "Ushbu Ta'rif o'chirmoqchimisiz?",
       icon: <QuestionCircleOutlined style={{ color: "red" }} />,
       okText: "Ha",

@@ -25,14 +25,25 @@ export default function SendMessageAction({
       label: `${user.firstName} ${user.lastName} (${user.phoneNumber})`,
     })) || [];
 
+  const selectedStatus = Form.useWatch("status", form);
+  const isSubscriptionDisabled =
+    selectedStatus === "EXPIRED" || selectedStatus === "REGISTERED";
+
+  // 🔁 subscriptionTypeId qiymatini tozalovchi useEffect
+  useEffect(() => {
+    if (isSubscriptionDisabled) {
+      form.setFieldValue("subscriptionTypeId", undefined);
+    }
+  }, [selectedStatus, isSubscriptionDisabled, form]);
+
   const onFinish = (values: any) => {
     if (!editorValue.trim()) {
       message.warning("Xabar matni bo‘sh bo‘lishi mumkin emas");
       return;
     }
-    const plainMessage = editorValue;
+
     const payload: any = {
-      text: plainMessage,
+      text: editorValue,
       status: values.status == " " ? undefined : values.status || undefined,
       userIds: values.userIds || undefined,
       subscriptionTypeId: values.subscriptionTypeId
@@ -97,6 +108,7 @@ export default function SendMessageAction({
             <Form.Item label="Tarif" name="subscriptionTypeId">
               <Select
                 placeholder="Tarifni tanlang"
+                disabled={isSubscriptionDisabled}
                 options={subscriptions?.data?.map((sub) => ({
                   value: sub.id.toString(),
                   label: sub.title,
@@ -110,10 +122,10 @@ export default function SendMessageAction({
               <Select
                 placeholder="Status tanlang"
                 options={[
-                  { value: "SUBSCRIBE", label: "Faol" },
-                  { value: "EXPIRED", label: "Muddati tugagan" },
-                  { value: "REGISTERED", label: "Obuna olmagan" },
                   { value: " ", label: "Barcha" },
+                  { value: "SUBSCRIBE", label: "Obuna olingan" },
+                  { value: "REGISTERED", label: "Obuna olinmagan" },
+                  { value: "EXPIRED", label: "Obuna muddati tugagan" },
                 ]}
               />
             </Form.Item>

@@ -1,12 +1,11 @@
 // pages/SubscriptionStatisticsTabs.tsx
-import { message, Table, Tag } from "antd";
+import { message, Modal, Table, Tag } from "antd";
 import type { TableProps } from "antd";
 import { useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import { Icons } from "../../assets/icons";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import confirm from "antd/es/modal/confirm";
 import EditUserModal from "../../components/users/EditUserModal";
 import { useDeleteUser, useUsersBySubscriptionId } from "../../hooks/useUser";
 
@@ -40,7 +39,7 @@ export default function SubscriptionStatisticsTabs() {
   const onClose = () => setOpen(false);
 
   const showDeleteConfirm = (id: number) => {
-    confirm({
+    Modal.confirm({
       title: "Ushbu mijozni o'chirmoqchimisiz?",
       icon: <QuestionCircleOutlined style={{ color: "red" }} />,
       okText: "Ha",
@@ -110,7 +109,7 @@ export default function SubscriptionStatisticsTabs() {
       render: (_, record) => (
         <div className="flex items-center gap-4">
           <button
-          className="cursor-pointer"
+            className="cursor-pointer"
             onClick={() => {
               setSelectedRecord(record);
               setOpen(true);
@@ -119,7 +118,7 @@ export default function SubscriptionStatisticsTabs() {
             <Icons.pencil />
           </button>
           <button
-          className="cursor-pointer"
+            className="cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
               showDeleteConfirm(record.id);
