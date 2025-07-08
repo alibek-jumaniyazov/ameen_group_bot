@@ -37,7 +37,7 @@ const menuItems = [
     icon: <Icons.email />,
     label: "Xabar yuborish va hisobotlar",
   },
-  { key: "/6", icon: <Icons.setting />, label: "Sozlamalar" },
+  { key: "/settings", icon: <Icons.setting />, label: "Sozlamalar" },
 ];
 
 export default function Sidebar() {

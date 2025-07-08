@@ -7,6 +7,7 @@ import PaymentHistory from "../pages/paymentHistory/PaymentHistory";
 import AdminProfile from "../pages/profile/AdminProfile";
 import SendMessage from "../pages/SendMessage/SendMessage";
 import UserMessage from "../pages/SendMessage/UserMessage";
+import SettingsPage from "../pages/settings/SettingsPage";
 import Subscribe from "../pages/subscribe/Subscription";
 import SubscriptionListPage from "../pages/SubscriptionList/SubscriptionListPage";
 import SubscriptionStatistics from "../pages/subscriptionStatistics/SubscriptionStatistics";
@@ -99,6 +100,12 @@ export const MainRoute = {
       id: 9,
       path: "/send-message/:id",
       element: <UserMessage />,
+      fallback: <h1>Loading...</h1>,
+    },
+    {
+      id: 9,
+      path: "/settings",
+      element: <SettingsPage />,
       fallback: <h1>Loading...</h1>,
     },
   ],
