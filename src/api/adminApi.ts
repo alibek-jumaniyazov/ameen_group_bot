@@ -28,7 +28,7 @@ export const AdminApi = {
   refresh: async (
     refreshToken: string
   ): Promise<Pick<AdminLoginResponse, "accessToken" | "refreshToken">> => {
-    const { data } = await axios.post("http://localhost:3000/api/refresh", {
+    const { data } = await axios.post("http://localhost:3000/api/admin/refresh", {
       refreshToken,
     });
     return data;

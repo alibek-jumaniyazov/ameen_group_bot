@@ -27,7 +27,7 @@ const Login = (): JSX.Element => {
       {
         onSuccess: () => {
           message.success({ content: "Login successful!", key, duration: 2 });
-          navigate("/admin");
+          navigate("/");
         },
         onError: (err: Error) => {
           message.error({

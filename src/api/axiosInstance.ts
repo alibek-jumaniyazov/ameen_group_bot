@@ -1,5 +1,6 @@
 import axios from "axios";
 import { TokenManager } from "./tokenManager";
+import { AdminApi } from "./adminApi";
 
 const BASE_URL = "http://localhost:3000/api";
 
@@ -31,13 +32,16 @@ const processQueue = (error: unknown, token: string | null = null) => {
   });
   failedQueue = [];
 };
-
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config as any;
+    console.log("RESPONSE ERROR:", error?.response?.status);
+
+    const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
+      console.log("🔄 Token expired, attempting refresh...");
+
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({
@@ -54,23 +58,15 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refresh = TokenManager.getRefreshToken();
-        if (!refresh) throw new Error("No refresh token");
+        const refreshToken = TokenManager.getRefreshToken();
+        if (!refreshToken) throw new Error("No refresh token");
 
-        const plainAxios = axios.create();
-        const { data } = await plainAxios.post(
-          `${BASE_URL}/refresh`,
-          { refreshToken: refresh },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const { accessToken, refreshToken: newRefresh } =
+          await AdminApi.refresh(refreshToken);
 
-        TokenManager.setTokens(data);
-        axiosInstance.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
-        processQueue(null, data.accessToken);
+        TokenManager.setTokens({ accessToken, refreshToken: newRefresh });
+        processQueue(null, accessToken);
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return axiosInstance(originalRequest);
       } catch (err) {
         processQueue(err, null);
