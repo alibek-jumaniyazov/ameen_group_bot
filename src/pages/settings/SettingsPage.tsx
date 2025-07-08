@@ -39,14 +39,14 @@ export default function SettingsPage() {
             initialValues={data}
           >
             <Form.Item name="aboutAminGroup" label="Amin Group haqida">
-              <MDEditor height={200} />
+              <MDEditor height={200} style={{ background: "#001529" }} />
             </Form.Item>
 
             <Form.Item
               name="aboutKozimxonTorayev"
               label="Kozimxon Torayev haqida"
             >
-              <MDEditor height={200} />
+              <MDEditor height={200} style={{ background: "#001529" }} />
             </Form.Item>
 
             <Form.Item>
