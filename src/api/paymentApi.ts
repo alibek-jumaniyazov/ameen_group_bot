@@ -18,17 +18,17 @@ export interface ApplyPayload {
 
 export const PaymentApi = {
   create: async (payload: CreatePaymentPayload): Promise<any> => {
-    const { data } = await axiosInstance.post("/api/atmos", payload);
+    const { data } = await axiosInstance.post("/atmos", payload);
     return data;
   },
 
   preapply: async (payload: PreapplyPayload): Promise<any> => {
-    const { data } = await axiosInstance.post("/api/atmos/preapply", payload);
+    const { data } = await axiosInstance.post("/atmos/preapply", payload);
     return data;
   },
 
   apply: async (payload: ApplyPayload): Promise<any> => {
-    const { data } = await axiosInstance.post("/api/atmos/apply", payload);
+    const { data } = await axiosInstance.post("/atmos/apply", payload);
     return data;
   },
 };

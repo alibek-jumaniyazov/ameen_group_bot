@@ -1,127 +1,47 @@
-import { useSearchParams } from "react-router-dom";
-import { Button, Form, Input, message, Typography } from "antd";
-import { useEffect, useState } from "react";
-import {
-  useApplyPayment,
-  useCreatePayment,
-  usePreapplyPayment,
-} from "../../hooks/usePayment";
+import { Typography, message } from "antd";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useCreatePayment } from "../../hooks/usePayment";
 
-const { Title } = Typography;
+const { Title, Paragraph } = Typography;
 
 export default function AtmosPayment() {
   const [searchParams] = useSearchParams();
-  const userId = Number(searchParams.get("userId"));
-  const subscriptionTypeId = Number(searchParams.get("subscriptionTypeId"));
+  const navigate = useNavigate();
+  const userId = Number(searchParams.get("userId") ?? 1);
+  const subscriptionTypeId = Number(
+    searchParams.get("subscriptionTypeId") ?? 1
+  );
 
-  const [form] = Form.useForm();
-  const [transactionId, setTransactionId] = useState<number | null>(null);
-
-  const { mutate: createPayment, isLoading: creating } = useCreatePayment();
-  const { mutate: preapply, isLoading: preapplying } = usePreapplyPayment();
-  const { mutate: apply, isLoading: applying } = useApplyPayment();
+  const { mutate } = useCreatePayment();
 
   useEffect(() => {
     if (!userId || !subscriptionTypeId) {
-      message.error(
-        "userId va subscriptionTypeId URL query orqali berilishi kerak"
-      );
+      message.error("URL query: userId va subscriptionTypeId kerak");
+      return;
     }
-  }, [userId, subscriptionTypeId]);
 
-  const handleCreate = () => {
-    if (!userId || !subscriptionTypeId) return;
-
-    createPayment(
+    mutate(
       { userId, subscriptionTypeId },
       {
         onSuccess: (res) => {
+          const id = res?.transaction_id;
           message.success("Transaction yaratildi");
-          setTransactionId(res?.transaction_id); 
-          form.setFieldsValue({ transaction_id: res?.transaction_id });
+          navigate(`/atmos/card?transaction_id=${id}`);
         },
         onError: () => {
-          message.error("Transaction yaratilmadi");
+          message.error("Transaction yaratishda xatolik yuz berdi");
         },
       }
     );
-  };
-
-  const handlePreapply = () => {
-    form
-      .validateFields(["transaction_id", "card_number", "expiry"])
-      .then((values) => {
-        preapply(values, {
-          onSuccess: () => message.success("Karta yuborildi"),
-          onError: () => message.error("Karta yuborilmadi"),
-        });
-      });
-  };
-
-  const handleApply = () => {
-    form.validateFields(["transaction_id", "otp"]).then((values) => {
-      apply(values, {
-        onSuccess: () => message.success("OTP tasdiqlandi"),
-        onError: () => message.error("OTP xato"),
-      });
-    });
-  };
+  }, [userId, subscriptionTypeId]);
 
   return (
-    <div style={{ maxWidth: 500, margin: "0 auto", padding: 24 }}>
-      <Title level={3}>Atmos To‘lov Sahifasi</Title>
-
-      <Form layout="vertical" form={form}>
-        <Form.Item label="Transaction ID" name="transaction_id">
-          <Input disabled placeholder="Avtomatik to‘ldiriladi" />
-        </Form.Item>
-
-        <Button
-          type="primary"
-          onClick={handleCreate}
-          loading={creating}
-          block
-          disabled={!userId || !subscriptionTypeId}
-        >
-          Create Payment
-        </Button>
-
-        <Form.Item
-          label="Card Number"
-          name="card_number"
-          rules={[{ required: true }]}
-        >
-          <Input placeholder="1234 5678 9012 3456" />
-        </Form.Item>
-
-        <Form.Item label="Expiry" name="expiry" rules={[{ required: true }]}>
-          <Input placeholder="12/26" />
-        </Form.Item>
-
-        <Button
-          type="dashed"
-          onClick={handlePreapply}
-          loading={preapplying}
-          block
-          disabled={!transactionId}
-        >
-          Preapply Card
-        </Button>
-
-        <Form.Item label="OTP" name="otp" rules={[{ required: true }]}>
-          <Input placeholder="123456" />
-        </Form.Item>
-
-        <Button
-          type="default"
-          onClick={handleApply}
-          loading={applying}
-          block
-          disabled={!transactionId}
-        >
-          Apply OTP
-        </Button>
-      </Form>
+    <div className="max-w-md mx-auto p-8 text-center">
+      <Title level={3}> To‘lov yaratilmoqda...</Title>
+      <Paragraph>
+        Transaction avtomatik tarzda yaratilmoqda. Iltimos kuting...
+      </Paragraph>
     </div>
   );
 }
