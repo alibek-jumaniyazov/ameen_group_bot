@@ -25,11 +25,28 @@ export interface MessageUserIdText {
   updatedAt: string;
 }
 
+export interface MessageButton {
+  text: string;
+  url: string;
+}
+
+export interface InlineKeyboard {
+  buttons: MessageButton[];
+}
+
+export interface ButtonsPayload {
+  inline_keyboard: InlineKeyboard[];
+}
+
 export interface CreateMessageDto {
   text: string;
   userIds: number[];
   status: string;
   subscriptionTypeId: number;
+  file?: string;
+  video?: string;
+  image?: string;
+  buttons?: ButtonsPayload;
 }
 
 export interface UpdateMessageDto {

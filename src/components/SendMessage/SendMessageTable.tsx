@@ -45,20 +45,20 @@ export default function SendMessageTable({ filters }: SendMessageTableProps) {
       title: "Matn",
       dataIndex: "text",
       key: "text",
-      render: (text: string) => {
-        const plainText = text.replace(/<[^>]+>/g, "");
-        const shortText =
-          plainText.length > 40 ? plainText.slice(0, 40) + "..." : plainText;
+      // render: (text: string) => {
+      //   const plainText = text.replace(/<[^>]+>/g, "");
+      //   const shortText =
+      //     plainText.length > 40 ? plainText.slice(0, 40) + "..." : plainText;
 
-        return (
-          <div title={plainText} data-color-mode="light">
-            <MarkdownPreview
-              source={shortText}
-              style={{ background: "transparent", color: "black" }}
-            />
-          </div>
-        );
-      },
+      //   return (
+      //     <div title={plainText} data-color-mode="light">
+      //       <MarkdownPreview
+      //         source={shortText}
+      //         style={{ background: "transparent", color: "black" }}
+      //       />
+      //     </div>
+      //   );
+      // },
     },
     {
       title: "Sana va vaqt",
