@@ -2,7 +2,7 @@ import axios from "axios";
 import { TokenManager } from "./tokenManager";
 import { AdminApi } from "./adminApi";
 
-const BASE_URL = "http://localhost:3000/api";
+const BASE_URL = "/api";
 
 export const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -79,5 +79,5 @@ axiosInstance.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
