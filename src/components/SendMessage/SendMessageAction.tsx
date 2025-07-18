@@ -10,13 +10,24 @@ import {
   Upload,
   message,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import {
+  UploadOutlined,
+  PlusOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import { useCreateMessage } from "../../hooks/useMessage";
 import { useUsers } from "../../hooks/useUser";
 import { useEffect, useState } from "react";
 import { useSubscriptions } from "../../hooks/useSubscription";
 import MessageEditor from "./MessageEditor";
-import Base from "antd/es/typography/Base";
+
+const BUTTON_DATA_OPTIONS = [
+  { label: "SUBSCRIPTONS", value: "subscriptons" },
+  { label: "BUY_SUBSCRIPTON", value: "subscribe-" },
+  { label: "ABOUT_US", value: "about_us" },
+  { label: "ABOUT_OWNER", value: "about_owner" },
+  { label: "MY_SUBSCRIPTION", value: "my_subscriptions" },
+];
 
 export default function SendMessageAction({
   onClose,
@@ -27,10 +38,13 @@ export default function SendMessageAction({
 }) {
   const [form] = Form.useForm();
   const [editorValue, setEditorValue] = useState<string>("");
-
-  const [imageUrl, setImageUrl] = useState<string | undefined>();
-  const [videoUrl, setVideoUrl] = useState<string | undefined>();
-  const [fileUrl, setFileUrl] = useState<string | undefined>();
+  const [imageUrl, setImageUrl] = useState<number | undefined>();
+  const [videoUrl, setVideoUrl] = useState<number | undefined>();
+  const [fileUrl, setFileUrl] = useState<number | undefined>();
+  const [buttons, setButtons] = useState([{ text: "", url: "", data: "" }]);
+  const [subscriptionIdForButton, setSubscriptionIdForButton] = useState<
+    Record<number, number | undefined>
+  >({});
 
   const { data: subscriptions } = useSubscriptions();
   const { data: userList, isLoading } = useUsers();
@@ -66,21 +80,23 @@ export default function SendMessageAction({
         ? Number(values.subscriptionTypeId)
         : 0,
       fileIds: [imageUrl, videoUrl, fileUrl].filter(Boolean),
-      buttons:
-        values.buttonText && values.buttonUrl
-          ? {
-              inline_keyboard: [
-                {
-                  buttons: [
-                    {
-                      text: values.buttonText,
-                      url: values.buttonUrl,
-                    },
-                  ],
-                },
-              ],
-            }
-          : undefined,
+      buttons: {
+        inline_keyboard: [
+          {
+            buttons: buttons
+              .filter((btn, i) => {
+                return btn.text || btn.url || btn.data;
+              })
+              .map((btn, i) => {
+                if (btn.data === "subscribe-") {
+                  const selectedId = subscriptionIdForButton[i];
+                  return { ...btn, data: `subscribe-${selectedId}` };
+                }
+                return btn;
+              }),
+          },
+        ],
+      },
     };
 
     createMessage.mutate(payload, {
@@ -90,6 +106,8 @@ export default function SendMessageAction({
         setImageUrl(undefined);
         setVideoUrl(undefined);
         setFileUrl(undefined);
+        setButtons([{ text: "", url: "", data: "" }]);
+        setSubscriptionIdForButton({});
         onClose();
         message.success("Xabar muvaffaqiyatli yuborildi");
       },
@@ -110,11 +128,11 @@ export default function SendMessageAction({
     },
     onChange(info: any) {
       if (info.file.status === "done") {
-        const url = info.file.response?.id;
-        if (url) {
-          if (type === "image") setImageUrl(url);
-          else if (type === "video") setVideoUrl(url);
-          else setFileUrl(url);
+        const id = info.file.response?.id;
+        if (id) {
+          if (type === "image") setImageUrl(id);
+          else if (type === "video") setVideoUrl(id);
+          else setFileUrl(id);
           message.success(`${info.file.name} yuklandi`);
         }
       } else if (info.file.status === "error") {
@@ -130,6 +148,8 @@ export default function SendMessageAction({
       setImageUrl(undefined);
       setVideoUrl(undefined);
       setFileUrl(undefined);
+      setButtons([{ text: "", url: "", data: "" }]);
+      setSubscriptionIdForButton({});
     }
   }, [open]);
 
@@ -210,70 +230,125 @@ export default function SendMessageAction({
               )}
             </Form.Item>
           </Col>
-
-          {/* Upload Components */}
-          <Col span={8}>
-            <Form.Item label="🖼️ Rasm">
-              <Upload {...uploadProps("image")}>
-                <Button icon={<UploadOutlined />}>Rasm tanlang</Button>
-              </Upload>
-              {imageUrl && (
-                <div className="mt-2">
-                  <img
-                    src={imageUrl}
-                    alt="uploaded"
-                    className="w-full max-h-[150px] object-contain rounded shadow"
-                  />
+          <Row gutter={24} className="w-full">
+            <Col span={8}>
+              <Form.Item label="🖼️ Rasm">
+                <Upload {...uploadProps("image")}>
+                  <Button icon={<UploadOutlined />}>Rasm tanlang</Button>
+                </Upload>
+                {imageUrl && (
                   <div className="text-green-600 text-xs mt-1">Yuklandi ✅</div>
-                </div>
-              )}
-            </Form.Item>
-          </Col>
+                )}
+              </Form.Item>
+            </Col>
 
-          <Col span={8}>
-            <Form.Item label="🎞️ Video">
-              <Upload {...uploadProps("video")}>
-                <Button icon={<UploadOutlined />}>Video tanlang</Button>
-              </Upload>
-              {videoUrl && (
-                <div className="mt-2">
-                  <video
-                    src={videoUrl}
-                    controls
-                    className="w-full max-h-[150px] rounded shadow"
-                  />
+            <Col span={8}>
+              <Form.Item label="🎞️ Video">
+                <Upload {...uploadProps("video")}>
+                  <Button icon={<UploadOutlined />}>Video tanlang</Button>
+                </Upload>
+                {videoUrl && (
                   <div className="text-green-600 text-xs mt-1">Yuklandi ✅</div>
-                </div>
-              )}
-            </Form.Item>
-          </Col>
+                )}
+              </Form.Item>
+            </Col>
 
-          <Col span={8}>
-            <Form.Item label="📎 Fayl">
-              <Upload {...uploadProps("file")}>
-                <Button icon={<UploadOutlined />}>Fayl tanlang</Button>
-              </Upload>
-              {/* {fileUrl && (
-                <div className="mt-2 truncate text-blue-600 underline text-sm">
-                  <a href={fileUrl} target="_blank" rel="noreferrer">
-                    {console.log(fileUrl,"aaaaa") as any||fileUrl.split("/").pop()}
-                  </a>
-                  <div className="text-green-600 text-xs">Yuklandi ✅</div>
-                </div>
-              )} */}
-            </Form.Item>
-          </Col>
+            <Col span={8}>
+              <Form.Item label="📎 Fayl">
+                <Upload {...uploadProps("file")}>
+                  <Button icon={<UploadOutlined />}>Fayl tanlang</Button>
+                </Upload>
+                {fileUrl && (
+                  <div className="text-green-600 text-xs mt-1">Yuklandi ✅</div>
+                )}
+              </Form.Item>
+            </Col>
+          </Row>
 
-          {/* Inline Button */}
-          <Col span={12}>
-            <Form.Item label="🔘 Button matni" name="buttonText">
-              <Input placeholder="Masalan: Bog‘lanish" />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label="🔗 Button URL" name="buttonUrl">
-              <Input placeholder="https://your-link.com" />
-            </Form.Item>
+          <Col span={24}>
+            <div className="flex items-center justify-start gap-8">
+              <h4 className="text-base font-medium">🔘 Inline tugmalar</h4>
+              <Button
+                icon={<PlusOutlined />}
+                onClick={() =>
+                  setButtons([...buttons, { text: "", url: "", data: "" }])
+                }
+              >
+                Button qo'shish
+              </Button>
+            </div>
+            <Row gutter={[16, 16]} className="mt-2">
+              {buttons.map((btn, idx) => (
+                <Col span={24} key={idx}>
+                  <Row gutter={8} align="middle">
+                    <Col span={5}>
+                      <Input
+                        value={btn.text}
+                        placeholder="Matn"
+                        onChange={(e) => {
+                          const newBtns = [...buttons];
+                          newBtns[idx].text = e.target.value;
+                          setButtons(newBtns);
+                        }}
+                      />
+                    </Col>
+                    <Col span={6}>
+                      <Input
+                        value={btn.url}
+                        placeholder="URL"
+                        onChange={(e) => {
+                          const newBtns = [...buttons];
+                          newBtns[idx].url = e.target.value;
+                          setButtons(newBtns);
+                        }}
+                      />
+                    </Col>
+                    <Col span={6}>
+                      <Select
+                        className="!w-full"
+                        allowClear
+                        placeholder="Data"
+                        value={btn.data || undefined}
+                        onChange={(value) => {
+                          const newBtns = [...buttons];
+                          newBtns[idx].data = value;
+                          setButtons(newBtns);
+                        }}
+                        options={BUTTON_DATA_OPTIONS}
+                      />
+                    </Col>
+                    {btn.data === "subscribe-" && (
+                      <Col span={5}>
+                        <Select
+                          className="!w-full"
+                          placeholder="Tarif tanlang"
+                          onChange={(val) => {
+                            setSubscriptionIdForButton((prev) => ({
+                              ...prev,
+                              [idx]: val,
+                            }));
+                          }}
+                          options={subscriptions?.data?.map((s) => ({
+                            value: s.id,
+                            label: s.title,
+                          }))}
+                        />
+                      </Col>
+                    )}
+                    <Col span={2}>
+                      <Button
+                        icon={<DeleteOutlined />}
+                        danger
+                        onClick={() => {
+                          const newBtns = buttons.filter((_, i) => i !== idx);
+                          setButtons(newBtns);
+                        }}
+                      />
+                    </Col>
+                  </Row>
+                </Col>
+              ))}
+            </Row>
           </Col>
         </Row>
       </Form>
