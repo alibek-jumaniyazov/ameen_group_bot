@@ -84,20 +84,31 @@ export default function SendMessageAction({
         inline_keyboard: [
           {
             buttons: buttons
-              .filter((btn, i) => {
-                return btn.text || btn.url || btn.data;
-              })
+              .filter((btn, i) => btn.text || btn.url || btn.data)
               .map((btn, i) => {
-                if (btn.data === "subscribe-") {
-                  const selectedId = subscriptionIdForButton[i];
-                  return { ...btn, data: `subscribe-${selectedId}` };
+                const url = btn.url?.trim();
+                const data =
+                  btn.data === "subscribe-"
+                    ? `subscribe-${subscriptionIdForButton[i]}`
+                    : btn.data;
+
+                // 👇 url bo‘sh bo‘lsa, u umuman objectga kiritilmaydi
+                const button: { text: string; data: string; url?: string } = {
+                  text: btn.text,
+                  data,
+                };
+
+                if (url) {
+                  button.url = url;
                 }
-                return btn;
+
+                return button;
               }),
           },
         ],
       },
     };
+    console.log("Payload:", payload);
 
     createMessage.mutate(payload, {
       onSuccess: () => {
