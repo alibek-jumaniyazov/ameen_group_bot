@@ -4,6 +4,9 @@ export interface Settings {
   id: number;
   aboutAminGroup: string;
   aboutKozimxonTorayev: string;
+  alertMessage: string;
+  aboutAminGroupImageId: number | null;
+  aboutKozimxonTorayevImageId: number | null;
 }
 
 export type UpdateSettingsDto = Omit<Settings, "id">;
