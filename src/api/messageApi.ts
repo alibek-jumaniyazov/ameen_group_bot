@@ -8,6 +8,7 @@ export interface Message {
   updatedAt: string;
   users?: number | any[];
 }
+
 export interface MessageUserId {
   id: number;
   createdAt: string;
@@ -25,17 +26,10 @@ export interface MessageUserIdText {
   updatedAt: string;
 }
 
-export interface MessageButton {
-  text: string;
-  url: string;
-}
-
-export interface InlineKeyboard {
-  buttons: MessageButton[];
-}
-
-export interface ButtonsPayload {
-  inline_keyboard: InlineKeyboard[];
+export interface ButtonPlacement {
+  buttonId: number;
+  row: number;
+  column: number;
 }
 
 export interface CreateMessageDto {
@@ -43,10 +37,8 @@ export interface CreateMessageDto {
   userIds: number[];
   status: string;
   subscriptionTypeId: number;
-  file?: string;
-  video?: string;
-  image?: string;
-  buttons?: ButtonsPayload;
+  fileIds: number[];
+  buttonPlacements?: ButtonPlacement[];
 }
 
 export interface UpdateMessageDto {
@@ -69,6 +61,7 @@ export interface PaginatedResponse<T> {
   limit: number;
   data: T[];
 }
+
 export interface MessageUser {
   id: number;
   userId: number;
@@ -78,6 +71,7 @@ export interface MessageUser {
   updatedAt: string;
   user: User;
 }
+
 export const MessageApi = {
   getAll: async (
     params?: MessageQueryParams
@@ -97,6 +91,7 @@ export const MessageApi = {
     const { data } = await axiosInstance.get(`/message/user/${id}`);
     return data;
   },
+
   getUserMessage: async (id: number): Promise<Message> => {
     const { data } = await axiosInstance.get(`/message/message/${id}`);
     return data;

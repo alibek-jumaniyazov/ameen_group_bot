@@ -157,189 +157,180 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-gray-100 py-10 px-4">
-      <div className="max-w-7xl mx-auto bg-white p-6 rounded-xl shadow-xl">
-        <Tabs defaultActiveKey="1">
-          <Tabs.TabPane tab="Owner info" key="1">
-            <Spin spinning={isLoading}>
-              <Form
-                form={form}
-                layout="vertical"
-                onFinish={onFinish}
-                className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-              >
-                <Form.Item name="aboutAminGroup" label="Amin Group haqida">
-                  <MDEditor height={200} style={{ background: "#fff" }} />
-                </Form.Item>
-                <Form.Item
-                  name="aboutKozimxonTorayev"
-                  label="Kozimxon Torayev haqida"
-                >
-                  <MDEditor height={200} style={{ background: "#fff" }} />
-                </Form.Item>
-                <Form.Item
-                  label="Amin Group rasmi"
-                  name="aboutAminGroupImageId"
-                >
-                  <Upload
-                    name="file"
-                    action={`${import.meta.env.VITE_API_URL}/files/upload`}
-                    showUploadList={false}
-                    onChange={handleUploadChange("aboutAminGroupImageId")}
-                  >
-                    <Button icon={<UploadOutlined />}>
-                      Yangi rasm yuklash
-                    </Button>
-                  </Upload>
-                  {data?.aboutAminGroupImage?.url && (
-                    <div className="mt-2">
-                      <p className="text-xs text-gray-500 mb-1">Joriy rasm:</p>
-                      <img
-                        src={`${import.meta.env.VITE_BASE_URL}${
-                          data.aboutAminGroupImage.url
-                        }`}
-                        alt="Oldingi rasm"
-                        className="w-24 rounded border"
-                      />
-                    </div>
-                  )}
-                  {imagePreviews.aboutAminGroupImageId && (
-                    <div className="mt-2">
-                      <p className="text-xs text-gray-500 mb-1">Yangi rasm:</p>
-                      <img
-                        src={`${import.meta.env.VITE_BASE_URL}${
-                          imagePreviews.aboutAminGroupImageId
-                        }`}
-                        alt="Preview"
-                        className="w-24 rounded border"
-                      />
-                    </div>
-                  )}
-                </Form.Item>
-                <Form.Item
-                  label="Kozimxon Torayev rasmi"
-                  name="aboutKozimxonTorayevImageId"
-                >
-                  <Upload
-                    name="file"
-                    action={`${import.meta.env.VITE_API_URL}/files/upload`}
-                    showUploadList={false}
-                    onChange={handleUploadChange("aboutKozimxonTorayevImageId")}
-                  >
-                    <Button icon={<UploadOutlined />}>
-                      Yangi rasm yuklash
-                    </Button>
-                  </Upload>
-                  {data?.aboutKozimxonTorayevImage?.url && (
-                    <div className="mt-2">
-                      <p className="text-xs text-gray-500 mb-1">Joriy rasm:</p>
-                      <img
-                        src={`${import.meta.env.VITE_BASE_URL}${
-                          data.aboutKozimxonTorayevImage.url
-                        }`}
-                        alt="Oldingi rasm"
-                        className="w-24 rounded border"
-                      />
-                    </div>
-                  )}
-                  {imagePreviews.aboutKozimxonTorayevImageId && (
-                    <div className="mt-2">
-                      <p className="text-xs text-gray-500 mb-1">Yangi rasm:</p>
-                      <img
-                        src={`${import.meta.env.VITE_BASE_URL}${
-                          imagePreviews.aboutKozimxonTorayevImageId
-                        }`}
-                        alt="Preview"
-                        className="w-24 rounded border"
-                      />
-                    </div>
-                  )}
-                </Form.Item>
-                <Form.Item className="lg:col-span-2">
-                  <Button type="primary" htmlType="submit" block>
-                    Saqlash
-                  </Button>
-                </Form.Item>
-              </Form>
-            </Spin>
-          </Tabs.TabPane>
-
-          <Tabs.TabPane tab="Inline buttons" key="2">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">Tugmalar ro‘yxati</h2>
-              <Button
-                type="primary"
-                onClick={() => {
-                  setEditingButton(null);
-                  buttonForm.resetFields();
-                  setIsModalOpen(true);
-                }}
-              >
-                + Yangi tugma
-              </Button>
-            </div>
-            <Table
-              columns={columns}
-              dataSource={buttonsData?.data || []}
-              loading={isButtonsLoading}
-              rowKey="id"
-              pagination={false}
-            />
-          </Tabs.TabPane>
-        </Tabs>
-
-        <Modal
-          open={isModalOpen}
-          title={editingButton ? "Tugmani tahrirlash" : "Yangi tugma"}
-          onCancel={() => setIsModalOpen(false)}
-          onOk={handleCreateOrUpdate}
-          okText={editingButton ? "Saqlash" : "Qo‘shish"}
-        >
-          <Form form={buttonForm} layout="vertical">
-            <Form.Item
-              label="Text"
-              name="text"
-              rules={[{ required: true, message: "Text kiriting" }]}
+    <div className="">
+      <Tabs defaultActiveKey="1">
+        <Tabs.TabPane tab="Owner info" key="1">
+          <Spin spinning={isLoading}>
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={onFinish}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
             >
-              <Input />
-            </Form.Item>
+              <Form.Item name="aboutAminGroup" label="Amin Group haqida">
+                <MDEditor height={200} data-color-mode="light" />
+              </Form.Item>
+              <Form.Item
+                name="aboutKozimxonTorayev"
+                label="Kozimxon Torayev haqida"
+              >
+                <MDEditor height={200} data-color-mode="light" />
+              </Form.Item>
+              <Form.Item label="Amin Group rasmi" name="aboutAminGroupImageId">
+                <Upload
+                  name="file"
+                  action={`${import.meta.env.VITE_API_URL}/files/upload`}
+                  showUploadList={false}
+                  onChange={handleUploadChange("aboutAminGroupImageId")}
+                >
+                  <Button icon={<UploadOutlined />}>Yangi rasm yuklash</Button>
+                </Upload>
+                {data?.aboutAminGroupImage?.url && (
+                  <div className="mt-2">
+                    <p className="text-xs text-gray-500 mb-1">Joriy rasm:</p>
+                    <img
+                      src={`${import.meta.env.VITE_BASE_URL}${
+                        data.aboutAminGroupImage.url
+                      }`}
+                      alt="Oldingi rasm"
+                      className="w-24 rounded border"
+                    />
+                  </div>
+                )}
+                {imagePreviews.aboutAminGroupImageId && (
+                  <div className="mt-2">
+                    <p className="text-xs text-gray-500 mb-1">Yangi rasm:</p>
+                    <img
+                      src={`${import.meta.env.VITE_BASE_URL}${
+                        imagePreviews.aboutAminGroupImageId
+                      }`}
+                      alt="Preview"
+                      className="w-24 rounded border"
+                    />
+                  </div>
+                )}
+              </Form.Item>
+              <Form.Item
+                label="Kozimxon Torayev rasmi"
+                name="aboutKozimxonTorayevImageId"
+              >
+                <Upload
+                  name="file"
+                  action={`${import.meta.env.VITE_API_URL}/files/upload`}
+                  showUploadList={false}
+                  onChange={handleUploadChange("aboutKozimxonTorayevImageId")}
+                >
+                  <Button icon={<UploadOutlined />}>Yangi rasm yuklash</Button>
+                </Upload>
+                {data?.aboutKozimxonTorayevImage?.url && (
+                  <div className="mt-2">
+                    <p className="text-xs text-gray-500 mb-1">Joriy rasm:</p>
+                    <img
+                      src={`${import.meta.env.VITE_BASE_URL}${
+                        data.aboutKozimxonTorayevImage.url
+                      }`}
+                      alt="Oldingi rasm"
+                      className="w-24 rounded border"
+                    />
+                  </div>
+                )}
+                {imagePreviews.aboutKozimxonTorayevImageId && (
+                  <div className="mt-2">
+                    <p className="text-xs text-gray-500 mb-1">Yangi rasm:</p>
+                    <img
+                      src={`${import.meta.env.VITE_BASE_URL}${
+                        imagePreviews.aboutKozimxonTorayevImageId
+                      }`}
+                      alt="Preview"
+                      className="w-24 rounded border"
+                    />
+                  </div>
+                )}
+              </Form.Item>
+              <Form.Item className="lg:col-span-2">
+                <Button type="primary" htmlType="submit" block>
+                  Saqlash
+                </Button>
+              </Form.Item>
+            </Form>
+          </Spin>
+        </Tabs.TabPane>
+
+        <Tabs.TabPane tab="Inline buttons" key="2">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold">Tugmalar ro‘yxati</h2>
+            <Button
+              type="primary"
+              onClick={() => {
+                setEditingButton(null);
+                buttonForm.resetFields();
+                setIsModalOpen(true);
+              }}
+            >
+              + Yangi tugma
+            </Button>
+          </div>
+          <Table
+            columns={columns}
+            dataSource={buttonsData?.data || []}
+            loading={isButtonsLoading}
+            rowKey="id"
+            pagination={false}
+          />
+        </Tabs.TabPane>
+      </Tabs>
+
+      <Modal
+        open={isModalOpen}
+        title={editingButton ? "Tugmani tahrirlash" : "Yangi tugma"}
+        onCancel={() => setIsModalOpen(false)}
+        onOk={handleCreateOrUpdate}
+        okText={editingButton ? "Saqlash" : "Qo‘shish"}
+      >
+        <Form form={buttonForm} layout="vertical">
+          <Form.Item
+            label="Text"
+            name="text"
+            rules={[{ required: true, message: "Text kiriting" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Data"
+            name="data"
+            rules={[{ required: true, message: "Data kiriting" }]}
+          >
+            <Select
+              options={[
+                { label: "SUBSCRIPTONS", value: "subscriptons" },
+                { label: "BUY_SUBSCRIPTON", value: "subscribe-" },
+                { label: "ABOUT_US", value: "about_us" },
+                { label: "ABOUT_OWNER", value: "about_owner" },
+                { label: "MY_SUBSCRIPTION", value: "my_subscriptions" },
+              ]}
+              placeholder="Data ni tanlang"
+            />
+          </Form.Item>
+          {dataValue === "subscribe-" && (
             <Form.Item
-              label="Data"
-              name="data"
-              rules={[{ required: true, message: "Data kiriting" }]}
+              label="Obuna turini tanlang"
+              name="subscriptionId"
+              rules={[{ required: true, message: "Tarif tanlang" }]}
             >
               <Select
-                options={[
-                  { label: "SUBSCRIPTONS", value: "subscriptons" },
-                  { label: "BUY_SUBSCRIPTON", value: "subscribe-" },
-                  { label: "ABOUT_US", value: "about_us" },
-                  { label: "ABOUT_OWNER", value: "about_owner" },
-                  { label: "MY_SUBSCRIPTION", value: "my_subscriptions" },
-                ]}
-                placeholder="Data ni tanlang"
+                options={subscriptions?.data?.map((s) => ({
+                  label: s.title,
+                  value: s.id,
+                }))}
+                placeholder="Obuna turini tanlang"
               />
             </Form.Item>
-            {dataValue === "subscribe-" && (
-              <Form.Item
-                label="Obuna turini tanlang"
-                name="subscriptionId"
-                rules={[{ required: true, message: "Tarif tanlang" }]}
-              >
-                <Select
-                  options={subscriptions?.data?.map((s) => ({
-                    label: s.title,
-                    value: s.id,
-                  }))}
-                  placeholder="Obuna turini tanlang"
-                />
-              </Form.Item>
-            )}
-            <Form.Item label="URL" name="url">
-              <Input />
-            </Form.Item>
-          </Form>
-        </Modal>
-      </div>
+          )}
+          <Form.Item label="URL" name="url">
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }
