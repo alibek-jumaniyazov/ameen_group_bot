@@ -5,6 +5,7 @@ export interface SubscriptionType {
   price: number;
   title: string;
   description: string;
+  oneTime: boolean;
   expireDays: number;
   createdAt: string;
   updatedAt: string;

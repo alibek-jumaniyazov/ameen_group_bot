@@ -1,4 +1,4 @@
-import { Button, Col, Drawer, Form, Input, message, Row } from "antd";
+import { Button, Col, Drawer, Form, Input, message, Row, Switch } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useEffect } from "react";
 import type { SubscriptionType } from "../../api/subscriptionApi";
@@ -23,13 +23,16 @@ export default function DefnModal({
       form.resetFields();
     }
   }, [open]);
-
+  const onChange = (checked: boolean) => {
+    console.log(`switch to ${checked}`);
+  };
   const onFinish = (values: Partial<SubscriptionType>) => {
     const cleanedData = {
       price: Number(values.price),
       title: values.title ?? "",
       description: values.description ?? "",
       expireDays: Number(values.expireDays),
+      oneTime: Boolean(values.oneTime),
     };
 
     createSubscription.mutate(cleanedData, {
@@ -83,6 +86,19 @@ export default function DefnModal({
               rules={[{ required: true, message: "Muddati kiriting" }]}
             >
               <Input type="number" placeholder="Masalan: 30" />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={16}>
+          <Col span={24}>
+            <Form.Item
+              label="Obuna faqat 1 marta amalga oshiriladimi?"
+              name="oneTime"
+              valuePropName="checked"
+              initialValue={false}
+            >
+              <Switch defaultChecked={false} onChange={onChange} />
             </Form.Item>
           </Col>
         </Row>
