@@ -36,7 +36,7 @@ const Login = (): JSX.Element => {
             key,
             duration: 2,
           });
-          setError(err.message);
+          setError("Username va parol noto'g'ri!");
           console.log(err);
         },
       }
@@ -85,6 +85,7 @@ const Login = (): JSX.Element => {
                   {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
                 </span>
               </div>
+              {error && <p className="text-red-500 text-sm">{error}</p>}
               <button
                 type="submit"
                 disabled={loginMutation.isPending}
