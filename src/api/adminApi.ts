@@ -40,7 +40,7 @@ export const AdminApi = {
     refreshToken: string
   ): Promise<Pick<AdminLoginResponse, "accessToken" | "refreshToken">> => {
     const { data } = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/admin/refresh`,
+      `${import.meta.env.VITE_API_URL}/admin/refresh`,
       {
         refreshToken,
       }
