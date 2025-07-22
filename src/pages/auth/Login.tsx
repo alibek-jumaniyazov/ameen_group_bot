@@ -14,6 +14,7 @@ const Login = (): JSX.Element => {
   const [error, setError] = useState<string | null>(null);
   const loginMutation = useAdminLogin();
   const navigate = useNavigate();
+  console.log(error);
 
   const handleLogin = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
@@ -37,7 +38,6 @@ const Login = (): JSX.Element => {
           });
           setError(err.message);
           console.log(err);
-          
         },
       }
     );

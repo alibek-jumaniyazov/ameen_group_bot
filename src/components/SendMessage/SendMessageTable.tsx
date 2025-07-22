@@ -4,7 +4,6 @@ import dayjs from "dayjs";
 import { useMessages } from "../../hooks/useMessage";
 import type { MessageQueryParams, Message } from "../../api/messageApi";
 import { useNavigate } from "react-router-dom";
-import MarkdownPreview from "@uiw/react-markdown-preview";
 
 interface SendMessageTableProps {
   filters?: {

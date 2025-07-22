@@ -1,7 +1,7 @@
 import { Button, Col, Drawer, Form, Input, Row, Space, message } from "antd";
 import { useEffect, useState } from "react";
 import { Icons } from "../../assets/icons";
-import { useUpdateUser, useDeleteUser } from "../../hooks/useUser";
+import { useUpdateUser } from "../../hooks/useUser";
 import type { User } from "../../api/userApi";
 
 interface DataType {
@@ -28,7 +28,7 @@ export default function EditUserModal({
   const [showEditInputs, setShowEditInputs] = useState(true);
 
   const updateUser = useUpdateUser();
-  const deleteUser = useDeleteUser();
+  // const deleteUser = useDeleteUser();
 
   useEffect(() => {
     if (record && open) {
@@ -61,18 +61,18 @@ export default function EditUserModal({
     );
   };
 
-  const handleDelete = () => {
-    if (!record) return;
-    deleteUser.mutate(record.id, {
-      onSuccess: () => {
-        message.success("Foydalanuvchi o‘chirildi");
-        onClose();
-      },
-      onError: () => {
-        message.error("O‘chirishda xatolik yuz berdi");
-      },
-    });
-  };
+  // const handleDelete = () => {
+  //   if (!record) return;
+  //   deleteUser.mutate(record.id, {
+  //     onSuccess: () => {
+  //       message.success("Foydalanuvchi o‘chirildi");
+  //       onClose();
+  //     },
+  //     onError: () => {
+  //       message.error("O‘chirishda xatolik yuz berdi");
+  //     },
+  //   });
+  // };
 
   return (
     <Drawer
@@ -88,12 +88,12 @@ export default function EditUserModal({
           >
             <Icons.pencilY />
           </button>
-          <button
+          {/* <button
             onClick={handleDelete}
             className="p-2 border border-red-500 rounded-lg cursor-pointer"
           >
             <Icons.delete />
-          </button>
+          </button> */}
         </Space>
       }
     >

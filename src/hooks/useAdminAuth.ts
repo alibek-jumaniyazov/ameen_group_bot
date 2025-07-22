@@ -4,7 +4,6 @@ import {
   type Admin,
   type AdminLoginRequest,
   type AdminLoginResponse,
-  type UpdateAdminDto,
 } from "../api/adminApi";
 import { TokenManager } from "../api/tokenManager";
 

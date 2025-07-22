@@ -30,10 +30,10 @@ export default function SettingsPage() {
   const [buttonForm] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingButton, setEditingButton] = useState<ButtonType | null>(null);
-  const [imagePreviews, setImagePreviews] = useState({
-    aboutAminGroupImageId: undefined,
-    aboutKozimxonTorayevImageId: undefined,
-  });
+  const [imagePreviews, setImagePreviews] = useState<{
+    aboutAminGroupImageId?: string;
+    aboutKozimxonTorayevImageId?: string;
+  }>({});
 
   const { data, isLoading } = useSettings();
   const updateMutation = useUpdateSettings();
@@ -73,9 +73,11 @@ export default function SettingsPage() {
 
   const handleUploadChange = (fieldName: string) => (info: any) => {
     if (info.file.status === "done") {
-      const fileId = info.file.response?.id;
+      const fileIdRaw = info.file.response?.id;
       const fileUrl = info.file.response?.url;
-      if (fileId && fileUrl) {
+
+      const fileId = Number(fileIdRaw);
+      if (!isNaN(fileId) && fileUrl) {
         form.setFieldValue(fieldName, fileId);
         setImagePreviews((prev) => ({ ...prev, [fieldName]: fileUrl }));
         message.success("Rasm muvaffaqiyatli yuklandi");

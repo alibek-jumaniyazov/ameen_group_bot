@@ -1,5 +1,4 @@
 import { Button, Col, DatePicker, Form, Input, Row, Select } from "antd";
-import { Icons } from "../../assets/icons";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { useEffect } from "react";

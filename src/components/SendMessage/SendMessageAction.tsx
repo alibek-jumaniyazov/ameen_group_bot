@@ -18,7 +18,13 @@ import { useButtons } from "../../hooks/useButtons";
 import MessageEditor from "./MessageEditor";
 import type { CreateMessageDto } from "../../api/messageApi";
 
-export default function SendMessageAction({ onClose, open }: { onClose: () => void; open: boolean }) {
+export default function SendMessageAction({
+  onClose,
+  open,
+}: {
+  onClose: () => void;
+  open: boolean;
+}) {
   const [form] = Form.useForm();
   const [editorValue, setEditorValue] = useState("");
   const [fileIds, setFileIds] = useState<number[]>([]);
@@ -30,7 +36,9 @@ export default function SendMessageAction({ onClose, open }: { onClose: () => vo
   const createMessage = useCreateMessage();
 
   const selectedStatus = Form.useWatch("status", form);
-  const isSubscriptionDisabled = ["EXPIRED", "REGISTERED"].includes(selectedStatus);
+  const isSubscriptionDisabled = ["EXPIRED", "REGISTERED"].includes(
+    selectedStatus
+  );
 
   useEffect(() => {
     if (!open) resetForm();
@@ -60,18 +68,19 @@ export default function SendMessageAction({ onClose, open }: { onClose: () => vo
         const id = info.file.response?.id;
         if (id) {
           setFileIds((prev) => [...prev, id]);
-          message.success(`${info.file.name} yuklandi`);
+          message.success(`${info.file.name} (${type}) yuklandi`);
         }
       } else if (info.file.status === "error") {
-        message.error(`${info.file.name} yuklashda xatolik`);
+        message.error(`${info.file.name} (${type}) yuklashda xatolik`);
       }
     },
   });
 
-  const userOptions = userList?.data?.map((user) => ({
-    value: user.id,
-    label: `${user.firstName} ${user.lastName} (${user.phoneNumber})`,
-  })) || [];
+  const userOptions =
+    userList?.data?.map((user) => ({
+      value: user.id,
+      label: `${user.firstName} ${user.lastName} (${user.phoneNumber})`,
+    })) || [];
 
   const onFinish = (values: any) => {
     if (!editorValue.trim()) {
@@ -82,7 +91,9 @@ export default function SendMessageAction({ onClose, open }: { onClose: () => vo
       text: editorValue,
       status: values.status === " " ? undefined : values.status,
       userIds: values.userIds || [],
-      subscriptionTypeId: values.subscriptionTypeId ? Number(values.subscriptionTypeId) : 0,
+      subscriptionTypeId: values.subscriptionTypeId
+        ? Number(values.subscriptionTypeId)
+        : 0,
       fileIds,
       buttonPlacements: selectedButtonIds.map((id, index) => ({
         buttonId: id,
@@ -110,7 +121,11 @@ export default function SendMessageAction({ onClose, open }: { onClose: () => vo
       bodyStyle={{ paddingBottom: 80 }}
       footer={
         <div className="flex justify-end border-t pt-4">
-          <Button type="primary" className="bg-[#528AF9] rounded-md" onClick={() => form.submit()}>
+          <Button
+            type="primary"
+            className="bg-[#528AF9] rounded-md"
+            onClick={() => form.submit()}
+          >
             Yuborish
           </Button>
         </div>
@@ -119,7 +134,11 @@ export default function SendMessageAction({ onClose, open }: { onClose: () => vo
       <Form layout="vertical" form={form} onFinish={onFinish}>
         <Row gutter={[16, 16]}>
           <Col span={24}>
-            <Form.Item label="📝 Xabar matni" name="text" rules={[{ required: true, message: "Xabar matni kerak" }]}> 
+            <Form.Item
+              label="📝 Xabar matni"
+              name="text"
+              rules={[{ required: true, message: "Xabar matni kerak" }]}
+            >
               <MessageEditor value={editorValue} onChange={setEditorValue} />
             </Form.Item>
           </Col>
@@ -129,7 +148,10 @@ export default function SendMessageAction({ onClose, open }: { onClose: () => vo
               <Select
                 placeholder="Tarifni tanlang"
                 disabled={isSubscriptionDisabled}
-                options={subscriptions?.data?.map((sub) => ({ value: sub.id.toString(), label: sub.title }))}
+                options={subscriptions?.data?.map((sub) => ({
+                  value: sub.id.toString(),
+                  label: sub.title,
+                }))}
               />
             </Form.Item>
           </Col>
@@ -157,7 +179,11 @@ export default function SendMessageAction({ onClose, open }: { onClose: () => vo
                   mode="multiple"
                   placeholder="Foydalanuvchilarni yozing va tanlang"
                   showSearch
-                  filterOption={(input, option) => (option?.label as string)?.toLowerCase()?.includes(input.toLowerCase())}
+                  filterOption={(input, option) =>
+                    (option?.label as string)
+                      ?.toLowerCase()
+                      ?.includes(input.toLowerCase())
+                  }
                   options={userOptions}
                 />
               )}
@@ -172,7 +198,9 @@ export default function SendMessageAction({ onClose, open }: { onClose: () => vo
             <Col span={8} key={type}>
               <Form.Item label={label}>
                 <Upload {...handleUpload(type)}>
-                  <Button icon={<UploadOutlined />}>{`${label.split(" ")[1]} tanlang`}</Button>
+                  <Button icon={<UploadOutlined />}>{`${
+                    label.split(" ")[1]
+                  } tanlang`}</Button>
                 </Upload>
               </Form.Item>
             </Col>
@@ -185,7 +213,10 @@ export default function SendMessageAction({ onClose, open }: { onClose: () => vo
                 placeholder="Tugmalarni tanlang"
                 value={selectedButtonIds}
                 onChange={setSelectedButtonIds}
-                options={buttonsData?.data?.map((btn) => ({ value: btn.id, label: btn.text }))}
+                options={buttonsData?.data?.map((btn) => ({
+                  value: btn.id,
+                  label: btn.text,
+                }))}
               />
             </Form.Item>
           </Col>

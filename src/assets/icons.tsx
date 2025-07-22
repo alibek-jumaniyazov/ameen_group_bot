@@ -1,5 +1,5 @@
 export const Icons = {
-  logo: (props: any) => (
+  logo: () => (
     <svg
       width="48"
       height="48"

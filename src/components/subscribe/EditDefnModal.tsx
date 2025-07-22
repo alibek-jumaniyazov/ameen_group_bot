@@ -17,7 +17,6 @@ import {
   useDeleteSubscription,
   useUpdateSubscription,
 } from "../../hooks/useSubscription";
-import confirm from "antd/es/modal/confirm";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 
 interface EditDefnModalProps {

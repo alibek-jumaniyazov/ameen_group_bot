@@ -1,10 +1,9 @@
-import { message, Modal, Table, Tag } from "antd";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import { Table, Tag } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
 import EditUserModal from "./EditUserModal";
 import { useNavigate } from "react-router-dom";
-import { useDeleteUser, useUsers } from "../../hooks/useUser";
+import {  useUsers } from "../../hooks/useUser";
 import { Icons } from "../../assets/icons";
 
 interface DataType {
@@ -25,7 +24,7 @@ export default function UsersTabs({
   filters: any;
 }) {
   const { data, isLoading } = useUsers();
-  const deleteUser = useDeleteUser();
+  // const deleteUser = useDeleteUser();
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
   const [selectedRecord, setSelectedRecord] = useState<DataType | null>(null);
@@ -64,33 +63,33 @@ export default function UsersTabs({
     return matchUser && matchDef && matchStatus && matchDate;
   });
 
-  const showDeleteConfirm = (id: number) => {
-    Modal.confirm({
-      title: "Ushbu mijozni o'chirmoqchimisiz?",
-      icon: <QuestionCircleOutlined style={{ color: "red" }} />,
-      okText: "Ha",
-      okType: "danger",
-      cancelText: "Yo'q",
-      onOk() {
-        handleDelete(id);
-      },
-      onCancel() {
-        console.log("O'chirish bekor qilindi");
-      },
-    });
-  };
+  // const showDeleteConfirm = (id: number) => {
+  //   Modal.confirm({
+  //     title: "Ushbu mijozni o'chirmoqchimisiz?",
+  //     icon: <QuestionCircleOutlined style={{ color: "red" }} />,
+  //     okText: "Ha",
+  //     okType: "danger",
+  //     cancelText: "Yo'q",
+  //     onOk() {
+  //       handleDelete(id);
+  //     },
+  //     onCancel() {
+  //       console.log("O'chirish bekor qilindi");
+  //     },
+  //   });
+  // };
 
-  const handleDelete = (id: number) => {
-    if (!id) return;
-    deleteUser.mutate(id, {
-      onSuccess: () => {
-        message.success("Mijoz o'chirildi");
-      },
-      onError: () => {
-        message.error("O'chirishda xatolik yuz berdi");
-      },
-    });
-  };
+  // const handleDelete = (id: number) => {
+  //   if (!id) return;
+  //   deleteUser.mutate(id, {
+  //     onSuccess: () => {
+  //       message.success("Mijoz o'chirildi");
+  //     },
+  //     onError: () => {
+  //       message.error("O'chirishda xatolik yuz berdi");
+  //     },
+  //   });
+  // };
 
   const columns = [
     { title: "Id", dataIndex: "id", key: "id" },

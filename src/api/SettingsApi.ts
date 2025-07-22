@@ -5,8 +5,10 @@ export interface Settings {
   aboutAminGroup: string;
   aboutKozimxonTorayev: string;
   alertMessage: string;
-  aboutAminGroupImageId: number | null;
-  aboutKozimxonTorayevImageId: number | null;
+  aboutKozimxonTorayevImageId: number | null | undefined;
+  aboutAminGroupImageId: number | null | undefined;
+  aboutAminGroupImage?: { id: number; url: string };
+  aboutKozimxonTorayevImage?: { id: number; url: string };
 }
 
 export type UpdateSettingsDto = Omit<Settings, "id">;
