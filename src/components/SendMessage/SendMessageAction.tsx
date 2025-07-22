@@ -92,7 +92,6 @@ export default function SendMessageAction({
                     ? `subscribe-${subscriptionIdForButton[i]}`
                     : btn.data;
 
-                // 👇 url bo‘sh bo‘lsa, u umuman objectga kiritilmaydi
                 const button: { text: string; data: string; url?: string } = {
                   text: btn.text,
                   data,
@@ -108,8 +107,6 @@ export default function SendMessageAction({
         ],
       },
     };
-    console.log("Payload:", payload);
-
     createMessage.mutate(payload, {
       onSuccess: () => {
         form.resetFields();
