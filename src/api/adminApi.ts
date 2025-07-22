@@ -40,7 +40,7 @@ export const AdminApi = {
     refreshToken: string
   ): Promise<Pick<AdminLoginResponse, "accessToken" | "refreshToken">> => {
     const { data } = await axios.post(
-      "http://localhost:3000/api/admin/refresh",
+      `${import.meta.env.VITE_BASE_URL}/admin/refresh`,
       {
         refreshToken,
       }
@@ -54,7 +54,7 @@ export const AdminApi = {
     });
   },
   getProfile: async (): Promise<Admin> => {
-    const { data } = await axiosInstance.get("/admin/1"); // faqat bitta admin
+    const { data } = await axiosInstance.get("/admin/1");
     return data;
   },
 

@@ -7,7 +7,7 @@ export default defineConfig({
     allowedHosts: ["cdaa2c33df2d.ngrok-free.app", "turaevkozimxon.uz"],
     proxy: {
       "/api": {
-        target: "http://localhost:3000",
+        target: "https://api.turaevkozimxon.uz",
       },
     },
   },
