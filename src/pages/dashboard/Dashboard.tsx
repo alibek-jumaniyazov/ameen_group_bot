@@ -1,15 +1,15 @@
 import { Card, Col, Row, Statistic } from "antd";
 import {
-  BarChart,
-  Bar,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
   Legend,
-  AreaChart,
-  Area,
+  BarChart,
+  Bar,
 } from "recharts";
 import { useEffect, useState } from "react";
 import {
@@ -31,6 +31,16 @@ const MONTHS = [
   "Noyabr",
   "Dekabr",
 ];
+
+type MonthlyItem = {
+  month: string;
+  revenue: number;
+};
+
+type MonthlySubItem = {
+  month: string;
+  activeSubscriptions: number;
+};
 
 export default function Dashboard() {
   const { data: stats, isLoading: loadingStats } = useStatistics();
@@ -54,22 +64,25 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (stats) {
+      const currentMonthName = MONTHS[new Date().getMonth()];
+
       const filledMonthlyData = MONTHS.map((month) => {
-        const revenueItem = stats.monthlyRevenue.find(
-          (item) => item.month === month
+        const revenueItem = (stats.monthlyRevenue as MonthlyItem[]).find(
+          (item: MonthlyItem) => item.month === month
         );
-        const subsItem = stats.monthlyActiveSubscriptions.find(
-          (item) => item.month === month
-        );
-        const pendingItem = stats.monthlyPendingPayments?.find(
-          (item) => item.month === month
-        );
+        const subsItem = (
+          stats.monthlyActiveSubscriptions as MonthlySubItem[]
+        ).find((item: MonthlySubItem) => item.month === month);
+
+        const isCurrentMonth = month === currentMonthName;
 
         return {
           month,
           revenue: revenueItem?.revenue || 0,
           activeSubscriptions: subsItem?.activeSubscriptions || 0,
-          pendingPayments: pendingItem?.pendingPayments || 0,
+          pendingPayments: isCurrentMonth
+            ? stats.pendingPaymentsThisMonth || 0
+            : 0,
         };
       });
 
@@ -80,7 +93,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (subscriptionStats) {
       setSubscriptionData(
-        subscriptionStats.map((item) => ({
+        subscriptionStats.map((item: any) => ({
           title: item.subscriptionType.title,
           active: item.activeCount,
           expired: item.expiredCount,
@@ -130,7 +143,7 @@ export default function Dashboard() {
 
       <Row gutter={[16, 16]} className="mt-8">
         <Col span={24}>
-          <Card title="Oylik daromad, aktiv obunalar va kutilayotgan to‘lovlar">
+          <Card title="Oylik daromad, obunalar va kutilayotgan to‘lovlar">
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart
                 data={monthlyData}
@@ -150,6 +163,7 @@ export default function Dashboard() {
                     <stop offset="95%" stopColor="#FA8C16" stopOpacity={0} />
                   </linearGradient>
                 </defs>
+
                 <XAxis dataKey="month" />
                 <YAxis />
                 <CartesianGrid strokeDasharray="3 3" />
