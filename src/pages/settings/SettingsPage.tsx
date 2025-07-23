@@ -63,6 +63,7 @@ export default function SettingsPage() {
   }, [data]);
 
   const onFinish = async (values: any) => {
+    console.log("Submitting settings:", values);
     try {
       await updateMutation.mutateAsync(values);
       message.success("Ma'lumotlar saqlandi!");
@@ -88,6 +89,10 @@ export default function SettingsPage() {
   const handleCreateOrUpdate = async () => {
     try {
       const values = await buttonForm.validateFields();
+      if(values.subscriptionId){
+        values.data = `subscribe-${values.subscriptionId}`;
+        delete values.subscriptionId;
+      }
       if (editingButton) {
         await updateButton.mutateAsync({
           id: editingButton.id,

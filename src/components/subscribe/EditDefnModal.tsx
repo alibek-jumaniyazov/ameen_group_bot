@@ -52,6 +52,7 @@ export default function EditDefnModal({
       title: values.title ?? "",
       description: values.description ?? "",
       expireDays: Number(values.expireDays),
+      oneTime: Boolean(values.oneTime),
     };
 
     updateSubscription.mutate(

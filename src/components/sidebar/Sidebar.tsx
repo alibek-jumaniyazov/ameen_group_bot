@@ -3,7 +3,7 @@ import {
   MenuUnfoldOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button, Image, Layout, Menu, theme } from "antd";
+import { Avatar, Button, Layout, Menu, theme } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { useState, useMemo } from "react";
@@ -43,7 +43,6 @@ const menuItems = [
 export default function Sidebar() {
   const { logout } = useApi();
   const [collapsed, setCollapsed] = useState(false);
-  const [hasImage] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -119,16 +118,7 @@ export default function Sidebar() {
             className="flex items-center gap-2.5 cursor-pointer"
             onClick={() => navigate("/profile")}
           >
-            <Avatar
-              size="large"
-              icon={
-                hasImage ? (
-                  <Image src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" />
-                ) : (
-                  <UserOutlined />
-                )
-              }
-            />
+            <Avatar size="large" icon={<UserOutlined />} />
           </div>
         </Header>
 
