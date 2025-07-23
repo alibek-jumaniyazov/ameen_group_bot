@@ -39,7 +39,7 @@ export const MainRoute = {
     {
       id: 1,
       path: "/atmos/otp",
-      element: <PaymentOtpPage  />,
+      element: <PaymentOtpPage />,
       fallback: <h1>Loading...</h1>,
     },
   ],

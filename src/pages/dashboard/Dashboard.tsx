@@ -1,5 +1,4 @@
 import { Card, Col, Row, Statistic } from "antd";
-
 import {
   BarChart,
   Bar,
@@ -18,6 +17,21 @@ import {
   useUserCountBySubscription,
 } from "../../hooks/useStatistics";
 
+const MONTHS = [
+  "Yanvar",
+  "Fevral",
+  "Mart",
+  "Aprel",
+  "May",
+  "Iyun",
+  "Iyul",
+  "Avgust",
+  "Sentyabr",
+  "Oktyabr",
+  "Noyabr",
+  "Dekabr",
+];
+
 export default function Dashboard() {
   const { data: stats, isLoading: loadingStats } = useStatistics();
   const { data: subscriptionStats, isLoading: loadingSubs } =
@@ -26,7 +40,12 @@ export default function Dashboard() {
   const isLoading = loadingStats || loadingSubs;
 
   const [monthlyData, setMonthlyData] = useState<
-    { month: string; revenue: number; activeSubscriptions: number }[]
+    {
+      month: string;
+      revenue: number;
+      activeSubscriptions: number;
+      pendingPayments: number;
+    }[]
   >([]);
 
   const [subscriptionData, setSubscriptionData] = useState<
@@ -35,14 +54,26 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (stats) {
-      setMonthlyData(
-        stats.monthlyRevenue.map((item, i) => ({
-          month: item.month,
-          revenue: item.revenue,
-          activeSubscriptions:
-            stats.monthlyActiveSubscriptions[i]?.activeSubscriptions || 0,
-        }))
-      );
+      const filledMonthlyData = MONTHS.map((month) => {
+        const revenueItem = stats.monthlyRevenue.find(
+          (item) => item.month === month
+        );
+        const subsItem = stats.monthlyActiveSubscriptions.find(
+          (item) => item.month === month
+        );
+        const pendingItem = stats.monthlyPendingPayments?.find(
+          (item) => item.month === month
+        );
+
+        return {
+          month,
+          revenue: revenueItem?.revenue || 0,
+          activeSubscriptions: subsItem?.activeSubscriptions || 0,
+          pendingPayments: pendingItem?.pendingPayments || 0,
+        };
+      });
+
+      setMonthlyData(filledMonthlyData);
     }
   }, [stats]);
 
@@ -57,9 +88,10 @@ export default function Dashboard() {
       );
     }
   }, [subscriptionStats]);
+
   return (
     <div className="p-4 max-h-[800px] overflow-y-auto">
-      <Row gutter={[16, 16]} className="">
+      <Row gutter={[16, 16]}>
         <Col span={6}>
           <Card loading={isLoading}>
             <Statistic
@@ -98,7 +130,7 @@ export default function Dashboard() {
 
       <Row gutter={[16, 16]} className="mt-8">
         <Col span={24}>
-          <Card title="Oylik daromad va aktiv obunalar">
+          <Card title="Oylik daromad, aktiv obunalar va kutilayotgan to‘lovlar">
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart
                 data={monthlyData}
@@ -112,6 +144,10 @@ export default function Dashboard() {
                   <linearGradient id="colorSubs" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#52C41A" stopOpacity={0.8} />
                     <stop offset="95%" stopColor="#52C41A" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorPending" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#FA8C16" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#FA8C16" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="month" />
@@ -134,6 +170,14 @@ export default function Dashboard() {
                   fillOpacity={1}
                   fill="url(#colorSubs)"
                   name="Aktiv obunalar"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="pendingPayments"
+                  stroke="#FA8C16"
+                  fillOpacity={1}
+                  fill="url(#colorPending)"
+                  name="Kutilayotgan to‘lovlar"
                 />
               </AreaChart>
             </ResponsiveContainer>

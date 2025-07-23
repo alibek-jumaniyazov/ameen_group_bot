@@ -16,7 +16,11 @@ export default function UsersTabsFilter({
 
   const onFinish = (values: any) => {
     const payload = {
-      ...values,
+      subscriptionTypeId: values.definition,
+      status: values.status,
+      name: values.searchUser,
+      phoneNumber: values.phoneNumber,
+      telegramId: values.telegramId,
       date: values.date
         ? dayjs(values.date).format("YYYY-MM-DD HH:mm")
         : undefined,
@@ -26,7 +30,7 @@ export default function UsersTabsFilter({
 
   const handleClear = () => {
     form.resetFields();
-    onFilter(null);
+    onFilter({});
   };
 
   useEffect(() => {
@@ -36,6 +40,7 @@ export default function UsersTabsFilter({
         date: filters.date
           ? dayjs(filters.date, "YYYY-MM-DD HH:mm")
           : undefined,
+        searchUser: filters.name || filters.phoneNumber || filters.telegramId,
       });
     }
   }, [filters]);
@@ -54,23 +59,61 @@ export default function UsersTabsFilter({
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Foydalanuvchi bo’yicha" name="searchUser">
+            <Form.Item label="Foydalanuvchi Ismi" name="searchUser">
               <Input
                 type="search"
-                placeholder="Foydalanuvchi"
-              
+                placeholder="Foydalanuvchi ismi orqali qidirish"
               />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
-          <Col span={24}>
+          <Col span={12}>
+            <Form.Item label="Telefon Raqam" name="phoneNumber">
+              <Input
+                type="search"
+                placeholder="Foydalanuvchi Telefon raqami orqali qidirish"
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label="Telegram ID" name="telegramId">
+              <Input
+                type="search"
+                placeholder="Foydalanuvchi Telegram ID orqali qidirish"
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item label="Status" name="status">
+              <Select
+                placeholder="Status tanlang"
+                allowClear
+                options={[
+                  {
+                    value: "REGISTERED",
+                    label: "Ro'yxatdan o'tgan",
+                  },
+                  { value: "SUBSCRIBE", label: "Faol obuna" },
+                  { value: "EXPIRED", label: "Muddati tugagan" },
+                  { value: "INACTIVE", label: "Noaktiv" },
+                  {
+                    value: "UNSUBSCRIBE",
+                    label: "Obunani bekor qilgan",
+                  },
+                ]}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
             <Form.Item label="Tarif" name="definition">
               <Select
                 placeholder="Tarif tanlang"
                 allowClear
                 options={data?.data.map((item) => ({
-                  value: item.title,
+                  value: item.id,
                   label: item.title,
                 }))}
               />

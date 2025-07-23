@@ -6,18 +6,22 @@ import UsersTabsFilter from "../../components/users/UsersTabsFilter";
 
 export default function Users() {
   const [open, setOpen] = useState(false);
-  const [filters, setFilters] = useState<any>(null);
+  const [filters, setFilters] = useState<any>({});
   const [search, setSearch] = useState("");
 
   const handleFilter = (values: any) => {
-    setFilters(values);
+    setFilters(values || {});
     setSearch("");
     setOpen(false);
   };
 
   const handleSearch = () => {
-    setFilters({ ...filters, searchUser: search });
+    setFilters({
+      ...filters,
+      name: search,
+    });
   };
+
   return (
     <div className="Users flex flex-col gap-4">
       <div className="w-full flex items-center justify-between relative z-10">
@@ -25,7 +29,7 @@ export default function Users() {
           <div className="flex items-center gap-2 w-[357px] h-[44px] rounded-lg border border-[#92959C] px-2.5">
             <Icons.search className={"w-5"} />
             <Input
-              placeholder="Search ( Id yoki Mijoz ismi )"
+              placeholder="Qidirib topish ismi orqali"
               variant="borderless"
               className="placeholder:!text-[#94A3B8]"
               value={search}
@@ -54,7 +58,7 @@ export default function Users() {
           <UsersTabsFilter onFilter={handleFilter} filters={filters} />
         </div>
       )}
-      <UsersTabs search={search} filters={filters} />
+      <UsersTabs filters={filters} />
     </div>
   );
 }
