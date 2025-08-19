@@ -25,12 +25,12 @@ export const MainRoute = {
       element: <Login />,
       fallback: <h1>Loading...</h1>,
     },
-    {
-      id: 1,
-      path: "/atmos",
-      element: <AtmosPayment />,
-      fallback: <h1>Loading...</h1>,
-    },
+    // {
+    //   id: 1,
+    //   path: "/atmos",
+    //   element: <AtmosPayment />,
+    //   fallback: <h1>Loading...</h1>,
+    // },
     {
       id: 1,
       path: "/atmos/card",
