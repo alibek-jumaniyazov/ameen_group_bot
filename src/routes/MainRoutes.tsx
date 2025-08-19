@@ -1,4 +1,3 @@
-import AtmosPayment from "../pages/atmos/AtmosPayment";
 import PaymentCardPage from "../pages/atmos/PaymentCardPage";
 import PaymentOtpPage from "../pages/atmos/PaymentOtpPage";
 import PaymentSuccess from "../pages/atmos/PaymentSuccess";
