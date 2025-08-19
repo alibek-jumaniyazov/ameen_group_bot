@@ -3,22 +3,41 @@ import { Button, Input } from "antd";
 import PaymentHistoryTabs from "../../components/PaymentHistory/PaymentHistoryTabs";
 import PaymentHistoryTabsFilter from "../../components/PaymentHistory/PaymentHistoryTabsFilter";
 import { useState } from "react";
-import { useTransactionByPaymentType } from "../../hooks/useTransaction";
+import { useTransactions } from "../../hooks/useTransaction";
 
 export default function PaymentHistory() {
   const [open, setOpen] = useState(false);
-  const [filters, setFilters] = useState<any>(null);
+  const [filters, setFilters] = useState<any>();
   const [search, setSearch] = useState("");
-  const { data } = useTransactionByPaymentType("NORMAL");
+  const [page, setPage] = useState(1);
+  const limit = 10;
+
+  const { data, isLoading } = useTransactions({
+    ...filters,
+    username: search || undefined,
+    page,
+    limit,
+  });
 
   const handleFilter = (values: any) => {
-    setFilters(values);
+    const payload = {
+      subscriptionTypeId: values?.definition || undefined,
+      minPrice: values?.minAmount ? Number(values.minAmount) : undefined,
+      maxPrice: values?.maxAmount ? Number(values.maxAmount) : undefined,
+      paymentType: filters?.paymentType,
+    };
+    setFilters(payload);
     setSearch("");
+    setPage(1);
     setOpen(false);
   };
 
   const handleSearch = () => {
-    setFilters({ ...filters, searchUser: search });
+    setPage(1);
+  };
+
+  const handlePageChange = (pageNumber: number) => {
+    setPage(pageNumber);
   };
 
   return (
@@ -28,7 +47,7 @@ export default function PaymentHistory() {
           <div className="flex items-center gap-2 w-[357px] h-[44px] rounded-lg border border-[#92959C] px-2.5">
             <Icons.search className="w-5" />
             <Input
-              placeholder="Search (ID yoki Foydalanuvchi)"
+              placeholder="Search (Foydalanuvchi username)"
               variant="borderless"
               className="placeholder:!text-[#94A3B8]"
               value={search}
@@ -52,12 +71,20 @@ export default function PaymentHistory() {
           <Icons.adjustments /> Filter
         </Button>
       </div>
+
       {open && (
         <div className="transition-all duration-300 ease-in-out">
           <PaymentHistoryTabsFilter onFilter={handleFilter} filters={filters} />
         </div>
       )}
-      <PaymentHistoryTabs filters={filters} data={data?.data ?? []} />
+      <PaymentHistoryTabs
+        data={data?.data ?? []}
+        loading={isLoading}
+        page={page}
+        limit={limit}
+        total={data?.total ?? 0}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }

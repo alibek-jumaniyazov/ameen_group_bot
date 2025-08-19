@@ -11,6 +11,7 @@ export const useTransactions = (params?: TransactionQueryParams) => {
     queryFn: () => TransactionApi.getAll(params),
   });
 };
+
 export const useTransactionByPaymentType = (type: string) => {
   return useQuery({
     queryKey: ["transaction", { type }],

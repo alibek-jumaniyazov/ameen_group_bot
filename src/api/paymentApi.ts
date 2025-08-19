@@ -7,7 +7,7 @@ export interface CreatePaymentPayload {
 
 export interface PreapplyPayload {
   transaction_id: number;
-  card_number: string;
+  card_number: number;
   expiry: string;
 }
 

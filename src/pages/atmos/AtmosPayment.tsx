@@ -8,10 +8,8 @@ const { Title, Paragraph } = Typography;
 export default function AtmosPayment() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const userId = Number(searchParams.get("userId") ?? 1);
-  const subscriptionTypeId = Number(
-    searchParams.get("subscriptionTypeId") ?? 1
-  );
+  const userId = Number(searchParams.get("userId"));
+  const subscriptionTypeId = Number(searchParams.get("subscriptionTypeId"));
 
   const { mutate } = useCreatePayment();
 
@@ -26,6 +24,10 @@ export default function AtmosPayment() {
       {
         onSuccess: (res) => {
           const id = res?.transaction_id;
+          if (!id) {
+            message.error("Transaction_id qaytmadi");
+            return;
+          }
           message.success("Transaction yaratildi");
           navigate(`/atmos/card?transaction_id=${id}`);
         },

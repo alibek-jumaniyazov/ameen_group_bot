@@ -59,6 +59,9 @@ export interface TransactionQueryParams {
   subscriptionTypeId?: number;
   type?: string;
   paymentType?: string;
+  username?: string;
+  phone?: string;
+  createdAt?: string;
 }
 
 export interface PaginatedResponse<T> {

@@ -1,3 +1,4 @@
+// PaymentHistoryTabs.tsx
 import { Table, Tag, type TableProps } from "antd";
 import type { Transaction } from "../../api/transactionApi";
 import dayjs from "dayjs";
@@ -11,61 +12,31 @@ interface DataType {
   status: string[];
 }
 
-export default function PaymentHistoryTabs({
-  filters,
-  data,
-}: {
-  filters: any;
+interface PaymentHistoryTabsProps {
   data: Transaction[];
-}) {
-  const allData: DataType[] = data
-    .filter((item) => item.status === "Paid")
-    .map((item) => ({
-      id: item.id.toString(),
-      user: `${item.user?.firstName || ""} ${item.user?.lastName || ""}`,
-      definition: [item.subscriptionType?.title || "Noma'lum"],
-      amout: `${item.price?.toString()} so'm`,
-      date: new Date(item.createdAt).toISOString(),
-      status: ["Muvaffaqiyatli"],
-    }));
+  page: number;
+  limit: number;
+  total: number;
+  loading?: boolean;
+  onPageChange: (page: number) => void;
+}
 
-  const filteredData = allData.filter((item) => {
-    const matchUser = filters?.searchUser
-      ? item.user.toLowerCase().includes(filters.searchUser.toLowerCase()) ||
-        item.id.includes(filters.searchUser)
-      : true;
-
-    const matchDef = filters?.definition
-      ? item.definition.includes(filters.definition)
-      : true;
-
-    const matchStatus = filters?.status
-      ? item.status.includes(filters.status)
-      : true;
-
-    const amountNum = Number(item.amout.replace(/\D/g, ""));
-
-    const matchAmountMin = filters?.minAmount
-      ? amountNum >= Number(filters.minAmount)
-      : true;
-
-    const matchAmountMax = filters?.maxAmount
-      ? amountNum <= Number(filters.maxAmount)
-      : true;
-
-    const matchDate = filters?.date
-      ? dayjs(item.date).format("YYYY-MM-DD HH:mm") === filters.date
-      : true;
-
-    return (
-      matchUser &&
-      matchDef &&
-      matchStatus &&
-      matchAmountMin &&
-      matchAmountMax &&
-      matchDate
-    );
-  });
+export default function PaymentHistoryTabs({
+  data,
+  page,
+  limit,
+  total,
+  loading,
+  onPageChange,
+}: PaymentHistoryTabsProps) {
+  const allData = data.map((item) => ({
+    id: item.id.toString(),
+    user: `${item.user?.firstName || ""} ${item.user?.lastName || ""}`,
+    definition: [item.subscriptionType?.title || "Noma'lum"],
+    amout: `${item.price?.toString()} so'm`,
+    date: new Date(item.createdAt).toISOString(),
+    status: ["Muvaffaqiyatli"],
+  }));
 
   const columns: TableProps<DataType>["columns"] = [
     { title: "To‘lov ID", dataIndex: "id", key: "id" },
@@ -105,13 +76,15 @@ export default function PaymentHistoryTabs({
     <div className="PaymentHistoryTabs">
       <Table
         columns={columns}
-        dataSource={filteredData}
+        dataSource={allData}
+        loading={loading}
         pagination={{
-          pageSize: 11,
+          current: page,
+          pageSize: limit,
+          total,
           showSizeChanger: false,
-          align: "center",
-          total: filteredData.length,
-          showTotal: (total) => `Jami: ${total} foydalanuvchi`,
+          onChange: onPageChange,
+          showTotal: (total) => `Jami: ${total} ta to‘lov`,
         }}
         rowKey="id"
       />

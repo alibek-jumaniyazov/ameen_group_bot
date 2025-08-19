@@ -12,19 +12,39 @@ export default function PaymentCardPage() {
   const transaction_id = Number(searchParams.get("transaction_id"));
   const { mutate, isPending: isLoading } = usePreapplyPayment();
 
+  const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, "");
+    if (value.length > 4) value = value.slice(0, 4);
+
+    if (value.length >= 3) {
+      value = value.slice(0, 2) + "/" + value.slice(2);
+    }
+    form.setFieldsValue({ expiry: value });
+  };
+
   const onSubmit = (values: any) => {
-    mutate(
-      { ...values, transaction_id },
-      {
-        onSuccess: () => {
-          message.success("Karta ma’lumotlari yuborildi");
-          navigate(`/atmos/otp?transaction_id=${transaction_id}`);
-        },
-        onError: () => {
-          message.error("Karta ma’lumotlarini yuborishda xatolik");
-        },
-      }
-    );
+    const [mm, yy] = values.expiry.split("/");
+    const formattedExpiry = yy + mm;
+
+    const payload = {
+      card_number: Number(values.card_number),
+      transaction_id,
+      expiry: formattedExpiry,
+    };
+
+    console.log("👉 Backendga yuboriladigan payload:", payload);
+
+    mutate(payload, {
+      onSuccess: () => {
+        message.success("Karta ma’lumotlari yuborildi");
+        navigate(`/atmos/otp?transaction_id=${transaction_id}`);
+      },
+      onError: (err) => {
+        console.error("❌ Xatolik yuz berdi, yuborilgan payload:", payload);
+        message.error("Karta ma’lumotlarini yuborishda xatolik");
+        console.log(err);
+      },
+    });
   };
 
   return (
@@ -36,15 +56,25 @@ export default function PaymentCardPage() {
           name="card_number"
           rules={[{ required: true, message: "Karta raqami kerak" }]}
         >
-          <Input placeholder="1234 5678 9012 3456" />
+          <Input placeholder="8600 1234 5678 9012" maxLength={19} />
         </Form.Item>
 
         <Form.Item
           label="Amal qilish muddati"
           name="expiry"
-          rules={[{ required: true, message: "Muddati kerak" }]}
+          rules={[
+            { required: true, message: "Muddati kerak" },
+            {
+              pattern: /^(0[1-9]|1[0-2])\/\d{2}$/,
+              message: "Format MM/YY bo‘lishi kerak",
+            },
+          ]}
         >
-          <Input placeholder="12/26" />
+          <Input
+            placeholder="MM/YY"
+            maxLength={5}
+            onChange={handleExpiryChange}
+          />
         </Form.Item>
 
         <Button

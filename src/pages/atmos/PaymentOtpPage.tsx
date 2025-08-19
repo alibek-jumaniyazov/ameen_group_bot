@@ -1,5 +1,5 @@
 import { Button, Form, Input, message, Typography } from "antd";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useApplyPayment } from "../../hooks/usePayment";
 
 const { Title } = Typography;
@@ -7,16 +7,22 @@ const { Title } = Typography;
 export default function PaymentOtpPage() {
   const [form] = Form.useForm();
   const [searchParams] = useSearchParams();
-  const transaction_id = Number(searchParams.get("transaction_id"));
+  const navigate = useNavigate();
 
+  const transaction_id = Number(searchParams.get("transaction_id"));
   const { mutate, isPending: isLoading } = useApplyPayment();
 
   const onSubmit = (values: any) => {
     mutate(
       { ...values, transaction_id },
       {
-        onSuccess: () => message.success("To‘lov muvaffaqiyatli tasdiqlandi"),
-        onError: () => message.error("OTP noto‘g‘ri kiritildi"),
+        onSuccess: () => {
+          message.success("To‘lov muvaffaqiyatli tasdiqlandi");
+          navigate("/success");
+        },
+        onError: () => {
+          message.error("OTP noto‘g‘ri kiritildi");
+        },
       }
     );
   };
@@ -30,7 +36,7 @@ export default function PaymentOtpPage() {
           name="otp"
           rules={[{ required: true, message: "OTP kodini kiriting" }]}
         >
-          <Input placeholder="123456" />
+          <Input placeholder="123456" maxLength={6} />
         </Form.Item>
 
         <Button
