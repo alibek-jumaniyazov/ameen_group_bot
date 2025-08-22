@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 import { TokenManager } from "./tokenManager";
 import { AdminApi } from "./adminApi";
 
@@ -22,7 +22,7 @@ axiosInstance.interceptors.request.use((config) => {
 let isRefreshing = false;
 let failedQueue: {
   resolve: (value?: unknown) => void;
-  reject: (error: unknown) => void;
+  reject: (reason?: unknown) => void;
 }[] = [];
 
 const processQueue = (error: unknown, token: string | null = null) => {
@@ -32,21 +32,31 @@ const processQueue = (error: unknown, token: string | null = null) => {
   });
   failedQueue = [];
 };
+
 axiosInstance.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    console.log("RESPONSE ERROR:", error?.response?.status);
+  async (error: AxiosError) => {
+    const originalRequest = error.config as AxiosRequestConfig & {
+      _retry?: boolean;
+    };
 
-    const originalRequest = error.config;
+    const status = error.response?.status;
+    console.log("❌ RESPONSE ERROR:", status);
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
       console.log("🔄 Token expired, attempting refresh...");
 
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({
             resolve: (token) => {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
+              if (token) {
+                originalRequest.headers = {
+                  ...originalRequest.headers,
+                  Authorization: `Bearer ${token}`,
+                };
+              }
               resolve(axiosInstance(originalRequest));
             },
             reject,
@@ -54,19 +64,24 @@ axiosInstance.interceptors.response.use(
         });
       }
 
-      originalRequest._retry = true;
       isRefreshing = true;
 
       try {
         const refreshToken = TokenManager.getRefreshToken();
-        if (!refreshToken) throw new Error("No refresh token");
+        if (!refreshToken) throw new Error("No refresh token found");
 
         const { accessToken, refreshToken: newRefresh } =
           await AdminApi.refresh(refreshToken);
 
         TokenManager.setTokens({ accessToken, refreshToken: newRefresh });
+
         processQueue(null, accessToken);
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
+        originalRequest.headers = {
+          ...originalRequest.headers,
+          Authorization: `Bearer ${accessToken}`,
+        };
+
         return axiosInstance(originalRequest);
       } catch (err) {
         processQueue(err, null);

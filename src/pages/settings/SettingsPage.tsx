@@ -89,7 +89,7 @@ export default function SettingsPage() {
   const handleCreateOrUpdate = async () => {
     try {
       const values = await buttonForm.validateFields();
-      if(values.subscriptionId){
+      if (values.subscriptionId) {
         values.data = `subscribe-${values.subscriptionId}`;
         delete values.subscriptionId;
       }
@@ -302,11 +302,7 @@ export default function SettingsPage() {
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            label="Data"
-            name="data"
-            rules={[{ required: true, message: "Data kiriting" }]}
-          >
+          <Form.Item label="Data" name="data">
             <Select
               options={[
                 { label: "SUBSCRIPTONS", value: "subscriptons" },
