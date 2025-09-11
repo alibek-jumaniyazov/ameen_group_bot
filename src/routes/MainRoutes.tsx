@@ -1,19 +1,19 @@
-import PaymentCardPage from "../pages/atmos/PaymentCardPage";
-import PaymentOtpPage from "../pages/atmos/PaymentOtpPage";
-import PaymentSuccess from "../pages/atmos/PaymentSuccess";
-import Login from "../pages/auth/Login";
+import AdminProfile from "../pages/profile/AdminProfile";
 import AutoPayment from "../pages/autoPayment/AutoPayment";
 import AutoPaymentUser from "../pages/autoPayment/AutoPaymentUser";
 import Dashboard from "../pages/dashboard/Dashboard";
+import Login from "../pages/auth/Login";
+import PaymentCardPage from "../pages/atmos/PaymentCardPage";
 import PaymentHistory from "../pages/paymentHistory/PaymentHistory";
-import AdminProfile from "../pages/profile/AdminProfile";
+import PaymentOtpPage from "../pages/atmos/PaymentOtpPage";
+import PaymentSuccess from "../pages/atmos/PaymentSuccess";
 import SendMessage from "../pages/SendMessage/SendMessage";
-import UserMessage from "../pages/SendMessage/UserMessage";
 import SettingsPage from "../pages/settings/SettingsPage";
 import Subscribe from "../pages/subscribe/Subscription";
 import SubscriptionListPage from "../pages/SubscriptionList/SubscriptionListPage";
 import SubscriptionStatistics from "../pages/subscriptionStatistics/SubscriptionStatistics";
 import User from "../pages/user/User";
+import UserMessage from "../pages/SendMessage/UserMessage";
 import Users from "../pages/users/Users";
 
 export const MainRoute = {
@@ -50,6 +50,24 @@ export const MainRoute = {
     },
   ],
   private: [
+    {
+      id: 1,
+      path: "/atmos/card",
+      element: <PaymentCardPage />,
+      fallback: <h1>Loading...</h1>,
+    },
+    {
+      id: 1,
+      path: "/atmos/otp",
+      element: <PaymentOtpPage />,
+      fallback: <h1>Loading...</h1>,
+    },
+    {
+      id: 1,
+      path: "/success",
+      element: <PaymentSuccess />,
+      fallback: <h1>Loading...</h1>,
+    },
     {
       id: 1,
       path: "/",
