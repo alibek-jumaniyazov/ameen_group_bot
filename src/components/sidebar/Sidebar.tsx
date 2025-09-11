@@ -1,17 +1,18 @@
+import { Avatar, Button, Layout, Menu, theme } from "antd";
+import { Content, Header } from "antd/es/layout/layout";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button, Layout, Menu, theme } from "antd";
-import { Content, Header } from "antd/es/layout/layout";
-import Sider from "antd/es/layout/Sider";
-import { useState, useMemo } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Icons } from "../../assets/icons";
-import { useApi } from "../../context/ApiContext";
-import logo from "../../assets/logo.png";
+import { useMemo, useState } from "react";
+
 import FullLogo from "../../assets/full_logo.png";
+import { Icons } from "../../assets/icons";
+import Sider from "antd/es/layout/Sider";
+import logo from "../../assets/logo.png";
+import { useApi } from "../../context/ApiContext";
 
 const menuItems = [
   { key: "/", icon: <Icons.dashboard />, label: "Dashboard" },
@@ -65,6 +66,13 @@ export default function Sidebar() {
   const handleMenuClick = ({ key }: { key: string }) => {
     navigate(key);
   };
+
+  const hideSidebar =
+    location.pathname.startsWith("/atmos") || location.pathname === "/success";
+
+  if (hideSidebar) {
+    return <Outlet />;
+  }
 
   return (
     <Layout className="h-screen">
