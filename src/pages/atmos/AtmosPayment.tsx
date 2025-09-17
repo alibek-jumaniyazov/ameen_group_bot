@@ -1,13 +1,27 @@
 import { Button, Form, Input, Spin, Typography, message } from "antd";
 import { useCreatePayment, usePreapplyPayment } from "../../hooks/usePayment";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { useState } from "react";
 import { useSubscriptions } from "../../hooks/useSubscription";
 
 const { Title, Text } = Typography;
+declare global {
+  interface Window {
+    Telegram: any;
+  }
+}
 
 export default function AtmosPaymentPage() {
+  useEffect(() => {
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.setBackgroundColor("#ffffff");
+      window.Telegram.WebApp.setHeaderColor("#ffffff");
+    }
+    document.body.style.backgroundColor = "#ffffff";
+    document.body.style.color = "#000000";
+  }, []);
+
   const [form] = Form.useForm();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -81,7 +95,7 @@ export default function AtmosPaymentPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto p-6">
+    <div className="max-w-md mx-auto p-6 !bg-white">
       <Title level={3} className="text-center mb-6">
         Karta va tarifni tanlang
       </Title>
@@ -147,7 +161,7 @@ export default function AtmosPaymentPage() {
           htmlType="submit"
           loading={isPending || isCardLoading}
           disabled={!selectedId}
-          className="w-full"
+          className="w-full py-8 text-lg font-semibold"
         >
           To‘lovni boshlash
         </Button>
