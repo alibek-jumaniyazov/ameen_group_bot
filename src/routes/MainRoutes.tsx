@@ -1,4 +1,5 @@
 import AdminProfile from "../pages/profile/AdminProfile";
+import AtmosPayment from "../pages/atmos/AtmosPayment";
 import AutoPayment from "../pages/autoPayment/AutoPayment";
 import AutoPaymentUser from "../pages/autoPayment/AutoPaymentUser";
 import Dashboard from "../pages/dashboard/Dashboard";
@@ -24,12 +25,12 @@ export const MainRoute = {
       element: <Login />,
       fallback: <h1>Loading...</h1>,
     },
-    // {
-    //   id: 1,
-    //   path: "/atmos",
-    //   element: <AtmosPayment />,
-    //   fallback: <h1>Loading...</h1>,
-    // },
+    {
+      id: 1,
+      path: "/atmos/payment",
+      element: <AtmosPayment />,
+      fallback: <h1>Loading...</h1>,
+    },
     {
       id: 1,
       path: "/atmos/card",
@@ -50,6 +51,12 @@ export const MainRoute = {
     },
   ],
   private: [
+    {
+      id: 1,
+      path: "/atmos/payment",
+      element: <AtmosPayment />,
+      fallback: <h1>Loading...</h1>,
+    },
     {
       id: 1,
       path: "/atmos/card",

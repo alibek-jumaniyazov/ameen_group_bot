@@ -1,6 +1,7 @@
-import axios, { AxiosError, type AxiosRequestConfig } from "axios";
-import { TokenManager } from "./tokenManager";
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+
 import { AdminApi } from "./adminApi";
+import { TokenManager } from "./tokenManager";
 
 const BASE_URL = `${import.meta.env.VITE_API_URL}`;
 
@@ -11,10 +12,10 @@ export const axiosInstance = axios.create({
   },
 });
 
-axiosInstance.interceptors.request.use((config) => {
+axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = TokenManager.getAccessToken();
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.set("Authorization", `Bearer ${token}`);
   }
   return config;
 });
@@ -32,16 +33,24 @@ const processQueue = (error: unknown, token: string | null = null) => {
   });
   failedQueue = [];
 };
-
 axiosInstance.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError) => {
-    const originalRequest = error.config as AxiosRequestConfig & {
+  async (error: AxiosError<any>) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
     };
 
     const status = error.response?.status;
-    console.log("❌ RESPONSE ERROR:", status);
+    const data = error.response?.data as { error?: string };
+
+    console.log("❌ RESPONSE ERROR:", status, data);
+
+    if (status === 400 && data?.error === "JWT_INVALID") {
+      console.log("⛔ JWT invalid, redirecting to login...");
+      TokenManager.clearTokens();
+      window.location.href = "/login";
+      return Promise.reject(error);
+    }
 
     if (status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -52,10 +61,7 @@ axiosInstance.interceptors.response.use(
           failedQueue.push({
             resolve: (token) => {
               if (token) {
-                originalRequest.headers = {
-                  ...originalRequest.headers,
-                  Authorization: `Bearer ${token}`,
-                };
+                originalRequest.headers.set("Authorization", `Bearer ${token}`);
               }
               resolve(axiosInstance(originalRequest));
             },
@@ -77,10 +83,7 @@ axiosInstance.interceptors.response.use(
 
         processQueue(null, accessToken);
 
-        originalRequest.headers = {
-          ...originalRequest.headers,
-          Authorization: `Bearer ${accessToken}`,
-        };
+        originalRequest.headers.set("Authorization", `Bearer ${accessToken}`);
 
         return axiosInstance(originalRequest);
       } catch (err) {
