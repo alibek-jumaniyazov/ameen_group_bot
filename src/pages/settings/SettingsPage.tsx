@@ -1,29 +1,30 @@
 import {
-  Form,
   Button,
-  message,
-  Spin,
+  Form,
   Input,
-  Table,
-  Space,
-  Popconfirm,
   Modal,
-  Tabs,
+  Popconfirm,
   Select,
+  Space,
+  Spin,
+  Table,
+  Tabs,
   Upload,
+  message,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
-import { useSettings, useUpdateSettings } from "../../hooks/useSettings";
-import MDEditor from "@uiw/react-md-editor";
 import {
   useButtons,
   useCreateButton,
-  useUpdateButton,
   useDeleteButton,
+  useUpdateButton,
 } from "../../hooks/useButtons";
-import { useSubscriptions } from "../../hooks/useSubscription";
+import { useEffect, useState } from "react";
+import { useSettings, useUpdateSettings } from "../../hooks/useSettings";
+
 import type { Button as ButtonType } from "../../api/buttonsApi";
+import MDEditor from "@uiw/react-md-editor";
+import { UploadOutlined } from "@ant-design/icons";
+import { useSubscriptions } from "../../hooks/useSubscription";
 
 export default function SettingsPage() {
   const [form] = Form.useForm();
@@ -32,7 +33,7 @@ export default function SettingsPage() {
   const [editingButton, setEditingButton] = useState<ButtonType | null>(null);
   const [imagePreviews, setImagePreviews] = useState<{
     aboutAminGroupImageId?: string;
-    aboutKozimxonTorayevImageId?: string;
+    contactImageId?: string;
   }>({});
 
   const { data, isLoading } = useSettings();
@@ -49,15 +50,15 @@ export default function SettingsPage() {
     if (data) {
       form.setFieldsValue({
         aboutAminGroup: data.aboutAminGroup,
-        aboutKozimxonTorayev: data.aboutKozimxonTorayev,
+        contactMessage: data.contactMessage,
+        startMessage: data.startMessage,
         aboutAminGroupImageId: data.aboutAminGroupImageId,
-        aboutKozimxonTorayevImageId: data.aboutKozimxonTorayevImageId,
+        contactImageId: data.contactImageId,
       });
 
       setImagePreviews({
         aboutAminGroupImageId: data.aboutAminGroupImage?.url || undefined,
-        aboutKozimxonTorayevImageId:
-          data.aboutKozimxonTorayevImage?.url || undefined,
+        contactImageId: data.contactImage?.url || undefined,
       });
     }
   }, [data]);
@@ -177,12 +178,10 @@ export default function SettingsPage() {
               <Form.Item name="aboutAminGroup" label="Amin Group haqida">
                 <MDEditor height={200} data-color-mode="light" />
               </Form.Item>
-              <Form.Item
-                name="aboutKozimxonTorayev"
-                label="Kozimxon Torayev haqida"
-              >
+              <Form.Item name="contactMessage" label="Kozimxon Torayev haqida">
                 <MDEditor height={200} data-color-mode="light" />
               </Form.Item>
+
               <Form.Item label="Amin Group rasmi" name="aboutAminGroupImageId">
                 <Upload
                   name="file"
@@ -217,42 +216,42 @@ export default function SettingsPage() {
                   </div>
                 )}
               </Form.Item>
-              <Form.Item
-                label="Kozimxon Torayev rasmi"
-                name="aboutKozimxonTorayevImageId"
-              >
+              <Form.Item label="Kozimxon Torayev rasmi" name="contactImageId">
                 <Upload
                   name="file"
                   action={`${import.meta.env.VITE_API_URL}/files/upload`}
                   showUploadList={false}
-                  onChange={handleUploadChange("aboutKozimxonTorayevImageId")}
+                  onChange={handleUploadChange("contactImageId")}
                 >
                   <Button icon={<UploadOutlined />}>Yangi rasm yuklash</Button>
                 </Upload>
-                {data?.aboutKozimxonTorayevImage?.url && (
+                {data?.contactImage?.url && (
                   <div className="mt-2">
                     <p className="text-xs text-gray-500 mb-1">Joriy rasm:</p>
                     <img
                       src={`${import.meta.env.VITE_BASE_URL}${
-                        data.aboutKozimxonTorayevImage.url
+                        data.contactImage.url
                       }`}
                       alt="Oldingi rasm"
                       className="w-24 rounded border"
                     />
                   </div>
                 )}
-                {imagePreviews.aboutKozimxonTorayevImageId && (
+                {imagePreviews.contactImageId && (
                   <div className="mt-2">
                     <p className="text-xs text-gray-500 mb-1">Yangi rasm:</p>
                     <img
                       src={`${import.meta.env.VITE_BASE_URL}${
-                        imagePreviews.aboutKozimxonTorayevImageId
+                        imagePreviews.contactImageId
                       }`}
                       alt="Preview"
                       className="w-24 rounded border"
                     />
                   </div>
                 )}
+              </Form.Item>
+              <Form.Item name="startMessage" label="Start message">
+                <MDEditor height={200} data-color-mode="light" />
               </Form.Item>
               <Form.Item className="lg:col-span-2">
                 <Button type="primary" htmlType="submit" block>

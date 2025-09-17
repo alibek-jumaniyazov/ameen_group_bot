@@ -3,12 +3,13 @@ import { axiosInstance } from "./axiosInstance";
 export interface Settings {
   id: number;
   aboutAminGroup: string;
-  aboutKozimxonTorayev: string;
+  contactMessage: string;
   alertMessage: string;
-  aboutKozimxonTorayevImageId: number | null | undefined;
+  startMessage: string;
+  contactImageId: number | null | undefined;
   aboutAminGroupImageId: number | null | undefined;
   aboutAminGroupImage?: { id: number; url: string };
-  aboutKozimxonTorayevImage?: { id: number; url: string };
+  contactImage?: { id: number; url: string };
 }
 
 export type UpdateSettingsDto = Omit<Settings, "id">;
