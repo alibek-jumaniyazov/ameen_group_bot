@@ -1,4 +1,6 @@
+import { PaymentApi, type CreatePaymentPayload } from "./paymentApi";
 import { axiosInstance } from "./axiosInstance";
+import { useMutation } from "@tanstack/react-query";
 
 export interface SubscriptionPayment {
   id: number;
@@ -109,4 +111,11 @@ export const SubscriptionApi = {
   delete: async (id: number): Promise<void> => {
     await axiosInstance.delete(`/subscription/${id}`);
   },
+};
+
+export const useCreateOctoCheckout = () => {
+  return useMutation({
+    mutationFn: (data: CreatePaymentPayload) =>
+      PaymentApi.createOctoCheckout(data),
+  });
 };

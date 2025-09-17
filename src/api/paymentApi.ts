@@ -31,4 +31,12 @@ export const PaymentApi = {
     const { data } = await axiosInstance.post("/atmos/apply", payload);
     return data;
   },
+
+  createOctoCheckout: async (payload: CreatePaymentPayload): Promise<any> => {
+    const { data } = await axiosInstance.post(
+      "/octobank/create-checkout-session",
+      payload
+    );
+    return data;
+  },
 };
