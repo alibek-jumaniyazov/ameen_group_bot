@@ -97,10 +97,9 @@ export default function AtmosPaymentPage() {
   return (
     <div className="max-w-md mx-auto p-6 !bg-white">
       <Title level={3} className="text-center mb-6">
-        Karta va tarifni tanlangg
+        Karta va tarifni tanlang
       </Title>
 
-      {/* Card form */}
       <Form form={form} layout="vertical" onFinish={onSubmit}>
         <Form.Item
           label="Karta raqami"
