@@ -1,37 +1,47 @@
 import { axiosInstance } from "./axiosInstance";
 
+export interface BindCardInitPayload {
+  card_number: string;
+  expiry: string; // format YYMM
+}
+
+export interface BindCardConfirmPayload {
+  transaction_id: number;
+  otp: string;
+  userId: number;
+  subscriptionTypeId: number;
+}
+
+export interface SchedulerConfirmPayload {
+  scheduler_id: string;
+  otp: string;
+}
+
 export interface CreatePaymentPayload {
   userId: number;
   subscriptionTypeId: number;
 }
 
-export interface PreapplyPayload {
-  transaction_id: number;
-  card_number: number;
-  expiry: string;
-}
-
-export interface ApplyPayload {
-  transaction_id: number;
-  otp: string;
-}
-
 export const PaymentApi = {
-  create: async (payload: CreatePaymentPayload): Promise<any> => {
-    const { data } = await axiosInstance.post("/atmos", payload);
+  // Atmos bind card init
+  bindCardInit: async (payload: BindCardInitPayload): Promise<any> => {
+    const { data } = await axiosInstance.post("/atmos/bind-card/init", payload);
     return data;
   },
 
-  preapply: async (payload: PreapplyPayload): Promise<any> => {
-    const { data } = await axiosInstance.post("/atmos/preapply", payload);
+  // Atmos bind card confirm (with OTP)
+  bindCardConfirm: async (payload: BindCardConfirmPayload): Promise<any> => {
+    const { data } = await axiosInstance.post("/atmos/bind-card/confirm", payload);
     return data;
   },
 
-  apply: async (payload: ApplyPayload): Promise<any> => {
-    const { data } = await axiosInstance.post("/atmos/apply", payload);
+  // Atmos scheduler confirm
+  schedulerConfirm: async (payload: SchedulerConfirmPayload): Promise<any> => {
+    const { data } = await axiosInstance.post("/atmos/scheduler/confirm", payload);
     return data;
   },
 
+  // Visa / Mastercard → OctoBank
   createOctoCheckout: async (payload: CreatePaymentPayload): Promise<any> => {
     const { data } = await axiosInstance.post(
       "/octobank/create-checkout-session",

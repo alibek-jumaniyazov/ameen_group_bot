@@ -4,7 +4,6 @@ import AutoPayment from "../pages/autoPayment/AutoPayment";
 import AutoPaymentUser from "../pages/autoPayment/AutoPaymentUser";
 import Dashboard from "../pages/dashboard/Dashboard";
 import Login from "../pages/auth/Login";
-import PaymentCardPage from "../pages/atmos/PaymentCardPage";
 import PaymentHistory from "../pages/paymentHistory/PaymentHistory";
 import PaymentOtpPage from "../pages/atmos/PaymentOtpPage";
 import PaymentSuccess from "../pages/atmos/PaymentSuccess";
@@ -31,12 +30,7 @@ export const MainRoute = {
       element: <AtmosPayment />,
       fallback: <h1>Loading...</h1>,
     },
-    {
-      id: 1,
-      path: "/atmos/card",
-      element: <PaymentCardPage />,
-      fallback: <h1>Loading...</h1>,
-    },
+
     {
       id: 1,
       path: "/atmos/otp",
@@ -57,12 +51,7 @@ export const MainRoute = {
       element: <AtmosPayment />,
       fallback: <h1>Loading...</h1>,
     },
-    {
-      id: 1,
-      path: "/atmos/card",
-      element: <PaymentCardPage />,
-      fallback: <h1>Loading...</h1>,
-    },
+
     {
       id: 1,
       path: "/atmos/otp",

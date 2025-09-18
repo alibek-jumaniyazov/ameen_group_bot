@@ -1,9 +1,9 @@
 import { Button, Checkbox, Form, Input, Spin, Typography, message } from "antd";
-import { useCreatePayment, usePreapplyPayment } from "../../hooks/usePayment";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { useCreateOctoCheckout } from "../../api/subscriptionPaymentApi";
+import { useBindCardInit } from "../../hooks/usePayment";
+import { useCreateOctoCheckout } from "../../hooks/usePayment";
 import { useSubscriptions } from "../../hooks/useSubscription";
 
 const { Title, Text } = Typography;
@@ -29,15 +29,17 @@ export default function AtmosPaymentPage() {
   const navigate = useNavigate();
   const userId = Number(searchParams.get("userId"));
 
-  const { mutate: createPayment, isPending } = useCreatePayment();
-  const { mutate: preapplyPayment, isPending: isCardLoading } = usePreapplyPayment();
+  // Queries
+  const { mutate: bindCardInit, isPending: isBindLoading } = useBindCardInit();
   const { mutate: createOctoCheckout, isPending: isOctoLoading } = useCreateOctoCheckout();
   const { data, isLoading } = useSubscriptions();
 
+  // States
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [paymentType, setPaymentType] = useState<"uzcard" | "visa">("uzcard"); // default Uzcard
-  const [acceptedOffer, setAcceptedOffer] = useState(false); // oferta check
+  const [paymentType, setPaymentType] = useState<"uzcard" | "visa">("uzcard");
+  const [acceptedOffer, setAcceptedOffer] = useState(false);
 
+  // Format expiry MM/YY → YYMM
   const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, "");
     if (value.length > 4) value = value.slice(0, 4);
@@ -62,45 +64,41 @@ export default function AtmosPaymentPage() {
     }
 
     if (paymentType === "uzcard") {
-      // Uzcard / Humo
-      createPayment(
-        { userId, subscriptionTypeId: selectedId },
-        {
-          onSuccess: (res) => {
-            const tid = res?.transactionId;
-            const [mm, yy] = values.expiry.split("/");
-            const formattedExpiry = yy + mm;
+      // 🔹 Uzcard / Humo → Atmos bind-card flow
+      const [mm, yy] = values.expiry.split("/");
+      const formattedExpiry = yy + mm; // YYMM
 
-            preapplyPayment(
-              {
-                card_number: Number(values.card_number),
-                transaction_id: tid,
-                expiry: formattedExpiry,
-              },
-              {
-                onSuccess: () => {
-                  message.success("OTP ga yo‘naltirilmoqda");
-                  navigate(`/atmos/otp?transaction_id=${tid}`);
-                },
-                onError: () => {
-                  message.error("Karta ma’lumotlarini yuborishda xatolik");
-                },
-              }
+      bindCardInit(
+        {
+          card_number: values.card_number.replace(/\s/g, ""), // clean spaces
+          expiry: formattedExpiry,
+        },
+        {
+          onSuccess: (res: any) => {
+            const tid = res?.transaction_id;
+            if (!tid) {
+              message.error("Transaction ID topilmadi");
+              return;
+            }
+            message.success("OTP ga yo‘naltirilmoqda");
+            navigate(
+              `/atmos/otp?transaction_id=${tid}&userId=${userId}&subscriptionTypeId=${selectedId}`
             );
           },
           onError: () => {
-            message.error("Transaction yaratishda xatolik yuz berdi");
+            message.error("Karta ma’lumotlarini yuborishda xatolik");
           },
         }
       );
     } else {
-      // Visa / Mastercard → OctoBank
+      // 🔹 Visa / Mastercard → OctoBank
       createOctoCheckout(
         { userId, subscriptionTypeId: selectedId },
         {
           onSuccess: (res: any) => {
-            if (res?.data?.octo_pay_url) {
-              window.location.href = res.data.octo_pay_url;
+            const url = res?.data?.octo_pay_url;
+            if (url) {
+              window.location.href = url;
             } else {
               message.error("OctoBank URL topilmadi");
             }
@@ -199,7 +197,9 @@ export default function AtmosPaymentPage() {
                   }`}
                 >
                   <div>
-                    <Text strong className="text-base">{tarif.title}</Text>
+                    <Text strong className="text-base">
+                      {tarif.title}
+                    </Text>
                   </div>
                   <Text strong>{Number(tarif.price).toLocaleString("uz-UZ")} so‘m</Text>
                 </div>
@@ -210,7 +210,7 @@ export default function AtmosPaymentPage() {
         <Button
           type="primary"
           htmlType="submit"
-          loading={isPending || isCardLoading || isOctoLoading}
+          loading={isBindLoading || isOctoLoading}
           disabled={!selectedId}
           className="w-full py-8 text-lg font-semibold"
         >

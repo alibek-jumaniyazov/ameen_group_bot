@@ -1,29 +1,36 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import {
   PaymentApi,
+  type BindCardInitPayload,
+  type BindCardConfirmPayload,
+  type SchedulerConfirmPayload,
   type CreatePaymentPayload,
-  type PreapplyPayload,
-  type ApplyPayload,
 } from "../api/paymentApi";
 
-export const useCreatePayment = () => {
-  const queryClient = useQueryClient();
+// Atmos Bind card init
+export const useBindCardInit = () => {
   return useMutation({
-    mutationFn: (data: CreatePaymentPayload) => PaymentApi.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["payment"] });
-    },
+    mutationFn: (data: BindCardInitPayload) => PaymentApi.bindCardInit(data),
   });
 };
 
-export const usePreapplyPayment = () => {
+// Atmos Bind card confirm (with OTP)
+export const useBindCardConfirm = () => {
   return useMutation({
-    mutationFn: (data: PreapplyPayload) => PaymentApi.preapply(data),
+    mutationFn: (data: BindCardConfirmPayload) => PaymentApi.bindCardConfirm(data),
   });
 };
 
-export const useApplyPayment = () => {
+// Atmos Scheduler confirm
+export const useSchedulerConfirm = () => {
   return useMutation({
-    mutationFn: (data: ApplyPayload) => PaymentApi.apply(data),
+    mutationFn: (data: SchedulerConfirmPayload) => PaymentApi.schedulerConfirm(data),
+  });
+};
+
+// OctoBank (Visa/Mastercard)
+export const useCreateOctoCheckout = () => {
+  return useMutation({
+    mutationFn: (data: CreatePaymentPayload) => PaymentApi.createOctoCheckout(data),
   });
 };
